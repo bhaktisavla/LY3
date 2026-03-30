@@ -1,4 +1,4 @@
-https://www.w3schools.com/html/tryit.asp?filename=tryhtml_basic<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -106,9 +106,11 @@ const correctSound = new Audio("https://www.soundjay.com/buttons/sounds/button-4
 const wrongSound = new Audio("https://www.soundjay.com/buttons/sounds/button-10.mp3");
 
 // Volume control
-document.getElementById("volume").addEventListener("input", (e) => {
-    correctSound.volume = e.target.value;
-    wrongSound.volume = e.target.value;
+document.addEventListener("input", function(e) {
+    if (e.target.id === "volume") {
+        correctSound.volume = e.target.value;
+        wrongSound.volume = e.target.value;
+    }
 });
 
 // Game variables
@@ -119,8 +121,7 @@ let score = 0;
 // Generate randomized questions
 function generateQuestions() {
     let nums = [1,2,3,4,5,6,7,8,9,10];
-    nums.sort(() => Math.random() - 0.5);
-    return nums;
+    return nums.sort(() => Math.random() - 0.5);
 }
 
 // Create options
@@ -152,10 +153,11 @@ function loadQuestion() {
     document.getElementById("question-number").innerText =
         "Question " + (currentQuestion + 1);
 
-    let imageName = answer === 1 ? "1-bird" : `${answer}-birds`;
+    let imageName = answer === 1 ? "1-bird.png" : `${answer}-birds.png`;
 
+    // ✅ FIXED PATH HERE
     document.getElementById("question-image").src =
-        `LY3/Birds/assets/${imageName}.png`;
+        `assets/${imageName}`;
 
     let options = generateOptions(answer);
     let optionsDiv = document.getElementById("options");
@@ -182,7 +184,6 @@ function checkAnswer(selected, correct) {
     }
 
     currentQuestion++;
-
     setTimeout(loadQuestion, 800);
 }
 
@@ -205,11 +206,6 @@ function startGame() {
 
         <button class="restart" onclick="startGame()">Restart</button>
     `;
-
-    document.getElementById("volume").addEventListener("input", (e) => {
-        correctSound.volume = e.target.value;
-        wrongSound.volume = e.target.value;
-    });
 
     loadQuestion();
 }
