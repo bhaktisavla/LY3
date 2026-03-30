@@ -1,0 +1,223 @@
+https://www.w3schools.com/html/tryit.asp?filename=tryhtml_basic<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bird Counting Game</title>
+
+<style>
+body {
+    font-family: 'Comic Sans MS', cursive;
+    background: linear-gradient(to right, #ffecd2, #fcb69f);
+    text-align: center;
+    margin: 0;
+    padding: 10px;
+}
+
+h1 {
+    color: #ff4081;
+}
+
+.game-container {
+    max-width: 500px;
+    margin: auto;
+    background: #fff;
+    border-radius: 20px;
+    padding: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+img {
+    width: 100%;
+    max-height: 250px;
+    object-fit: contain;
+}
+
+.options button {
+    display: block;
+    width: 80%;
+    margin: 10px auto;
+    padding: 15px;
+    font-size: 20px;
+    border-radius: 15px;
+    border: none;
+    background: #4caf50;
+    color: white;
+    cursor: pointer;
+}
+
+.options button:hover {
+    background: #45a049;
+}
+
+.score {
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+.controls {
+    margin-top: 15px;
+}
+
+button.restart {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #ff5722;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+input[type=range] {
+    width: 80%;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>🐦 Count the Birds!</h1>
+
+<div class="game-container">
+
+    <div id="question-number"></div>
+
+    <img id="question-image" src="" alt="birds">
+
+    <div class="options" id="options"></div>
+
+    <div class="score" id="score"></div>
+
+    <div class="controls">
+        🔊 Volume:
+        <input type="range" min="0" max="1" step="0.1" id="volume" value="1">
+    </div>
+
+    <button class="restart" onclick="startGame()">Restart</button>
+
+</div>
+
+<script>
+
+// Sounds
+const correctSound = new Audio("https://www.soundjay.com/buttons/sounds/button-4.mp3");
+const wrongSound = new Audio("https://www.soundjay.com/buttons/sounds/button-10.mp3");
+
+// Volume control
+document.getElementById("volume").addEventListener("input", (e) => {
+    correctSound.volume = e.target.value;
+    wrongSound.volume = e.target.value;
+});
+
+// Game variables
+let questions = [];
+let currentQuestion = 0;
+let score = 0;
+
+// Generate randomized questions
+function generateQuestions() {
+    let nums = [1,2,3,4,5,6,7,8,9,10];
+    nums.sort(() => Math.random() - 0.5);
+    return nums;
+}
+
+// Create options
+function generateOptions(answer) {
+    let options = new Set();
+    options.add(answer);
+
+    while (options.size < 3) {
+        let rand = Math.floor(Math.random() * 10) + 1;
+        options.add(rand);
+    }
+
+    return Array.from(options).sort(() => Math.random() - 0.5);
+}
+
+// Load question
+function loadQuestion() {
+    if (currentQuestion >= 10) {
+        document.querySelector(".game-container").innerHTML = `
+            <h2>🎉 Game Over!</h2>
+            <p>Your Score: ${score}/10</p>
+            <button class="restart" onclick="startGame()">Play Again</button>
+        `;
+        return;
+    }
+
+    let answer = questions[currentQuestion];
+
+    document.getElementById("question-number").innerText =
+        "Question " + (currentQuestion + 1);
+
+    let imageName = answer === 1 ? "1-bird" : `${answer}-birds`;
+
+    document.getElementById("question-image").src =
+        `LY3/Birds/assets/${imageName}.png`;
+
+    let options = generateOptions(answer);
+    let optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML = "";
+
+    options.forEach(opt => {
+        let btn = document.createElement("button");
+        btn.innerText = opt;
+        btn.onclick = () => checkAnswer(opt, answer);
+        optionsDiv.appendChild(btn);
+    });
+
+    document.getElementById("score").innerText =
+        "Score: " + score;
+}
+
+// Check answer
+function checkAnswer(selected, correct) {
+    if (selected === correct) {
+        correctSound.play();
+        score++;
+    } else {
+        wrongSound.play();
+    }
+
+    currentQuestion++;
+
+    setTimeout(loadQuestion, 800);
+}
+
+// Start game
+function startGame() {
+    questions = generateQuestions();
+    currentQuestion = 0;
+    score = 0;
+
+    document.querySelector(".game-container").innerHTML = `
+        <div id="question-number"></div>
+        <img id="question-image" src="">
+        <div class="options" id="options"></div>
+        <div class="score" id="score"></div>
+
+        <div class="controls">
+            🔊 Volume:
+            <input type="range" min="0" max="1" step="0.1" id="volume" value="1">
+        </div>
+
+        <button class="restart" onclick="startGame()">Restart</button>
+    `;
+
+    document.getElementById("volume").addEventListener("input", (e) => {
+        correctSound.volume = e.target.value;
+        wrongSound.volume = e.target.value;
+    });
+
+    loadQuestion();
+}
+
+// Start on load
+startGame();
+
+</script>
+
+</body>
+</html>
