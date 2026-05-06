@@ -3,228 +3,369 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Counting Game</title>
+
+<title>Count and Type 1 to 30</title>
 
 <style>
-body {
-    margin: 0;
-    font-family: 'Comic Sans MS', sans-serif;
-    background: #f5fbff;
-    text-align: center;
+*{
+  box-sizing:border-box;
 }
 
-/* SPLASH */
-#splash {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    background: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#fff4dc;
+  color:#333;
+  text-align:center;
 }
 
-#splash img {
-    width: 220px;
+#splash{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:100;
 }
 
-/* GAME */
-#game {
-    display: none;
-    padding: 10px;
+#splash img{
+  max-width:70%;
+  max-height:45%;
 }
 
-h2 {
-    color: #ff7043;
-    margin: 5px;
+.game{
+  min-height:100vh;
+  padding:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
-/* GRID */
-#objects {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
-    justify-items: center;
-    margin: 10px 0;
+.card{
+  background:white;
+  width:100%;
+  max-width:850px;
+  border-radius:22px;
+  padding:14px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
 }
 
-/* BIG IMAGES */
-#objects img {
-    width: 65px;
-    height: 65px;
+h1{
+  margin:4px 0;
+  font-size:24px;
+  color:#3d6b8f;
 }
 
-/* INPUT */
-input {
-    width: 160px;
-    height: 65px;
-    font-size: 30px;
-    text-align: center;
-    border-radius: 12px;
-    border: 2px solid #ccc;
+.progress{
+  font-size:16px;
+  color:#555;
+  margin:5px;
 }
 
-/* BUTTON */
-button {
-    margin-top: 8px;
-    padding: 10px 18px;
-    font-size: 18px;
-    border-radius: 10px;
-    border: none;
-    background: #4CAF50;
-    color: white;
+.question{
+  font-size:20px;
+  font-weight:bold;
+  margin:8px;
 }
 
-#playAgain {
-    display: none;
-    background: #ff7043;
+.objects{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(46px, 1fr));
+  gap:7px;
+  max-width:760px;
+  margin:10px auto;
+  max-height:45vh;
+  overflow:auto;
 }
 
-/* MOBILE */
-@media (max-width: 600px) {
-    #objects img {
-        width: 55px;
-        height: 55px;
-    }
+.obj{
+  width:46px;
+  height:46px;
+  object-fit:contain;
+  margin:auto;
+}
+
+.controls{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+
+input{
+  width:135px;
+  height:65px;
+  font-size:34px;
+  text-align:center;
+  border:4px solid #f0b85b;
+  border-radius:18px;
+  outline:none;
+}
+
+button{
+  min-height:56px;
+  padding:12px 18px;
+  font-size:19px;
+  border:none;
+  border-radius:18px;
+  background:#7bb77e;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button.secondary{
+  background:#6b95c9;
+}
+
+.feedback{
+  min-height:34px;
+  font-size:22px;
+  font-weight:bold;
+  margin-top:8px;
+}
+
+.finish{
+  display:none;
+}
+
+.finish h2{
+  font-size:34px;
+  color:#4f8d57;
+}
+
+@media(max-width:480px){
+  .card{
+    padding:10px;
+  }
+
+  h1{
+    font-size:20px;
+  }
+
+  .question{
+    font-size:18px;
+  }
+
+  .objects{
+    grid-template-columns:repeat(auto-fit, minmax(36px, 1fr));
+    gap:5px;
+    max-height:42vh;
+  }
+
+  .obj{
+    width:36px;
+    height:36px;
+  }
+
+  input{
+    width:125px;
+    height:62px;
+    font-size:32px;
+  }
+
+  button{
+    font-size:17px;
+    min-height:54px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<!-- SPLASH -->
 <div id="splash">
-    <img src="./assets/innovine-logo.png" 
-         onerror="this.style.display='none'; alert('Logo not found. Check assets path');">
+  <img src="assets/innovine-logo.png" alt="Innovine Logo">
 </div>
 
-<!-- GAME -->
-<div id="game">
-    <h2>Count and type the number</h2>
+<div class="game" id="game" style="display:none;">
 
-    <div id="objects"></div>
+  <div class="card" id="playArea">
 
-    <input type="number" id="answer" placeholder="?">
-    <br>
+    <h1>Count and Type</h1>
 
-    <button onclick="checkAnswer()">Submit</button>
+    <div class="progress" id="progress"></div>
 
-    <div id="feedback"></div>
+    <div class="question" id="questionText"></div>
 
-    <button id="playAgain" onclick="startGame()">🔁 Play Again</button>
+    <button class="secondary" onclick="speakQuestion()">🔊 Hear Again</button>
+
+    <div class="objects" id="objects"></div>
+
+    <div class="controls">
+      <input id="answer" type="number" inputmode="numeric" pattern="[0-9]*" min="1" max="30">
+      <button onclick="checkAnswer()">Check</button>
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+
+  </div>
+
+  <div class="card finish" id="finishArea">
+    <h2>Great Job!</h2>
+    <p>You finished all 10 rounds.</p>
+    <button onclick="playAgain()">Play Again</button>
+  </div>
+
 </div>
 
-<!-- AUDIO -->
-<audio id="correctSound" src="./assets/correct.mp3"></audio>
-<audio id="greatSound" src="./assets/greatjob.mp3"></audio>
-<audio id="voicePlayer"></audio>
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="greatJobSound" src="assets/freesound_community_claps-44774.mp3"></audio>
 
 <script>
-let currentQuestion = 0;
-let numbers = [];
-let correctAnswer = 0;
+var questions = [];
+var current = 0;
 
-// EXACT FILE NAMES FROM YOUR ASSETS
-const objects = [
-"./assets/cat.png",
-"./assets/book.png",
-"./assets/dog.png",
-"./assets/sun.png",
-"./assets/bag.png",
-"./assets/star.png",
-"./assets/moon.png",
-"./assets/crayon.png",
-"./assets/bus.png",
-"./assets/bird.png"
+var cliparts = [
+  {name:"bags", file:"assets/bag.png"},
+  {name:"birds", file:"assets/bird.jpg"},
+  {name:"books", file:"assets/book.png"},
+  {name:"buses", file:"assets/bus.png"},
+  {name:"cats", file:"assets/cat.jpg"},
+  {name:"crayons", file:"assets/crayon.jpg"},
+  {name:"dogs", file:"assets/dog.png"},
+  {name:"moons", file:"assets/moon.png"},
+  {name:"stars", file:"assets/star.png"},
+  {name:"suns", file:"assets/sun.jpg"}
 ];
 
-// SPLASH 5 sec
-setTimeout(() => {
+window.onload = function(){
+  setTimeout(function(){
     document.getElementById("splash").style.display = "none";
-    document.getElementById("game").style.display = "block";
+    document.getElementById("game").style.display = "flex";
     startGame();
-}, 5000);
+  }, 5000);
+};
 
-// shuffle
-function shuffle(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
-        let j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
+function startGame(){
+  questions = [];
+  current = 0;
+
+  var usedNumbers = {};
+
+  while(questions.length < 10){
+    var num = Math.floor(Math.random() * 30) + 1;
+
+    if(!usedNumbers[num]){
+      usedNumbers[num] = true;
+
+      questions.push({
+        count:num,
+        item:cliparts[questions.length]
+      });
     }
+  }
+
+  showQuestion();
 }
 
-// numbers
-function generateNumbers() {
-    let pool = [];
-    for (let i = 1; i <= 30; i++) pool.push(i);
-    shuffle(pool);
-    numbers = pool.slice(0, 10);
+function showQuestion(){
+  var q = questions[current];
+
+  document.getElementById("progress").innerHTML = "Round " + (current + 1) + " of 10";
+  document.getElementById("questionText").innerHTML = "How many " + q.item.name + " can you see?";
+  document.getElementById("answer").value = "";
+  document.getElementById("feedback").innerHTML = "";
+
+  var box = document.getElementById("objects");
+  box.innerHTML = "";
+
+  for(var i = 0; i < q.count; i++){
+    var img = document.createElement("img");
+    img.src = q.item.file;
+    img.className = "obj";
+    img.alt = q.item.name;
+    box.appendChild(img);
+  }
+
+  setTimeout(function(){
+    speakQuestion();
+  }, 500);
 }
 
-// START
-function startGame() {
-    generateNumbers();
-    currentQuestion = 0;
-    document.getElementById("playAgain").style.display = "none";
-    nextQuestion();
+function speakQuestion(){
+  var q = questions[current];
+
+  if("speechSynthesis" in window){
+    window.speechSynthesis.cancel();
+
+    var message = new SpeechSynthesisUtterance(
+      "How many " + q.item.name + " can you see? Count and type the number."
+    );
+
+    message.rate = 0.82;
+    message.pitch = 1.05;
+
+    window.speechSynthesis.speak(message);
+  }
 }
 
-// NEXT
-function nextQuestion() {
-    if (currentQuestion >= 10) {
-        endGame();
-        return;
-    }
+function checkAnswer(){
+  var answer = Number(document.getElementById("answer").value);
+  var correctAnswer = questions[current].count;
 
-    correctAnswer = numbers[currentQuestion];
+  if(answer === correctAnswer){
+    document.getElementById("feedback").innerHTML = "Correct!";
+    playSound("correctSound");
 
-    document.getElementById("answer").value = "";
-    document.getElementById("feedback").innerText = "";
+    setTimeout(function(){
+      current++;
 
-    let container = document.getElementById("objects");
-    container.innerHTML = "";
+      if(current >= 10){
+        finishGame();
+      }else{
+        showQuestion();
+      }
+    }, 1000);
 
-    let imgSrc = objects[currentQuestion];
-
-    for (let i = 0; i < correctAnswer; i++) {
-        let img = document.createElement("img");
-        img.src = imgSrc;
-
-        // ERROR CHECK
-        img.onerror = function() {
-            this.style.display = "none";
-            console.log("Missing image:", imgSrc);
-        };
-
-        container.appendChild(img);
-    }
-
-    // VOICE
-    let voice = document.getElementById("voicePlayer");
-    voice.src = "./assets/voice/q" + (currentQuestion + 1) + ".mp3";
-    voice.play();
-
-    currentQuestion++;
+  }else{
+    document.getElementById("feedback").innerHTML = "Try Again!";
+    playSound("wrongSound");
+    speakText("Try again. Count carefully.");
+  }
 }
 
-// CHECK
-function checkAnswer() {
-    let user = Number(document.getElementById("answer").value);
+function finishGame(){
+  document.getElementById("playArea").style.display = "none";
+  document.getElementById("finishArea").style.display = "block";
 
-    if (user === correctAnswer) {
-        document.getElementById("feedback").innerText = "✅ Correct";
-        document.getElementById("correctSound").play();
-        setTimeout(nextQuestion, 1000);
-    } else {
-        document.getElementById("feedback").innerText = "❌ Try Again";
-    }
+  playSound("greatJobSound");
+  speakText("Great job! You finished the game.");
 }
 
-// END
-function endGame() {
-    document.getElementById("objects").innerHTML = "🎉 FINISH 🎉";
-    document.getElementById("greatSound").play();
-    document.getElementById("playAgain").style.display = "inline-block";
+function playAgain(){
+  document.getElementById("playArea").style.display = "block";
+  document.getElementById("finishArea").style.display = "none";
+
+  startGame();
+}
+
+function playSound(id){
+  var sound = document.getElementById(id);
+
+  sound.currentTime = 0;
+
+  sound.play().catch(function(){
+    console.log("Sound will play after user interaction.");
+  });
+}
+
+function speakText(text){
+  if("speechSynthesis" in window){
+    window.speechSynthesis.cancel();
+
+    var message = new SpeechSynthesisUtterance(text);
+    message.rate = 0.85;
+
+    window.speechSynthesis.speak(message);
+  }
 }
 </script>
 
