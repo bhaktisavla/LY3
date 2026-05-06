@@ -7,6 +7,7 @@
 
 <style>
 *{box-sizing:border-box}
+
 html,body{
   margin:0;
   padding:0;
@@ -224,19 +225,23 @@ function setRealHeight(){
   var vh=window.innerHeight*0.01;
   document.documentElement.style.setProperty("--vh",vh+"px");
 }
+
 setRealHeight();
 window.addEventListener("resize",setRealHeight);
 
-/* ONLY BEFORE AND AFTER QUESTIONS */
+/*
+Only before and after questions.
+No repeated answer numbers.
+*/
 var questions=[
   {type:"before", number:2, answer:1},
-  {type:"after", number:3, answer:4},
+  {type:"after", number:2, answer:3},
   {type:"before", number:5, answer:4},
-  {type:"after", number:6, answer:7},
-  {type:"before", number:9, answer:8},
-  {type:"after", number:10, answer:11},
-  {type:"before", number:13, answer:12},
-  {type:"after", number:14, answer:15},
+  {type:"after", number:5, answer:6},
+  {type:"before", number:8, answer:7},
+  {type:"after", number:8, answer:9},
+  {type:"before", number:12, answer:11},
+  {type:"after", number:13, answer:14},
   {type:"before", number:18, answer:17},
   {type:"after", number:19, answer:20}
 ];
@@ -301,10 +306,25 @@ function speakQuestion(){
 
   if("speechSynthesis" in window){
     window.speechSynthesis.cancel();
+
     var speech=new SpeechSynthesisUtterance(text);
     speech.lang="en-IN";
     speech.rate=0.75;
     speech.pitch=1.1;
+
+    window.speechSynthesis.speak(speech);
+  }
+}
+
+function speakFeedback(text){
+  if("speechSynthesis" in window){
+    window.speechSynthesis.cancel();
+
+    var speech=new SpeechSynthesisUtterance(text);
+    speech.lang="en-IN";
+    speech.rate=0.8;
+    speech.pitch=1.1;
+
     window.speechSynthesis.speak(speech);
   }
 }
@@ -314,10 +334,11 @@ function checkAnswer(){
 
   var q=questions[current];
   var input=document.getElementById("answerInput");
+
   if(!input)return;
 
   var answerBox=input.parentElement;
-  var value=Number(input.value);
+  var value=parseInt(input.value,10);
 
   answerBox.className="numBox";
 
@@ -325,21 +346,29 @@ function checkAnswer(){
     movingNext=true;
     answerBox.classList.add("correctGlow");
     document.getElementById("feedback").innerHTML="Good Job! 🎉";
+
     playSound("rightSound");
+    speakFeedback("Good job");
 
     setTimeout(function(){
       current++;
+
       if(current>=questions.length){
         finishGame();
       }else{
         loadQuestion();
       }
-    },1400);
+    },1500);
 
   }else{
     answerBox.classList.add("wrongGlow");
     document.getElementById("feedback").innerHTML="Try Again 😊";
+
     playSound("wrongSound");
+    speakFeedback("Try again");
+
+    input.value="";
+    input.focus();
   }
 }
 
@@ -357,6 +386,7 @@ function finishGame(){
 
 function playSound(id){
   var sound=document.getElementById(id);
+
   if(sound){
     sound.currentTime=0;
     sound.play();
