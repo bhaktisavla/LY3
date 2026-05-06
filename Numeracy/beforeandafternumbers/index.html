@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Before and After Numbers</title>
 
 <style>
@@ -14,7 +14,7 @@ html, body {
   margin: 0;
   padding: 0;
   width: 100%;
-  min-height: 100%;
+  height: 100%;
   overflow: hidden;
   font-family: "Comic Sans MS", "Trebuchet MS", sans-serif;
   background: #eaf8ff;
@@ -37,41 +37,43 @@ html, body {
 
 .game {
   width: 100vw;
-  height: 100svh;
-  min-height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
   display: none;
   flex-direction: column;
   align-items: center;
-  padding: 6px 8px 90px 8px;
+  justify-content: flex-start;
+  padding: 6px;
   background: #eaf8ff;
-  position: relative;
+  overflow: hidden;
 }
 
 h1 {
-  margin: 4px 0 6px 0;
-  font-size: clamp(24px, 6vw, 38px);
+  margin: 4px 0;
+  font-size: clamp(22px, 5vw, 34px);
   color: #178bd3;
   text-align: center;
+  line-height: 1.1;
 }
 
 .instruction {
-  font-size: clamp(17px, 4vw, 24px);
+  font-size: clamp(16px, 4vw, 22px);
   color: #444;
   text-align: center;
-  min-height: 30px;
-  margin-bottom: 6px;
+  min-height: 28px;
+  margin: 4px 0;
 }
 
 .planeBox {
   position: relative;
   width: 96%;
-  max-width: 760px;
-  height: 50vh;
-  max-height: 380px;
-  min-height: 260px;
+  max-width: 700px;
+  height: 42%;
+  max-height: 330px;
+  min-height: 210px;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 4px;
 }
 
 .planeBox img {
@@ -86,19 +88,18 @@ h1 {
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: clamp(8px, 2vw, 18px);
+  gap: 10px;
 }
 
 .numBox {
-  width: clamp(60px, 15vw, 92px);
-  height: clamp(55px, 13vw, 76px);
+  width: clamp(54px, 14vw, 86px);
+  height: clamp(50px, 12vw, 72px);
   border: 4px solid #d94d73;
   border-radius: 12px;
   background: white;
   color: blue;
-  font-size: clamp(28px, 7vw, 42px);
+  font-size: clamp(26px, 7vw, 40px);
   font-weight: bold;
-  text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -109,7 +110,7 @@ h1 {
   height: 100%;
   border: none;
   outline: none;
-  font-size: clamp(28px, 7vw, 42px);
+  font-size: clamp(26px, 7vw, 40px);
   font-weight: bold;
   text-align: center;
   color: blue;
@@ -119,47 +120,43 @@ h1 {
 
 .correctGlow {
   border-color: #24a148 !important;
-  box-shadow: 0 0 18px #24a148;
+  box-shadow: 0 0 16px #24a148;
 }
 
 .wrongGlow {
   border-color: #d93025 !important;
-  box-shadow: 0 0 18px #d93025;
+  box-shadow: 0 0 16px #d93025;
 }
 
 .feedback {
-  min-height: 34px;
-  font-size: clamp(20px, 5vw, 30px);
+  min-height: 32px;
+  font-size: clamp(18px, 5vw, 28px);
   font-weight: bold;
   color: #444;
   text-align: center;
-  margin-top: 4px;
+  margin: 6px 0;
 }
 
 .buttons {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  min-height: 78px;
-  background: #eaf8ff;
+  width: 100%;
   display: flex;
-  gap: 12px;
+  gap: 10px;
   justify-content: center;
   align-items: center;
-  padding: 10px;
-  z-index: 50;
+  margin-top: auto;
+  padding-bottom: 8px;
 }
 
 button {
   border: none;
   border-radius: 12px;
-  padding: 12px 18px;
-  font-size: clamp(16px, 4vw, 22px);
+  padding: 12px 16px;
+  font-size: clamp(15px, 4vw, 22px);
   font-weight: bold;
   font-family: inherit;
   cursor: pointer;
   color: white;
+  min-width: 135px;
 }
 
 #hearBtn {
@@ -189,81 +186,77 @@ button:active {
 }
 
 @media (max-width: 600px) {
-  .game {
-    padding-bottom: 92px;
-  }
-
   h1 {
-    font-size: 30px;
-    margin-top: 6px;
+    font-size: 28px;
   }
 
   .instruction {
-    font-size: 22px;
-    margin-top: 4px;
+    font-size: 20px;
   }
 
   .planeBox {
-    height: 45vh;
-    min-height: 300px;
-    margin-top: 8px;
-  }
-
-  .numberRow {
-    top: 46%;
-  }
-
-  .numBox {
-    width: 64px;
-    height: 60px;
-  }
-
-  .buttons {
-    min-height: 82px;
-  }
-}
-
-@media (max-height: 700px) {
-  h1 {
-    font-size: 24px;
-  }
-
-  .instruction {
-    font-size: 18px;
-  }
-
-  .planeBox {
-    height: 38vh;
+    height: 39%;
     min-height: 230px;
   }
 
+  .numBox {
+    width: 60px;
+    height: 56px;
+  }
+
+  button {
+    min-width: 130px;
+    padding: 11px 12px;
+  }
+}
+
+@media (max-height: 680px) {
+  h1 {
+    font-size: 22px;
+  }
+
+  .instruction {
+    font-size: 17px;
+  }
+
+  .planeBox {
+    height: 36%;
+    min-height: 190px;
+  }
+
   .feedback {
-    font-size: 20px;
+    font-size: 18px;
+    min-height: 26px;
+  }
+
+  button {
+    padding: 9px 10px;
+    font-size: 15px;
   }
 }
 
 @media (max-height: 560px) {
   .planeBox {
-    height: 34vh;
-    min-height: 180px;
+    height: 32%;
+    min-height: 155px;
   }
 
   .numBox {
-    width: 56px;
-    height: 50px;
-    font-size: 26px;
+    width: 50px;
+    height: 46px;
+    font-size: 24px;
   }
 
   .numBox input {
-    font-size: 26px;
+    font-size: 24px;
   }
 
-  button {
-    padding: 8px 12px;
+  h1 {
+    font-size: 20px;
   }
 
-  .buttons {
-    min-height: 64px;
+  .instruction {
+    font-size: 15px;
   }
 }
 </style>
@@ -296,7 +289,7 @@ button:active {
 
   <div class="buttons" id="buttons">
     <button id="hearBtn" onclick="speakQuestion()">🔊 Hear Again</button>
-    <button id="checkBtn" onclick="checkAnswer()">Check Answer</button>
+    <button id="checkBtn" onclick="checkAnswer()">Check</button>
   </div>
 </div>
 
@@ -310,6 +303,14 @@ The game should be mobile friendly, tab friendly, low connectivity,
 it should also work on old phone models, android and IOS,
 everything should fit in on one screen scrolling shouldn't be required.
 */
+
+function setRealHeight() {
+  var vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty("--vh", vh + "px");
+}
+
+setRealHeight();
+window.addEventListener("resize", setRealHeight);
 
 var questions = [
   { nums: [1, 2, 3], missing: 0 },
@@ -331,6 +332,7 @@ var planes = [
 ];
 
 var current = 0;
+var movingNext = false;
 
 window.onload = function () {
   setTimeout(function () {
@@ -341,6 +343,8 @@ window.onload = function () {
 };
 
 function loadQuestion() {
+  movingNext = false;
+
   var q = questions[current];
 
   document.getElementById("feedback").innerHTML = "";
@@ -377,7 +381,7 @@ function loadQuestion() {
 
   setTimeout(function () {
     speakQuestion();
-  }, 500);
+  }, 400);
 }
 
 function speakQuestion() {
@@ -396,6 +400,8 @@ function speakQuestion() {
 }
 
 function checkAnswer() {
+  if (movingNext) return;
+
   var q = questions[current];
   var input = document.getElementById("answerInput");
 
@@ -407,6 +413,7 @@ function checkAnswer() {
   answerBox.className = "numBox";
 
   if (value === q.nums[q.missing]) {
+    movingNext = true;
     answerBox.classList.add("correctGlow");
     document.getElementById("feedback").innerHTML = "Good Job! 🎉";
     playSound("rightSound");
@@ -419,7 +426,7 @@ function checkAnswer() {
       } else {
         loadQuestion();
       }
-    }, 1800);
+    }, 1400);
 
   } else {
     answerBox.classList.add("wrongGlow");
@@ -452,17 +459,17 @@ function playSound(id) {
 function makeConfetti() {
   var colors = ["#f7b801", "#f18701", "#2b9fd9", "#80b918", "#db4b70"];
 
-  for (var i = 0; i < 60; i++) {
+  for (var i = 0; i < 50; i++) {
     var confetti = document.createElement("div");
     confetti.className = "confetti";
     confetti.style.left = Math.random() * 100 + "vw";
     confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-    confetti.style.animationDelay = Math.random() * 1.5 + "s";
+    confetti.style.animationDelay = Math.random() * 1.2 + "s";
     document.body.appendChild(confetti);
 
     setTimeout(function () {
-      if (confetti && confetti.parentNode) {
-        confetti.parentNode.removeChild(confetti);
+      if (document.querySelector(".confetti")) {
+        document.querySelector(".confetti").remove();
       }
     }, 4000);
   }
