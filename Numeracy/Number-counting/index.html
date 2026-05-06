@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Counting Game</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Comic Sans MS', sans-serif;
+    background: #f5fbff;
+    text-align: center;
+}
+
+/* SPLASH SCREEN */
+#splash {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#splash img {
+    width: 200px;
+}
+
+/* GAME */
+#game {
+    display: none;
+    padding: 10px;
+}
+
+h2 {
+    color: #ff7043;
+    margin: 5px;
+}
+
+#objects {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin: 10px 0;
+}
+
+#objects img {
+    width: 45px;
+    height: 45px;
+}
+
+input {
+    width: 140px;
+    height: 60px;
+    font-size: 28px;
+    text-align: center;
+    border-radius: 12px;
+    border: 2px solid #ccc;
+}
+
+/* BUTTONS */
+button {
+    margin: 5px;
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: none;
+    background: #4CAF50;
+    color: white;
+}
+
+#replayVoice {
+    background: #2196F3;
+}
+
+#playAgain {
+    display: none;
+    background: #ff7043;
+}
+
+/* MOBILE FIT */
+@media (max-width: 600px) {
+    #objects img {
+        width: 38px;
+        height: 38px;
+    }
+
+    input {
+        width: 120px;
+        height: 55px;
+        font-size: 26px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+    <img src="assets/innovine-logo.png">
+</div>
+
+<!-- GAME -->
+<div id="game">
+    <h2 id="question"></h2>
+
+    <button id="replayVoice">🔊 Hear Again</button>
+
+    <div id="objects"></div>
+
+    <input type="number" id="answer" placeholder="?">
+    <br>
+
+    <button onclick="checkAnswer()">Submit</button>
+
+    <div id="feedback"></div>
+
+    <button id="playAgain" onclick="startGame()">🔁 Play Again</button>
+</div>
+
+<!-- AUDIO -->
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="greatSound" src="assets/greatjob.mp3"></audio>
+<audio id="voicePlayer"></audio>
+
+<script>
+let currentQuestion = 0;
+let numbers = [];
+let correctAnswer = 0;
+
+const objects = [
+"assets/dog.png",
+"assets/bird.png",
+"assets/flower.png",
+"assets/tree.png",
+"assets/star.png",
+"assets/ball.png",
+"assets/books.png",
+"assets/butterfly.png",
+"assets/schoolbag.png",
+"assets/capsicum.png"
+];
+
+// SPLASH SCREEN (5 sec)
+setTimeout(() => {
+    document.getElementById("splash").style.display = "none";
+    document.getElementById("game").style.display = "block";
+    startGame();
+}, 5000);
+
+// shuffle
+function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+}
+
+// unique numbers
+function generateNumbers() {
+    let pool = [];
+    for (let i = 1; i <= 30; i++) pool.push(i);
+    shuffle(pool);
+    numbers = pool.slice(0, 10);
+}
+
+// START
+function startGame() {
+    generateNumbers();
+    currentQuestion = 0;
+    document.getElementById("playAgain").style.display = "none";
+    nextQuestion();
+}
+
+// NEXT
+function nextQuestion() {
+    if (currentQuestion >= 10) {
+        endGame();
+        return;
+    }
+
+    correctAnswer = numbers[currentQuestion];
+
+    document.getElementById("question").innerText =
+        "Count and type the number";
+
+    document.getElementById("answer").value = "";
+    document.getElementById("feedback").innerText = "";
+
+    let container = document.getElementById("objects");
+    container.innerHTML = "";
+
+    let imgSrc = objects[currentQuestion];
+
+    for (let i = 0; i < correctAnswer; i++) {
+        let img = document.createElement("img");
+        img.src = imgSrc;
+        container.appendChild(img);
+    }
+
+    // PLAY VOICE
+    playVoice(currentQuestion);
+
+    currentQuestion++;
+}
+
+// VOICE
+function playVoice(index) {
+    let voice = document.getElementById("voicePlayer");
+    voice.src = "assets/voice/q" + (index + 1) + ".mp3";
+    voice.play();
+}
+
+document.getElementById("replayVoice").onclick = () => {
+    playVoice(currentQuestion - 1);
+};
+
+// CHECK
+function checkAnswer() {
+    let user = Number(document.getElementById("answer").value);
+
+    if (user === correctAnswer) {
+        document.getElementById("feedback").innerText = "✅ Correct";
+        document.getElementById("correctSound").play();
+        setTimeout(nextQuestion, 1000);
+    } else {
+        document.getElementById("feedback").innerText = "❌ Try Again";
+    }
+}
+
+// END
+function endGame() {
+    document.getElementById("objects").innerHTML = "🎉 FINISH 🎉";
+    document.getElementById("greatSound").play();
+    document.getElementById("playAgain").style.display = "inline-block";
+}
+</script>
+
+</body>
+</html>
