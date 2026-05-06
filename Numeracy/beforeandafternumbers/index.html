@@ -6,258 +6,180 @@
 <title>Before and After Numbers</title>
 
 <style>
-* {
-  box-sizing: border-box;
+*{box-sizing:border-box}
+html,body{
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  font-family:"Comic Sans MS","Trebuchet MS",sans-serif;
+  background:#eaf8ff;
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  font-family: "Comic Sans MS", "Trebuchet MS", sans-serif;
-  background: #eaf8ff;
+#logoScreen{
+  position:fixed;
+  inset:0;
+  background:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:100;
 }
 
-#logoScreen {
-  position: fixed;
-  inset: 0;
-  background: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
+#logoScreen img{
+  max-width:75%;
+  max-height:60%;
 }
 
-#logoScreen img {
-  max-width: 75%;
-  max-height: 60%;
+.game{
+  width:100vw;
+  height:calc(var(--vh,1vh)*100);
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  padding:6px;
+  overflow:hidden;
 }
 
-.game {
-  width: 100vw;
-  height: calc(var(--vh, 1vh) * 100);
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 6px;
-  background: #eaf8ff;
-  overflow: hidden;
+h1{
+  margin:4px 0;
+  font-size:clamp(22px,5vw,34px);
+  color:#178bd3;
+  text-align:center;
 }
 
-h1 {
-  margin: 4px 0;
-  font-size: clamp(22px, 5vw, 34px);
-  color: #178bd3;
-  text-align: center;
-  line-height: 1.1;
+.instruction{
+  font-size:clamp(16px,4vw,22px);
+  color:#444;
+  text-align:center;
+  margin:4px 0;
 }
 
-.instruction {
-  font-size: clamp(16px, 4vw, 22px);
-  color: #444;
-  text-align: center;
-  min-height: 28px;
-  margin: 4px 0;
+.planeBox{
+  position:relative;
+  width:96%;
+  max-width:700px;
+  height:42%;
+  max-height:330px;
+  min-height:210px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
-.planeBox {
-  position: relative;
-  width: 96%;
-  max-width: 700px;
-  height: 42%;
-  max-height: 330px;
-  min-height: 210px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 4px;
+.planeBox img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
 }
 
-.planeBox img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+.numberRow{
+  position:absolute;
+  top:45%;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  gap:10px;
 }
 
-.numberRow {
-  position: absolute;
-  top: 45%;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 10px;
+.numBox{
+  width:clamp(54px,14vw,86px);
+  height:clamp(50px,12vw,72px);
+  border:4px solid #d94d73;
+  border-radius:12px;
+  background:white;
+  color:blue;
+  font-size:clamp(26px,7vw,40px);
+  font-weight:bold;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
-.numBox {
-  width: clamp(54px, 14vw, 86px);
-  height: clamp(50px, 12vw, 72px);
-  border: 4px solid #d94d73;
-  border-radius: 12px;
-  background: white;
-  color: blue;
-  font-size: clamp(26px, 7vw, 40px);
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.numBox input{
+  width:100%;
+  height:100%;
+  border:none;
+  outline:none;
+  font-size:clamp(26px,7vw,40px);
+  font-weight:bold;
+  text-align:center;
+  color:blue;
+  background:transparent;
+  font-family:inherit;
 }
 
-.numBox input {
-  width: 100%;
-  height: 100%;
-  border: none;
-  outline: none;
-  font-size: clamp(26px, 7vw, 40px);
-  font-weight: bold;
-  text-align: center;
-  color: blue;
-  background: transparent;
-  font-family: inherit;
+.correctGlow{
+  border-color:#24a148!important;
+  box-shadow:0 0 16px #24a148;
 }
 
-.correctGlow {
-  border-color: #24a148 !important;
-  box-shadow: 0 0 16px #24a148;
+.wrongGlow{
+  border-color:#d93025!important;
+  box-shadow:0 0 16px #d93025;
 }
 
-.wrongGlow {
-  border-color: #d93025 !important;
-  box-shadow: 0 0 16px #d93025;
+.feedback{
+  min-height:32px;
+  font-size:clamp(18px,5vw,28px);
+  font-weight:bold;
+  color:#444;
+  text-align:center;
+  margin:6px 0;
 }
 
-.feedback {
-  min-height: 32px;
-  font-size: clamp(18px, 5vw, 28px);
-  font-weight: bold;
-  color: #444;
-  text-align: center;
-  margin: 6px 0;
+.buttons{
+  width:100%;
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  margin-top:auto;
+  padding-bottom:8px;
 }
 
-.buttons {
-  width: 100%;
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  align-items: center;
-  margin-top: auto;
-  padding-bottom: 8px;
+button{
+  border:none;
+  border-radius:12px;
+  padding:12px 16px;
+  font-size:clamp(15px,4vw,22px);
+  font-weight:bold;
+  font-family:inherit;
+  cursor:pointer;
+  color:white;
+  min-width:135px;
 }
 
-button {
-  border: none;
-  border-radius: 12px;
-  padding: 12px 16px;
-  font-size: clamp(15px, 4vw, 22px);
-  font-weight: bold;
-  font-family: inherit;
-  cursor: pointer;
-  color: white;
-  min-width: 135px;
+#hearBtn{background:#2b9fd9}
+#checkBtn{background:#80b918}
+
+button:active{transform:scale(.96)}
+
+.confetti{
+  position:fixed;
+  top:-10px;
+  width:10px;
+  height:16px;
+  animation:fall 2.8s linear forwards;
 }
 
-#hearBtn {
-  background: #2b9fd9;
+@keyframes fall{
+  to{transform:translateY(105vh) rotate(360deg)}
 }
 
-#checkBtn {
-  background: #80b918;
+@media(max-width:600px){
+  h1{font-size:28px}
+  .instruction{font-size:20px}
+  .planeBox{height:39%;min-height:230px}
+  .numBox{width:60px;height:56px}
 }
 
-button:active {
-  transform: scale(0.96);
-}
-
-.confetti {
-  position: fixed;
-  top: -10px;
-  width: 10px;
-  height: 16px;
-  animation: fall 2.8s linear forwards;
-}
-
-@keyframes fall {
-  to {
-    transform: translateY(105vh) rotate(360deg);
-  }
-}
-
-@media (max-width: 600px) {
-  h1 {
-    font-size: 28px;
-  }
-
-  .instruction {
-    font-size: 20px;
-  }
-
-  .planeBox {
-    height: 39%;
-    min-height: 230px;
-  }
-
-  .numBox {
-    width: 60px;
-    height: 56px;
-  }
-
-  button {
-    min-width: 130px;
-    padding: 11px 12px;
-  }
-}
-
-@media (max-height: 680px) {
-  h1 {
-    font-size: 22px;
-  }
-
-  .instruction {
-    font-size: 17px;
-  }
-
-  .planeBox {
-    height: 36%;
-    min-height: 190px;
-  }
-
-  .feedback {
-    font-size: 18px;
-    min-height: 26px;
-  }
-
-  button {
-    padding: 9px 10px;
-    font-size: 15px;
-  }
-}
-
-@media (max-height: 560px) {
-  .planeBox {
-    height: 32%;
-    min-height: 155px;
-  }
-
-  .numBox {
-    width: 50px;
-    height: 46px;
-    font-size: 24px;
-  }
-
-  .numBox input {
-    font-size: 24px;
-  }
-
-  h1 {
-    font-size: 20px;
-  }
-
-  .instruction {
-    font-size: 15px;
-  }
+@media(max-height:680px){
+  h1{font-size:22px}
+  .instruction{font-size:17px}
+  .planeBox{height:36%;min-height:190px}
+  .feedback{font-size:18px}
+  button{padding:9px 10px;font-size:15px}
 }
 </style>
 </head>
@@ -298,180 +220,165 @@ button:active {
 <audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
 
 <script>
-/*
-The game should be mobile friendly, tab friendly, low connectivity,
-it should also work on old phone models, android and IOS,
-everything should fit in on one screen scrolling shouldn't be required.
-*/
-
-function setRealHeight() {
-  var vh = window.innerHeight * 0.01;
-  document.documentElement.style.setProperty("--vh", vh + "px");
+function setRealHeight(){
+  var vh=window.innerHeight*0.01;
+  document.documentElement.style.setProperty("--vh",vh+"px");
 }
-
 setRealHeight();
-window.addEventListener("resize", setRealHeight);
+window.addEventListener("resize",setRealHeight);
 
-var questions = [
-  { nums: [1, 2, 3], missing: 0 },
-  { nums: [3, 4, 5], missing: 2 },
-  { nums: [5, 6, 7], missing: 0 },
-  { nums: [7, 8, 9], missing: 1 },
-  { nums: [9, 10, 11], missing: 2 },
-  { nums: [11, 12, 13], missing: 0 },
-  { nums: [13, 14, 15], missing: 1 },
-  { nums: [15, 16, 17], missing: 2 },
-  { nums: [17, 18, 19], missing: 0 },
-  { nums: [18, 19, 20], missing: 1 }
+/* ONLY BEFORE AND AFTER QUESTIONS */
+var questions=[
+  {type:"before", number:2, answer:1},
+  {type:"after", number:3, answer:4},
+  {type:"before", number:5, answer:4},
+  {type:"after", number:6, answer:7},
+  {type:"before", number:9, answer:8},
+  {type:"after", number:10, answer:11},
+  {type:"before", number:13, answer:12},
+  {type:"after", number:14, answer:15},
+  {type:"before", number:18, answer:17},
+  {type:"after", number:19, answer:20}
 ];
 
-var planes = [
+var planes=[
   "assets/aeroplane.jpg",
   "assets/aeroplanes.jfif",
   "assets/aeroplane.jpg"
 ];
 
-var current = 0;
-var movingNext = false;
+var current=0;
+var movingNext=false;
 
-window.onload = function () {
-  setTimeout(function () {
-    document.getElementById("logoScreen").style.display = "none";
-    document.getElementById("game").style.display = "flex";
+window.onload=function(){
+  setTimeout(function(){
+    document.getElementById("logoScreen").style.display="none";
+    document.getElementById("game").style.display="flex";
     loadQuestion();
-  }, 5000);
+  },5000);
 };
 
-function loadQuestion() {
-  movingNext = false;
+function loadQuestion(){
+  movingNext=false;
 
-  var q = questions[current];
+  var q=questions[current];
 
-  document.getElementById("feedback").innerHTML = "";
-  document.getElementById("planeImg").src = planes[current % planes.length];
+  document.getElementById("feedback").innerHTML="";
+  document.getElementById("planeImg").src=planes[current%planes.length];
 
-  var boxes = [
+  var boxes=[
     document.getElementById("box1"),
     document.getElementById("box2"),
     document.getElementById("box3")
   ];
 
-  for (var i = 0; i < 3; i++) {
-    boxes[i].className = "numBox";
-    boxes[i].innerHTML = "";
-
-    if (i === q.missing) {
-      boxes[i].innerHTML = '<input id="answerInput" type="number" inputmode="numeric" min="1" max="20">';
-    } else {
-      boxes[i].innerHTML = q.nums[i];
-    }
+  for(var i=0;i<3;i++){
+    boxes[i].className="numBox";
+    boxes[i].innerHTML="";
   }
 
-  var text = "";
-
-  if (q.missing === 0) {
-    text = "What number comes before " + q.nums[1] + "?";
-  } else if (q.missing === 1) {
-    text = "What number comes between " + q.nums[0] + " and " + q.nums[2] + "?";
-  } else {
-    text = "What number comes after " + q.nums[1] + "?";
+  if(q.type==="before"){
+    boxes[0].innerHTML='<input id="answerInput" type="number" inputmode="numeric" min="1" max="20">';
+    boxes[1].innerHTML=q.number;
+    boxes[2].innerHTML=q.number+1;
+    document.getElementById("questionText").innerHTML="What number comes before "+q.number+"?";
   }
 
-  document.getElementById("questionText").innerHTML = text;
+  if(q.type==="after"){
+    boxes[0].innerHTML=q.number-1;
+    boxes[1].innerHTML=q.number;
+    boxes[2].innerHTML='<input id="answerInput" type="number" inputmode="numeric" min="1" max="20">';
+    document.getElementById("questionText").innerHTML="What number comes after "+q.number+"?";
+  }
 
-  setTimeout(function () {
+  setTimeout(function(){
     speakQuestion();
-  }, 400);
+  },400);
 }
 
-function speakQuestion() {
-  var text = document.getElementById("questionText").innerText;
+function speakQuestion(){
+  var text=document.getElementById("questionText").innerText;
 
-  if ("speechSynthesis" in window) {
+  if("speechSynthesis" in window){
     window.speechSynthesis.cancel();
-
-    var speech = new SpeechSynthesisUtterance(text);
-    speech.lang = "en-IN";
-    speech.rate = 0.75;
-    speech.pitch = 1.1;
-
+    var speech=new SpeechSynthesisUtterance(text);
+    speech.lang="en-IN";
+    speech.rate=0.75;
+    speech.pitch=1.1;
     window.speechSynthesis.speak(speech);
   }
 }
 
-function checkAnswer() {
-  if (movingNext) return;
+function checkAnswer(){
+  if(movingNext)return;
 
-  var q = questions[current];
-  var input = document.getElementById("answerInput");
+  var q=questions[current];
+  var input=document.getElementById("answerInput");
+  if(!input)return;
 
-  if (!input) return;
+  var answerBox=input.parentElement;
+  var value=Number(input.value);
 
-  var answerBox = input.parentElement;
-  var value = Number(input.value);
+  answerBox.className="numBox";
 
-  answerBox.className = "numBox";
-
-  if (value === q.nums[q.missing]) {
-    movingNext = true;
+  if(value===q.answer){
+    movingNext=true;
     answerBox.classList.add("correctGlow");
-    document.getElementById("feedback").innerHTML = "Good Job! 🎉";
+    document.getElementById("feedback").innerHTML="Good Job! 🎉";
     playSound("rightSound");
 
-    setTimeout(function () {
+    setTimeout(function(){
       current++;
-
-      if (current >= questions.length) {
+      if(current>=questions.length){
         finishGame();
-      } else {
+      }else{
         loadQuestion();
       }
-    }, 1400);
+    },1400);
 
-  } else {
+  }else{
     answerBox.classList.add("wrongGlow");
-    document.getElementById("feedback").innerHTML = "Try Again 😊";
+    document.getElementById("feedback").innerHTML="Try Again 😊";
     playSound("wrongSound");
   }
 }
 
-function finishGame() {
-  document.getElementById("questionText").innerHTML = "Finished!";
-  document.getElementById("planeBox").innerHTML =
-    '<div style="font-size:clamp(34px,8vw,60px);color:#178bd3;font-weight:bold;text-align:center;">🎉 Finished! 🎉<br>Well Done!</div>';
+function finishGame(){
+  document.getElementById("questionText").innerHTML="Finished!";
+  document.getElementById("planeBox").innerHTML=
+  '<div style="font-size:clamp(34px,8vw,60px);color:#178bd3;font-weight:bold;text-align:center;">🎉 Finished! 🎉<br>Well Done!</div>';
 
-  document.getElementById("feedback").innerHTML = "You completed all 10 questions.";
-  document.getElementById("buttons").style.display = "none";
+  document.getElementById("feedback").innerHTML="You completed all 10 questions.";
+  document.getElementById("buttons").style.display="none";
 
   playSound("clapSound");
   makeConfetti();
 }
 
-function playSound(id) {
-  var sound = document.getElementById(id);
-
-  if (sound) {
-    sound.currentTime = 0;
+function playSound(id){
+  var sound=document.getElementById(id);
+  if(sound){
+    sound.currentTime=0;
     sound.play();
   }
 }
 
-function makeConfetti() {
-  var colors = ["#f7b801", "#f18701", "#2b9fd9", "#80b918", "#db4b70"];
+function makeConfetti(){
+  var colors=["#f7b801","#f18701","#2b9fd9","#80b918","#db4b70"];
 
-  for (var i = 0; i < 50; i++) {
-    var confetti = document.createElement("div");
-    confetti.className = "confetti";
-    confetti.style.left = Math.random() * 100 + "vw";
-    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-    confetti.style.animationDelay = Math.random() * 1.2 + "s";
+  for(var i=0;i<50;i++){
+    var confetti=document.createElement("div");
+    confetti.className="confetti";
+    confetti.style.left=Math.random()*100+"vw";
+    confetti.style.background=colors[Math.floor(Math.random()*colors.length)];
+    confetti.style.animationDelay=Math.random()*1.2+"s";
     document.body.appendChild(confetti);
 
-    setTimeout(function () {
-      if (document.querySelector(".confetti")) {
+    setTimeout(function(){
+      if(document.querySelector(".confetti")){
         document.querySelector(".confetti").remove();
       }
-    }, 4000);
+    },4000);
   }
 }
 </script>
