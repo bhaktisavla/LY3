@@ -23,7 +23,10 @@ body {
     justify-content: center;
     align-items: center;
 }
-#splash img { width: 180px; }
+
+#splash img {
+    width: 220px;
+}
 
 /* GAME */
 #game {
@@ -36,22 +39,22 @@ h2 {
     margin: 5px;
 }
 
-/* GRID FOR EASY COUNTING */
+/* GRID */
 #objects {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 8px;
+    gap: 10px;
     justify-items: center;
     margin: 10px 0;
 }
 
-/* BIG CLEAR IMAGES */
+/* BIG IMAGES */
 #objects img {
-    width: 60px;
-    height: 60px;
+    width: 65px;
+    height: 65px;
 }
 
-/* BIG INPUT */
+/* INPUT */
 input {
     width: 160px;
     height: 65px;
@@ -61,7 +64,7 @@ input {
     border: 2px solid #ccc;
 }
 
-/* BUTTONS */
+/* BUTTON */
 button {
     margin-top: 8px;
     padding: 10px 18px;
@@ -77,17 +80,11 @@ button {
     background: #ff7043;
 }
 
-/* MOBILE OPTIMIZATION */
+/* MOBILE */
 @media (max-width: 600px) {
     #objects img {
-        width: 50px;
-        height: 50px;
-    }
-
-    input {
-        width: 140px;
-        height: 60px;
-        font-size: 26px;
+        width: 55px;
+        height: 55px;
     }
 }
 </style>
@@ -97,7 +94,8 @@ button {
 
 <!-- SPLASH -->
 <div id="splash">
-    <img src="assets/innovine-logo.png">
+    <img src="./assets/innovine-logo.png" 
+         onerror="this.style.display='none'; alert('Logo not found. Check assets path');">
 </div>
 
 <!-- GAME -->
@@ -117,8 +115,8 @@ button {
 </div>
 
 <!-- AUDIO -->
-<audio id="correctSound" src="assets/correct.mp3"></audio>
-<audio id="greatSound" src="assets/greatjob.mp3"></audio>
+<audio id="correctSound" src="./assets/correct.mp3"></audio>
+<audio id="greatSound" src="./assets/greatjob.mp3"></audio>
 <audio id="voicePlayer"></audio>
 
 <script>
@@ -126,18 +124,18 @@ let currentQuestion = 0;
 let numbers = [];
 let correctAnswer = 0;
 
-// YOUR OBJECTS
+// EXACT FILE NAMES FROM YOUR ASSETS
 const objects = [
-"assets/cat.png",
-"assets/book.png",
-"assets/dog.png",
-"assets/sun.png",
-"assets/bag.png",
-"assets/star.png",
-"assets/moon.png",
-"assets/crayon.png",
-"assets/bus.png",
-"assets/bird.png"
+"./assets/cat.png",
+"./assets/book.png",
+"./assets/dog.png",
+"./assets/sun.png",
+"./assets/bag.png",
+"./assets/star.png",
+"./assets/moon.png",
+"./assets/crayon.png",
+"./assets/bus.png",
+"./assets/bird.png"
 ];
 
 // SPLASH 5 sec
@@ -191,12 +189,19 @@ function nextQuestion() {
     for (let i = 0; i < correctAnswer; i++) {
         let img = document.createElement("img");
         img.src = imgSrc;
+
+        // ERROR CHECK
+        img.onerror = function() {
+            this.style.display = "none";
+            console.log("Missing image:", imgSrc);
+        };
+
         container.appendChild(img);
     }
 
-    // VOICE AUTO PLAY
+    // VOICE
     let voice = document.getElementById("voicePlayer");
-    voice.src = "assets/voice/q" + (currentQuestion + 1) + ".mp3";
+    voice.src = "./assets/voice/q" + (currentQuestion + 1) + ".mp3";
     voice.play();
 
     currentQuestion++;
