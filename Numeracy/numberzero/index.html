@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learn Number 0</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Comic Sans MS;
+    background:#87CEEB;
+    overflow:hidden;
+}
+
+#game{
+    width:100vw;
+    height:100vh;
+    position:relative;
+}
+
+.screen{
+    width:100%;
+    height:100%;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    position:absolute;
+    top:0;
+    left:0;
+}
+
+.active{
+    display:flex;
+}
+
+h1{
+    font-size:80px;
+    color:#ff4081;
+    margin:10px;
+}
+
+p{
+    font-size:35px;
+    color:#333;
+}
+
+button{
+    padding:20px 40px;
+    font-size:30px;
+    border:none;
+    border-radius:20px;
+    background:#ff9800;
+    color:white;
+    cursor:pointer;
+}
+
+.cloud{
+    position:absolute;
+    width:150px;
+    height:80px;
+    background:white;
+    border-radius:50px;
+}
+
+.cloud:before{
+    content:'';
+    position:absolute;
+    width:80px;
+    height:80px;
+    background:white;
+    border-radius:50%;
+    top:-30px;
+    left:20px;
+}
+
+.sun{
+    position:absolute;
+    top:20px;
+    right:20px;
+    width:120px;
+    height:120px;
+    background:yellow;
+    border-radius:50%;
+}
+
+.number-btn{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    background:white;
+    margin:20px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:60px;
+    cursor:pointer;
+    border:5px solid #ff9800;
+}
+
+.row{
+    display:flex;
+}
+
+.basket{
+    width:220px;
+    height:140px;
+    background:brown;
+    border-radius:0 0 50px 50px;
+    margin-top:30px;
+}
+
+.apple{
+    width:80px;
+    height:80px;
+    background:red;
+    border-radius:50%;
+    position:absolute;
+    cursor:grab;
+}
+
+.apple:before{
+    content:'';
+    position:absolute;
+    width:10px;
+    height:25px;
+    background:green;
+    top:-15px;
+    left:35px;
+}
+
+.star{
+    font-size:70px;
+    animation:pop 1s infinite alternate;
+}
+
+@keyframes pop{
+    from{transform:scale(1);}
+    to{transform:scale(1.3);}
+}
+</style>
+</head>
+
+<body>
+
+<div id="game">
+
+<div class="sun"></div>
+<div class="cloud" style="top:60px;left:100px;"></div>
+<div class="cloud" style="top:120px;left:400px;"></div>
+
+<!-- SCREEN 1 -->
+<div class="screen active" id="screen1">
+    <h1>0</h1>
+    <p>This is Number Zero</p>
+    <button onclick="nextScreen(2)">Start</button>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen2">
+    <p>Tap the Number 0</p>
+
+    <div class="row">
+        <div class="number-btn" onclick="wrong()">3</div>
+        <div class="number-btn" onclick="correct()">0</div>
+        <div class="number-btn" onclick="wrong()">5</div>
+    </div>
+</div>
+
+<!-- SCREEN 3 -->
+<div class="screen" id="screen3">
+    <p>How many apples are here?</p>
+    <h1>0</h1>
+
+    <button onclick="nextScreen(4)">Next</button>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="screen" id="screen4">
+    <p>Put ZERO apples in the basket</p>
+
+    <div class="basket"></div>
+
+    <button style="margin-top:30px;" onclick="nextScreen(5)">
+        Done
+    </button>
+</div>
+
+<!-- SCREEN 5 -->
+<div class="screen" id="screen5">
+    <div class="star">⭐</div>
+    <h1>Great Job!</h1>
+    <p>You learned Number 0</p>
+
+    <button onclick="restartGame()">Play Again</button>
+</div>
+
+</div>
+
+<script>
+
+function speak(text){
+    let speech = new SpeechSynthesisUtterance(text);
+    speech.rate = 0.8;
+    speech.pitch = 1;
+    speech.lang = "en-GB";
+    speechSynthesis.speak(speech);
+}
+
+window.onload = ()=>{
+    speak("This is number zero");
+}
+
+function nextScreen(num){
+
+    document.querySelectorAll('.screen').forEach(s=>{
+        s.classList.remove('active');
+    });
+
+    document.getElementById('screen'+num).classList.add('active');
+
+    if(num===2){
+        speak("Tap the number zero");
+    }
+
+    if(num===3){
+        speak("How many apples are here?");
+    }
+
+    if(num===4){
+        speak("Put zero apples in the basket");
+    }
+
+    if(num===5){
+        speak("Great job! You learned number zero");
+    }
+}
+
+function correct(){
+    speak("Excellent");
+    setTimeout(()=>{
+        nextScreen(3);
+    },1000);
+}
+
+function wrong(){
+    speak("Try again");
+}
+
+function restartGame(){
+    nextScreen(1);
+}
+
+</script>
+
+</body>
+</html>
