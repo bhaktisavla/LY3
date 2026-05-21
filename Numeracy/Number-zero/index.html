@@ -203,26 +203,12 @@ align-items:center;
 width:100%;
 }
 
-.choice{
-width:min(26vw,150px);
-height:min(26vw,150px);
+/* REMOVE WHITE BACKGROUND */
 
-background:white;
-
-border:5px solid #ffffff;
-
-border-radius:22px;
-
-display:flex;
-justify-content:center;
-align-items:center;
-
-font-size:min(11vw,65px);
-
-cursor:pointer;
-
-box-shadow:
-0 6px 12px rgba(0,0,0,0.15);
+.clean-img{
+mix-blend-mode:multiply;
+background:transparent;
+filter:drop-shadow(0 5px 6px rgba(0,0,0,0.18));
 }
 
 /* BALLOONS */
@@ -232,17 +218,16 @@ width:min(18vw,90px);
 position:absolute;
 cursor:pointer;
 animation:float 2s infinite alternate;
-mix-blend-mode:multiply;
-filter:drop-shadow(0 4px 4px rgba(0,0,0,0.15));
 }
 
-/* REMOVE WHITE IMAGE BACKGROUND */
+/* BASKETS */
 
-.transparent-img{
-mix-blend-mode:multiply;
-background:transparent;
-filter:drop-shadow(0 4px 4px rgba(0,0,0,0.15));
+.basket-img{
+width:min(38vw,220px);
+cursor:pointer;
 }
+
+/* FLOAT */
 
 @keyframes float{
 from{
@@ -264,9 +249,26 @@ opacity:0;
 }
 }
 
-.basket-img{
-width:min(38vw,220px);
+.choice{
+width:min(26vw,150px);
+height:min(26vw,150px);
+
+background:white;
+
+border:5px solid #ffffff;
+
+border-radius:22px;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+font-size:min(11vw,65px);
+
 cursor:pointer;
+
+box-shadow:
+0 6px 12px rgba(0,0,0,0.15);
 }
 
 .falling{
@@ -460,11 +462,11 @@ Tap the basket with 0 apples
 <div class="choice-container">
 
 <img src="assets/basketwithapples.jpg"
-class="basket-img transparent-img"
+class="basket-img clean-img"
 onclick="wrongBasket()">
 
 <img src="assets/emptybasket.jpg"
-class="basket-img transparent-img"
+class="basket-img clean-img"
 onclick="correctBasket()">
 
 </div>
@@ -644,7 +646,7 @@ document.createElement('img');
 
 balloon.src=images[i];
 
-balloon.className='balloon transparent-img';
+balloon.className='balloon clean-img';
 
 balloon.style.left=
 (8+i*18)+'%';
