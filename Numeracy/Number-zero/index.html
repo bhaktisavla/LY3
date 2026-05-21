@@ -25,8 +25,6 @@ overflow:hidden;
 font-family:Arial,sans-serif;
 touch-action:none;
 
-/* BEAUTIFUL BACKGROUND */
-
 background:
 linear-gradient(to bottom,
 #6ed0ff 0%,
@@ -227,12 +225,23 @@ box-shadow:
 0 6px 12px rgba(0,0,0,0.15);
 }
 
+/* BALLOONS */
+
 .balloon{
 width:min(18vw,90px);
 position:absolute;
 cursor:pointer;
 animation:float 2s infinite alternate;
+mix-blend-mode:multiply;
+filter:drop-shadow(0 4px 4px rgba(0,0,0,0.15));
+}
+
+/* REMOVE WHITE IMAGE BACKGROUND */
+
+.transparent-img{
+mix-blend-mode:multiply;
 background:transparent;
+filter:drop-shadow(0 4px 4px rgba(0,0,0,0.15));
 }
 
 @keyframes float{
@@ -258,7 +267,6 @@ opacity:0;
 .basket-img{
 width:min(38vw,220px);
 cursor:pointer;
-background:transparent;
 }
 
 .falling{
@@ -452,11 +460,11 @@ Tap the basket with 0 apples
 <div class="choice-container">
 
 <img src="assets/basketwithapples.jpg"
-class="basket-img"
+class="basket-img transparent-img"
 onclick="wrongBasket()">
 
 <img src="assets/emptybasket.jpg"
-class="basket-img"
+class="basket-img transparent-img"
 onclick="correctBasket()">
 
 </div>
@@ -505,7 +513,7 @@ position:absolute;">
 
 <!-- SCREEN 8 -->
 
-<div class="screen active" id="screen8">
+<div class="screen" id="screen8">
 
 <div id="confettiArea"></div>
 
@@ -636,7 +644,7 @@ document.createElement('img');
 
 balloon.src=images[i];
 
-balloon.className='balloon';
+balloon.className='balloon transparent-img';
 
 balloon.style.left=
 (8+i*18)+'%';
@@ -855,6 +863,8 @@ let caught=0;
 
 let total=0;
 
+let wrongNumbers=['3','4','5','8','9'];
+
 let game=setInterval(()=>{
 
 total++;
@@ -870,8 +880,9 @@ Math.random()>0.5;
 item.innerHTML=
 isZero ? '0'
 :
-['3','5','8']
-[Math.floor(Math.random()*3)];
+wrongNumbers[
+Math.floor(Math.random()*wrongNumbers.length)
+];
 
 item.style.left=
 Math.random()*85+'vw';
