@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,
+initial-scale=1.0,
+maximum-scale=1.0,
+user-scalable=no">
+
+<title>Number 0 Adventure</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+overflow:hidden;
+font-family:'Comic Sans MS',sans-serif;
+background:linear-gradient(to bottom,#8fd8ff,#eefbff);
+touch-action:none;
+}
+
+#game{
+width:100vw;
+height:100vh;
+position:relative;
+overflow:hidden;
+}
+
+.screen{
+position:absolute;
+width:100%;
+height:100%;
+display:none;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+padding:10px;
+}
+
+.active{
+display:flex;
+}
+
+.title{
+font-size:min(22vw,120px);
+color:#ff4081;
+animation:bounce 1s infinite alternate;
+}
+
+@keyframes bounce{
+from{transform:translateY(0px);}
+to{transform:translateY(-10px);}
+}
+
+.instruction{
+background:white;
+padding:14px 20px;
+border-radius:20px;
+font-size:min(5vw,34px);
+text-align:center;
+margin:15px;
+max-width:90%;
+box-shadow:0 4px 10px rgba(0,0,0,0.2);
+}
+
+.play-btn{
+padding:16px 30px;
+font-size:min(6vw,34px);
+border:none;
+border-radius:20px;
+background:#ff9800;
+color:white;
+cursor:pointer;
+}
+
+.choice-container{
+display:flex;
+gap:15px;
+flex-wrap:wrap;
+justify-content:center;
+align-items:center;
+}
+
+.choice{
+width:min(28vw,180px);
+height:min(28vw,180px);
+background:white;
+border:6px solid #ff9800;
+border-radius:25px;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:min(12vw,70px);
+cursor:pointer;
+}
+
+.choice:active{
+transform:scale(0.95);
+}
+
+.balloon{
+width:min(18vw,100px);
+position:absolute;
+cursor:pointer;
+animation:float 2s infinite alternate;
+}
+
+@keyframes float{
+from{transform:translateY(0px);}
+to{transform:translateY(-12px);}
+}
+
+.pop{
+animation:pop 0.3s forwards;
+}
+
+@keyframes pop{
+to{
+transform:scale(1.5);
+opacity:0;
+}
+}
+
+.falling{
+position:absolute;
+font-size:min(14vw,90px);
+cursor:pointer;
+user-select:none;
+font-weight:bold;
+color:#ff4081;
+}
+
+.basket-img{
+width:min(38vw,240px);
+cursor:pointer;
+}
+
+.trace-box{
+width:min(75vw,380px);
+height:min(75vw,380px);
+background:white;
+border:5px dashed #ff9800;
+border-radius:20px;
+display:flex;
+justify-content:center;
+align-items:center;
+position:relative;
+}
+
+.trace-guide{
+position:absolute;
+font-size:min(60vw,270px);
+color:#ffd6e7;
+font-weight:bold;
+pointer-events:none;
+}
+
+canvas{
+position:absolute;
+width:100%;
+height:100%;
+}
+
+.confetti{
+position:absolute;
+width:10px;
+height:10px;
+animation:fall linear infinite;
+}
+
+@keyframes fall{
+from{
+transform:translateY(-100px) rotate(0deg);
+}
+to{
+transform:translateY(110vh) rotate(360deg);
+}
+}
+
+#logoScreen{
+position:absolute;
+width:100%;
+height:100%;
+background:white;
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:999;
+}
+
+#logoScreen img{
+width:min(60vw,300px);
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- LOGO SCREEN -->
+
+<div id="logoScreen">
+
+<img src="assets/innovine-logo.png">
+
+</div>
+
+<!-- SOUNDS -->
+
+<audio id="correctSound"
+src="assets/correct.mp3"></audio>
+
+<audio id="wrongSound"
+src="assets/wrong.mp3"></audio>
+
+<div id="game">
+
+<!-- SCREEN 1 -->
+
+<div class="screen" id="screen1">
+
+<div class="title">0</div>
+
+<div class="instruction">
+Welcome to Number 0 Adventure
+</div>
+
+<button class="play-btn"
+onclick="showScreen(2)">
+PLAY
+</button>
+
+</div>
+
+<!-- SCREEN 2 -->
+
+<div class="screen" id="screen2">
+
+<div class="instruction">
+Tap Number 0
+</div>
+
+<div class="choice-container">
+
+<div class="choice"
+onclick="wrong()">5</div>
+
+<div class="choice"
+onclick="correct(3)">0</div>
+
+<div class="choice"
+onclick="wrong()">8</div>
+
+</div>
+
+</div>
+
+<!-- SCREEN 3 -->
+
+<div class="screen" id="screen3">
+
+<div class="instruction">
+Burst all balloons to make 0 balloons
+</div>
+
+<div id="balloonArea"
+style="width:100%;
+height:75%;
+position:relative;">
+</div>
+
+</div>
+
+<!-- SCREEN 4 -->
+
+<div class="screen" id="screen4">
+
+<div class="instruction">
+Trace Number 0
+</div>
+
+<div class="trace-box">
+
+<div class="trace-guide">
+0
+</div>
+
+<canvas id="traceCanvas"></canvas>
+
+</div>
+
+<br>
+
+<button class="play-btn"
+onclick="traceDone()">
+DONE
+</button>
+
+</div>
+
+<!-- SCREEN 5 -->
+
+<div class="screen" id="screen5">
+
+<div class="instruction">
+Circle the basket with 0 apples
+</div>
+
+<div class="choice-container">
+
+<img src="assets/basketwithapples.jpg"
+class="basket-img"
+onclick="wrong()">
+
+<img src="assets/emptybasket.jpg"
+class="basket-img"
+onclick="correct(6)">
+
+</div>
+
+</div>
+
+<!-- SCREEN 6 -->
+
+<div class="screen" id="screen6">
+
+<div class="instruction">
+Tap the box with 0 stars
+</div>
+
+<div class="choice-container">
+
+<div class="choice"
+onclick="wrong()">⭐</div>
+
+<div class="choice"
+onclick="correct(7)">
+</div>
+
+<div class="choice"
+onclick="wrong()">⭐⭐</div>
+
+</div>
+
+</div>
+
+<!-- SCREEN 7 -->
+
+<div class="screen" id="screen7">
+
+<div class="instruction">
+Catch only Number 0
+</div>
+
+<div id="fallingArea"
+style="width:100%;
+height:100%;
+position:absolute;">
+</div>
+
+</div>
+
+<!-- SCREEN 8 -->
+
+<div class="screen" id="screen8">
+
+<div id="confettiArea"></div>
+
+<div class="title">
+0
+</div>
+
+<div class="instruction">
+YAY! You learned Number 0
+</div>
+
+<button class="play-btn"
+onclick="restartGame()">
+PLAY AGAIN
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+let canvas;
+let ctx;
+let drawing=false;
+
+window.onload=()=>{
+
+setTimeout(()=>{
+
+document.getElementById('logoScreen')
+.style.display='none';
+
+showScreen(1);
+
+speak("Welcome to Number 0 Adventure");
+
+createBalloons();
+
+setupTracing();
+
+},5000);
+
+}
+
+function speak(text){
+
+speechSynthesis.cancel();
+
+let speech=
+new SpeechSynthesisUtterance(text);
+
+speech.lang="en-GB";
+
+speech.rate=0.85;
+
+speech.pitch=1;
+
+speechSynthesis.speak(speech);
+
+}
+
+function playCorrect(){
+
+document.getElementById('correctSound')
+.play();
+
+}
+
+function playWrong(){
+
+document.getElementById('wrongSound')
+.play();
+
+}
+
+function showScreen(num){
+
+document.querySelectorAll('.screen')
+.forEach(s=>{
+s.classList.remove('active');
+});
+
+document.getElementById('screen'+num)
+.classList.add('active');
+
+if(num===2){
+speak("Tap number zero");
+}
+
+if(num===3){
+speak("Burst all balloons");
+}
+
+if(num===4){
+speak("Trace number zero");
+}
+
+if(num===5){
+speak("Circle the basket with zero apples");
+}
+
+if(num===6){
+speak("Tap the box with zero stars");
+}
+
+if(num===7){
+speak("Catch only number zero");
+startFallingGame();
+}
+
+if(num===8){
+
+speak("Yay! You learned number zero");
+
+createConfetti();
+
+}
+
+}
+
+function correct(next){
+
+playCorrect();
+
+speak("Excellent");
+
+setTimeout(()=>{
+showScreen(next);
+},1000);
+
+}
+
+function wrong(){
+
+playWrong();
+
+speak("Try again");
+
+}
+
+function createBalloons(){
+
+let area=
+document.getElementById('balloonArea');
+
+area.innerHTML='';
+
+let images=[
+'assets/redballoon.png',
+'assets/greenballoon.png',
+'assets/yellowballoon.png',
+'assets/blueballoon.jfif',
+'assets/redballoon.png'
+];
+
+for(let i=0;i<5;i++){
+
+let balloon=
+document.createElement('img');
+
+balloon.src=images[i];
+
+balloon.className='balloon';
+
+balloon.style.left=
+(10+i*16)+'%';
+
+balloon.style.top=
+(20+(i%2)*20)+'%';
+
+area.appendChild(balloon);
+
+balloon.addEventListener('click',()=>{
+
+balloon.classList.add('pop');
+
+playCorrect();
+
+setTimeout(()=>{
+
+balloon.remove();
+
+checkBalloons();
+
+},300);
+
+});
+
+}
+
+}
+
+function checkBalloons(){
+
+let left=
+document.querySelectorAll('.balloon')
+.length;
+
+if(left===0){
+
+speak("Now there are zero balloons");
+
+setTimeout(()=>{
+
+showScreen(4);
+
+},1200);
+
+}
+
+}
+
+function setupTracing(){
+
+canvas=
+document.getElementById('traceCanvas');
+
+ctx=
+canvas.getContext('2d');
+
+resizeCanvas();
+
+window.addEventListener('resize',
+resizeCanvas);
+
+canvas.addEventListener('mousedown',
+startDraw);
+
+canvas.addEventListener('mousemove',
+draw);
+
+canvas.addEventListener('mouseup',
+stopDraw);
+
+canvas.addEventListener('touchstart',
+startDrawTouch);
+
+canvas.addEventListener('touchmove',
+drawTouch);
+
+canvas.addEventListener('touchend',
+stopDraw);
+
+}
+
+function resizeCanvas(){
+
+canvas.width=
+canvas.offsetWidth;
+
+canvas.height=
+canvas.offsetHeight;
+
+}
+
+function startDraw(e){
+
+drawing=true;
+
+ctx.beginPath();
+
+ctx.moveTo(e.offsetX,e.offsetY);
+
+}
+
+function draw(e){
+
+if(!drawing)return;
+
+ctx.lineWidth=8;
+
+ctx.lineCap='round';
+
+ctx.strokeStyle='#ff4081';
+
+ctx.lineTo(e.offsetX,e.offsetY);
+
+ctx.stroke();
+
+}
+
+function stopDraw(){
+
+drawing=false;
+
+}
+
+function startDrawTouch(e){
+
+e.preventDefault();
+
+drawing=true;
+
+let rect=
+canvas.getBoundingClientRect();
+
+let touch=e.touches[0];
+
+ctx.beginPath();
+
+ctx.moveTo(
+touch.clientX-rect.left,
+touch.clientY-rect.top
+);
+
+}
+
+function drawTouch(e){
+
+e.preventDefault();
+
+if(!drawing)return;
+
+let rect=
+canvas.getBoundingClientRect();
+
+let touch=e.touches[0];
+
+ctx.lineWidth=8;
+
+ctx.lineCap='round';
+
+ctx.strokeStyle='#ff4081';
+
+ctx.lineTo(
+touch.clientX-rect.left,
+touch.clientY-rect.top
+);
+
+ctx.stroke();
+
+}
+
+function traceDone(){
+
+playCorrect();
+
+speak("Wonderful tracing");
+
+setTimeout(()=>{
+showScreen(5);
+},1000);
+
+}
+
+function startFallingGame(){
+
+let area=
+document.getElementById('fallingArea');
+
+area.innerHTML='';
+
+let caught=0;
+
+let total=0;
+
+let game=setInterval(()=>{
+
+total++;
+
+let item=
+document.createElement('div');
+
+item.className='falling';
+
+let isZero=
+Math.random()>0.5;
+
+item.innerHTML=
+isZero ? '0'
+:
+['3','5','8']
+[Math.floor(Math.random()*3)];
+
+item.style.left=
+Math.random()*85+'vw';
+
+item.style.top='-50px';
+
+area.appendChild(item);
+
+let speed=
+2+Math.random()*2;
+
+let fall=setInterval(()=>{
+
+item.style.top=
+(item.offsetTop+speed)+'px';
+
+if(item.offsetTop>
+window.innerHeight){
+
+clearInterval(fall);
+
+item.remove();
+
+}
+
+},20);
+
+item.onclick=()=>{
+
+if(item.innerHTML==='0'){
+
+playCorrect();
+
+caught++;
+
+item.remove();
+
+}else{
+
+playWrong();
+
+}
+
+if(caught>=5){
+
+clearInterval(game);
+
+setTimeout(()=>{
+
+showScreen(8);
+
+},1000);
+
+}
+
+}
+
+if(total>25){
+
+clearInterval(game);
+
+}
+
+},900);
+
+}
+
+function createConfetti(){
+
+let area=
+document.getElementById('confettiArea');
+
+area.innerHTML='';
+
+let colors=[
+'#ff4081',
+'#2196f3',
+'#4caf50',
+'#ffeb3b',
+'#ff9800',
+'#9c27b0'
+];
+
+for(let i=0;i<120;i++){
+
+let paper=
+document.createElement('div');
+
+paper.className='confetti';
+
+paper.style.left=
+Math.random()*100+'vw';
+
+paper.style.background=
+colors[Math.floor(Math.random()*colors.length)];
+
+paper.style.animationDuration=
+(2+Math.random()*3)+'s';
+
+paper.style.width=
+(5+Math.random()*8)+'px';
+
+paper.style.height=
+(5+Math.random()*8)+'px';
+
+area.appendChild(paper);
+
+}
+
+}
+
+function restartGame(){
+
+speechSynthesis.cancel();
+
+document.querySelectorAll('.screen')
+.forEach(s=>{
+s.classList.remove('active');
+});
+
+document.getElementById('confettiArea')
+.innerHTML='';
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+createBalloons();
+
+showScreen(1);
+
+speak("Welcome to Number 0 Adventure");
+
+}
+
+</script>
+
+</body>
+</html>
