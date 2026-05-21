@@ -244,7 +244,7 @@ height:100%;
 /* BALLOONS */
 
 .balloon{
-width:min(18vw,100px);
+width:min(16vw,90px);
 position:absolute;
 cursor:pointer;
 
@@ -640,6 +640,16 @@ sound.currentTime=0;
 
 sound.play();
 
+/* STOP SOUND FAST */
+
+setTimeout(()=>{
+
+sound.pause();
+
+sound.currentTime=0;
+
+},900);
+
 }
 
 function playWrong(){
@@ -719,11 +729,14 @@ let images=[
 'assets/red-balloon.png',
 'assets/yellowballoon.png',
 'assets/blueballoon.png',
+'assets/red-balloon.png',
+'assets/yellowballoon.png',
+'assets/blueballoon.png',
 'assets/red-balloon.png'
 
 ];
 
-for(let i=0;i<4;i++){
+for(let i=0;i<7;i++){
 
 let balloon=
 document.createElement('img');
@@ -733,10 +746,10 @@ balloon.src=images[i];
 balloon.className='balloon';
 
 balloon.style.left=
-(10+i*22)+'%';
+(5+i*13)+'%';
 
 balloon.style.top=
-(15+(i%2)*25)+'%';
+(10+(i%3)*18)+'%';
 
 area.appendChild(balloon);
 
@@ -1050,7 +1063,7 @@ showScreen(8);
 
 }
 
-},900);
+},800);
 
 }
 
