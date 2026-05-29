@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Magic Letter Train</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+-webkit-tap-highlight-color: transparent;
+}
+
+body{
+font-family: Arial, sans-serif;
+overflow:hidden;
+background:url('assets/rainbowbackground.jpg') center center/cover no-repeat;
+height:100vh;
+width:100vw;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+#gameContainer{
+width:100%;
+height:100vh;
+position:relative;
+overflow:hidden;
+}
+
+/* Logo Screen */
+#logoScreen{
+position:absolute;
+inset:0;
+background:white;
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:100;
+}
+
+#logoScreen img{
+width:min(60vw,300px);
+animation:fadeIn 2s ease;
+}
+
+@keyframes fadeIn{
+from{opacity:0;transform:scale(0.8)}
+to{opacity:1;transform:scale(1)}
+}
+
+/* Main Game */
+#gameScreen{
+display:none;
+width:100%;
+height:100%;
+background:rgba(255,255,255,0.25);
+backdrop-filter:blur(2px);
+padding:10px;
+}
+
+.header{
+height:14%;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:10px;
+}
+
+.header img{
+height:70px;
+}
+
+.title{
+font-size:clamp(24px,4vw,42px);
+font-weight:bold;
+color:#ff6b6b;
+text-shadow:2px 2px 0 white;
+}
+
+.questionBox{
+width:95%;
+margin:0 auto;
+min-height:12%;
+background:#fff6d6;
+border-radius:20px;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:10px;
+font-size:clamp(18px,3vw,34px);
+font-weight:bold;
+text-align:center;
+color:#5a3d2b;
+box-shadow:0 4px 10px rgba(0,0,0,0.15);
+position:relative;
+}
+
+#speakBtn{
+position:absolute;
+right:12px;
+top:50%;
+transform:translateY(-50%);
+background:#7ed6df;
+border:none;
+border-radius:50%;
+width:50px;
+height:50px;
+font-size:22px;
+cursor:pointer;
+}
+
+.roundArea{
+height:58%;
+width:100%;
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:15px;
+padding:15px;
+align-items:center;
+justify-items:center;
+}
+
+.optionCard{
+width:100%;
+max-width:320px;
+height:100%;
+max-height:230px;
+background:white;
+border-radius:25px;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:10px;
+box-shadow:0 6px 12px rgba(0,0,0,0.18);
+transition:0.3s;
+position:relative;
+}
+
+.optionCard img{
+max-width:100%;
+max-height:100%;
+object-fit:contain;
+pointer-events:none;
+}
+
+.optionCard:active{
+transform:scale(0.96);
+}
+
+.giggle{
+animation:giggle 0.4s;
+}
+
+@keyframes giggle{
+0%{transform:translateX(0)}
+25%{transform:translateX(-8px)}
+50%{transform:translateX(8px)}
+75%{transform:translateX(-8px)}
+100%{transform:translateX(0)}
+}
+
+.glow{
+animation:glow 1s infinite alternate;
+}
+
+@keyframes glow{
+from{box-shadow:0 0 10px #ffeaa7}
+to{box-shadow:0 0 25px #2ecc71}
+}
+
+.tick{
+position:absolute;
+right:10px;
+top:10px;
+font-size:40px;
+}
+
+.footer{
+height:12%;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:clamp(18px,3vw,28px);
+font-weight:bold;
+color:white;
+text-shadow:2px 2px 5px black;
+}
+
+#confettiCanvas{
+position:absolute;
+inset:0;
+pointer-events:none;
+}
+
+#endScreen{
+position:absolute;
+inset:0;
+background:rgba(255,255,255,0.96);
+display:none;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+gap:20px;
+z-index:50;
+}
+
+#endScreen h1{
+font-size:clamp(34px,5vw,60px);
+color:#ff7675;
+text-align:center;
+}
+
+#playAgainBtn{
+padding:18px 35px;
+font-size:clamp(22px,3vw,34px);
+border:none;
+border-radius:20px;
+background:#55efc4;
+font-weight:bold;
+cursor:pointer;
+}
+
+@media(max-width:768px){
+.roundArea{
+grid-template-columns:1fr 1fr;
+gap:10px;
+padding:10px;
+}
+
+.optionCard{
+max-height:180px;
+}
+
+.header img{
+height:55px;
+}
+}
+
+@media(max-width:600px){
+.roundArea{
+grid-template-columns:1fr 1fr;
+}
+
+.optionCard{
+height:150px;
+padding:5px;
+}
+
+#speakBtn{
+width:42px;
+height:42px;
+}
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="gameContainer">
+
+<canvas id="confettiCanvas"></canvas>
+
+<div id="logoScreen">
+<img src="assets/innovine-logo.png" alt="logo">
+</div>
+
+<div id="gameScreen">
+
+<div class="header">
+<img src="assets/engine.png">
+<div class="title">Magic Letter Train I–L</div>
+<img src="assets/compartment.png">
+</div>
+
+<div class="questionBox" id="questionBox">
+Question
+<button id="speakBtn">🔊</button>
+</div>
+
+<div class="roundArea" id="roundArea"></div>
+
+<div class="footer" id="footerText">
+Tap the correct picture
+</div>
+
+</div>
+
+<div id="endScreen">
+<h1>🎉 Amazing Job! 🎉</h1>
+<button id="playAgainBtn">Play Again</button>
+</div>
+
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+</div>
+
+<script>
+const rounds = [
+{
+question:"Tap the picture that starts with letter I",
+voice:"Tap the picture that starts with letter I",
+correct:"assets/ice-cream.jpeg",
+options:[
+"assets/ice-cream.jpeg",
+"assets/apple.png",
+"assets/fish.png",
+"assets/banana.png"
+]
+},
+{
+question:"Tap the picture that starts with letter J",
+voice:"Tap the picture that starts with letter J",
+correct:"assets/jam.jpg",
+options:[
+"assets/jam.jpg",
+"assets/cat.png",
+"assets/orange.png",
+"assets/fish.png"
+]
+},
+{
+question:"Tap the picture that starts with letter K",
+voice:"Tap the picture that starts with letter K",
+correct:"assets/kite.png",
+options:[
+"assets/kite.png",
+"assets/bus.jpg",
+"assets/apple.png",
+"assets/lion.png"
+]
+},
+{
+question:"Tap the picture that starts with letter L",
+voice:"Tap the picture that starts with letter L",
+correct:"assets/lion.png",
+options:[
+"assets/lion.png",
+"assets/banana.png",
+"assets/fish.png",
+"assets/orange.png"
+]
+},
+{
+question:"Tap the object that starts with J",
+voice:"Find the picture that starts with J",
+correct:"assets/jet.png",
+options:[
+"assets/jet.png",
+"assets/apple.png",
+"assets/banana.png",
+"assets/fish.png"
+]
+},
+{
+question:"Tap the object that starts with K",
+voice:"Find the picture that starts with K",
+correct:"assets/key.jpeg",
+options:[
+"assets/key.jpeg",
+"assets/cat.png",
+"assets/fish.png",
+"assets/orange.png"
+]
+},
+{
+question:"Tap the object that starts with L",
+voice:"Find the picture that starts with L",
+correct:"assets/leaf.jpeg",
+options:[
+"assets/leaf.jpeg",
+"assets/apple.png",
+"assets/bus.jpg",
+"assets/cat.png"
+]
+},
+{
+question:"Tap the picture that starts with I",
+voice:"Find the picture that starts with I",
+correct:"assets/igloo.png",
+options:[
+"assets/igloo.png",
+"assets/banana.png",
+"assets/fish.png",
+"assets/cat.png"
+]
+}
+];
+
+let currentRound = 0;
+let wrongAttempts = 0;
+
+const roundArea = document.getElementById('roundArea');
+const questionBox = document.getElementById('questionBox');
+const correctSound = document.getElementById('correctSound');
+const wrongSound = document.getElementById('wrongSound');
+const clapSound = document.getElementById('clapSound');
+const footerText = document.getElementById('footerText');
+const endScreen = document.getElementById('endScreen');
+
+setTimeout(()=>{
+document.getElementById('logoScreen').style.display='none';
+document.getElementById('gameScreen').style.display='block';
+loadRound();
+},5000);
+
+function speakText(text){
+if('speechSynthesis' in window){
+window.speechSynthesis.cancel();
+const speech = new SpeechSynthesisUtterance(text);
+speech.rate = 0.8;
+speech.pitch = 1;
+speech.volume = 1;
+window.speechSynthesis.speak(speech);
+}
+}
+
+function shuffle(array){
+for(let i=array.length-1;i>0;i--){
+const j=Math.floor(Math.random()*(i+1));
+[array[i],array[j]]=[array[j],array[i]];
+}
+return array;
+}
+
+function loadRound(){
+wrongAttempts = 0;
+roundArea.innerHTML = '';
+
+const round = rounds[currentRound];
+questionBox.childNodes[0].textContent = round.question;
+
+speakText(round.voice);
+
+const shuffled = shuffle([...round.options]);
+
+shuffled.forEach(option=>{
+const card = document.createElement('div');
+card.className = 'optionCard';
+
+const img = document.createElement('img');
+img.src = option;
+
+card.appendChild(img);
+
+card.onclick = ()=>checkAnswer(option, card, round.correct);
+
+roundArea.appendChild(card);
+});
+}
+
+function checkAnswer(selected, card, correct){
+if(selected === correct){
+correctSound.currentTime = 0;
+correctSound.play();
+
+clapSound.currentTime = 0;
+setTimeout(()=>{
+clapSound.play();
+},500);
+
+card.innerHTML += '<div class="tick">✅</div>';
+card.style.border = '6px solid #2ecc71';
+footerText.innerHTML = '⭐ Good Job! ⭐';
+
+speakText('Good Job');
+
+setTimeout(()=>{
+currentRound++;
+
+if(currentRound >= rounds.length){
+showEndScreen();
+}else{
+footerText.innerHTML = 'Tap the correct picture';
+loadRound();
+}
+},1800);
+
+}else{
+wrongSound.currentTime = 0;
+wrongSound.play();
+card.classList.add('giggle');
+
+setTimeout(()=>{
+card.classList.remove('giggle');
+},400);
+
+wrongAttempts++;
+
+if(wrongAttempts >= 2){
+const cards = document.querySelectorAll('.optionCard');
+
+cards.forEach(c=>{
+const image = c.querySelector('img').src;
+if(image.includes(correct.split('/').pop())){
+c.classList.add('glow');
+}
+});
+}
+}
+}
+
+function showEndScreen(){
+endScreen.style.display = 'flex';
+startConfetti();
+speakText('Amazing Job');
+}
+
+document.getElementById('playAgainBtn').onclick = ()=>{
+currentRound = 0;
+endScreen.style.display = 'none';
+stopConfetti();
+loadRound();
+}
+
+document.getElementById('speakBtn').onclick = ()=>{
+speakText(rounds[currentRound].voice);
+}
+
+/* Confetti */
+const canvas = document.getElementById('confettiCanvas');
+const ctx = canvas.getContext('2d');
+let confetti = [];
+let animationId;
+
+function resizeCanvas(){
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function startConfetti(){
+confetti = [];
+for(let i=0;i<150;i++){
+confetti.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height-canvas.height,
+r:Math.random()*6+4,
+d:Math.random()*150
+});
+}
+animateConfetti();
+}
+
+function animateConfetti(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+confetti.forEach((c,i)=>{
+ctx.beginPath();
+ctx.arc(c.x,c.y,c.r,0,Math.PI*2);
+ctx.fillStyle = ['#ff7675','#74b9ff','#55efc4','#ffeaa7','#fd79a8'][i%5];
+ctx.fill();
+
+c.y += 3;
+
+if(c.y > canvas.height){
+c.y = -10;
+}
+});
+
+animationId = requestAnimationFrame(animateConfetti);
+}
+
+function stopConfetti(){
+cancelAnimationFrame(animationId);
+ctx.clearRect(0,0,canvas.width,canvas.height);
+}
+
+</script>
+
+</body>
+</html>
