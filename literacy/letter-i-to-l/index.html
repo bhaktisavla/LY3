@@ -1,154 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>Magic Letter Train</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Magic Letter Train - Letter I</title>
 
 <style>
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
--webkit-tap-highlight-color: transparent;
+-webkit-tap-highlight-color:transparent;
 }
 
 body{
-font-family: Arial, sans-serif;
+font-family:Arial, sans-serif;
 overflow:hidden;
-background:url('assets/rainbowbackground.jpg') center center/cover no-repeat;
-height:100vh;
-width:100vw;
-display:flex;
-justify-content:center;
-align-items:center;
+background:#dff9fb;
 }
 
-#gameContainer{
-width:100%;
+#game{
+width:100vw;
 height:100vh;
 position:relative;
 overflow:hidden;
 }
 
-/* Logo Screen */
-#logoScreen{
+.screen{
 position:absolute;
 inset:0;
-background:white;
-display:flex;
+display:none;
 justify-content:center;
 align-items:center;
+flex-direction:column;
+}
+
+.active{
+display:flex;
+}
+
+/* LOGO */
+#logoScreen{
+background:white;
 z-index:100;
 }
 
 #logoScreen img{
-width:min(60vw,300px);
-animation:fadeIn 2s ease;
+width:min(70vw,320px);
+animation:pop 2s ease;
 }
 
-@keyframes fadeIn{
-from{opacity:0;transform:scale(0.8)}
-to{opacity:1;transform:scale(1)}
+@keyframes pop{
+0%{transform:scale(0.5);opacity:0;}
+100%{transform:scale(1);opacity:1;}
 }
 
-/* Main Game */
-#gameScreen{
-display:none;
-width:100%;
-height:100%;
-background:rgba(255,255,255,0.25);
-backdrop-filter:blur(2px);
-padding:10px;
+/* INTRO */
+#introScreen{
+background:url('assets/icecreamland.jpg') center/cover no-repeat;
+padding:20px;
 }
 
-.header{
-height:14%;
-display:flex;
-align-items:center;
-justify-content:center;
-gap:10px;
-}
-
-.header img{
-height:70px;
-}
-
-.title{
-font-size:clamp(24px,4vw,42px);
-font-weight:bold;
-color:#ff6b6b;
-text-shadow:2px 2px 0 white;
-}
-
-.questionBox{
-width:95%;
-margin:0 auto;
-min-height:12%;
-background:#fff6d6;
-border-radius:20px;
-display:flex;
-align-items:center;
-justify-content:center;
-padding:10px;
-font-size:clamp(18px,3vw,34px);
-font-weight:bold;
-text-align:center;
-color:#5a3d2b;
-box-shadow:0 4px 10px rgba(0,0,0,0.15);
-position:relative;
-}
-
-#speakBtn{
+.train{
 position:absolute;
-right:12px;
-top:50%;
-transform:translateY(-50%);
-background:#7ed6df;
-border:none;
-border-radius:50%;
-width:50px;
-height:50px;
-font-size:22px;
-cursor:pointer;
+bottom:0;
+left:-500px;
+display:flex;
+align-items:flex-end;
+animation:trainMove 6s linear forwards;
 }
 
-.roundArea{
-height:58%;
+.train img{
+height:120px;
+}
+
+@keyframes trainMove{
+0%{left:-500px;}
+100%{left:110%;}
+}
+
+.letterBox{
+background:rgba(255,255,255,0.9);
+padding:20px 35px;
+border-radius:30px;
+text-align:center;
+box-shadow:0 8px 20px rgba(0,0,0,0.2);
+}
+
+.bigLetter{
+font-size:min(30vw,180px);
+font-weight:bold;
+color:#ff7979;
+line-height:1;
+}
+
+.smallLetter{
+font-size:min(16vw,100px);
+color:#686de0;
+margin-top:10px;
+}
+
+.phonics{
+font-size:clamp(24px,4vw,40px);
+margin-top:15px;
+color:#22a6b3;
+font-weight:bold;
+}
+
+.sparkle{
+position:absolute;
+font-size:40px;
+animation:sparkle 2s infinite;
+}
+
+@keyframes sparkle{
+0%{transform:scale(0.7) rotate(0deg);opacity:0.5;}
+50%{transform:scale(1.2) rotate(30deg);opacity:1;}
+100%{transform:scale(0.7) rotate(0deg);opacity:0.5;}
+}
+
+/* BUTTON */
+.btn{
+padding:16px 32px;
+font-size:clamp(20px,3vw,30px);
+border:none;
+border-radius:18px;
+background:#7ed6df;
+color:#fff;
+font-weight:bold;
+margin-top:25px;
+box-shadow:0 5px 10px rgba(0,0,0,0.2);
+}
+
+/* QUIZ */
+#quizScreen{
+background:url('assets/ice-cream-land.jpg') center/cover no-repeat;
+padding:10px;
+}
+
+.question{
+width:95%;
+background:#fff5cc;
+padding:14px;
+border-radius:20px;
+text-align:center;
+font-size:clamp(20px,3vw,34px);
+font-weight:bold;
+color:#5c3d2e;
+margin-bottom:15px;
+box-shadow:0 5px 10px rgba(0,0,0,0.15);
+}
+
+.options{
 width:100%;
+height:70%;
 display:grid;
 grid-template-columns:repeat(2,1fr);
 gap:15px;
-padding:15px;
-align-items:center;
-justify-items:center;
+padding:10px;
 }
 
-.optionCard{
-width:100%;
-max-width:320px;
-height:100%;
-max-height:230px;
+.card{
 background:white;
 border-radius:25px;
 display:flex;
-align-items:center;
 justify-content:center;
+align-items:center;
 padding:10px;
-box-shadow:0 6px 12px rgba(0,0,0,0.18);
+box-shadow:0 6px 12px rgba(0,0,0,0.2);
 transition:0.3s;
 position:relative;
 }
 
-.optionCard img{
+.card img{
 max-width:100%;
 max-height:100%;
 object-fit:contain;
 pointer-events:none;
-}
-
-.optionCard:active{
-transform:scale(0.96);
 }
 
 .giggle{
@@ -156,11 +184,11 @@ animation:giggle 0.4s;
 }
 
 @keyframes giggle{
-0%{transform:translateX(0)}
-25%{transform:translateX(-8px)}
-50%{transform:translateX(8px)}
-75%{transform:translateX(-8px)}
-100%{transform:translateX(0)}
+0%{transform:translateX(0);}
+25%{transform:translateX(-10px);}
+50%{transform:translateX(10px);}
+75%{transform:translateX(-10px);}
+100%{transform:translateX(0);}
 }
 
 .glow{
@@ -168,91 +196,119 @@ animation:glow 1s infinite alternate;
 }
 
 @keyframes glow{
-from{box-shadow:0 0 10px #ffeaa7}
-to{box-shadow:0 0 25px #2ecc71}
+from{box-shadow:0 0 10px #ffeaa7;}
+to{box-shadow:0 0 30px #2ecc71;}
 }
 
-.tick{
-position:absolute;
-right:10px;
-top:10px;
-font-size:40px;
+/* CATCH GAME */
+#catchScreen{
+background:url('assets/icecreamland.jpg') center/cover no-repeat;
 }
 
-.footer{
-height:12%;
-display:flex;
-justify-content:center;
-align-items:center;
-font-size:clamp(18px,3vw,28px);
+.catchTitle{
+margin-top:15px;
+font-size:clamp(24px,4vw,40px);
 font-weight:bold;
 color:white;
 text-shadow:2px 2px 5px black;
 }
 
-#confettiCanvas{
+#gameArea{
+position:relative;
+width:100%;
+height:75%;
+overflow:hidden;
+}
+
+.falling{
+position:absolute;
+width:min(18vw,100px);
+}
+
+#basket{
+position:absolute;
+bottom:10px;
+left:50%;
+transform:translateX(-50%);
+width:min(28vw,170px);
+}
+
+/* WRITING */
+#traceScreen{
+background:#f6e58d;
+padding:10px;
+}
+
+.traceTitle{
+font-size:clamp(24px,4vw,42px);
+font-weight:bold;
+color:#6c5ce7;
+margin-bottom:10px;
+}
+
+.traceBox{
+position:relative;
+width:95%;
+height:55%;
+background:white;
+border-radius:20px;
+overflow:hidden;
+box-shadow:0 6px 12px rgba(0,0,0,0.2);
+}
+
+.traceLines{
+position:absolute;
+inset:0;
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.traceLetter{
+position:absolute;
+left:50%;
+top:50%;
+transform:translate(-50%,-50%);
+font-size:min(45vw,240px);
+font-weight:bold;
+color:rgba(0,0,0,0.12);
+}
+
+canvas{
+position:absolute;
+inset:0;
+width:100%;
+height:100%;
+}
+
+/* END */
+#endScreen{
+background:linear-gradient(to bottom,#ffecd2,#fcb69f);
+}
+
+#endScreen h1{
+font-size:clamp(40px,6vw,80px);
+color:#ff6b81;
+text-align:center;
+}
+
+#confetti{
 position:absolute;
 inset:0;
 pointer-events:none;
 }
 
-#endScreen{
-position:absolute;
-inset:0;
-background:rgba(255,255,255,0.96);
-display:none;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-gap:20px;
-z-index:50;
-}
-
-#endScreen h1{
-font-size:clamp(34px,5vw,60px);
-color:#ff7675;
-text-align:center;
-}
-
-#playAgainBtn{
-padding:18px 35px;
-font-size:clamp(22px,3vw,34px);
-border:none;
-border-radius:20px;
-background:#55efc4;
-font-weight:bold;
-cursor:pointer;
-}
-
-@media(max-width:768px){
-.roundArea{
-grid-template-columns:1fr 1fr;
+@media(max-width:700px){
+.options{
 gap:10px;
-padding:10px;
 }
 
-.optionCard{
-max-height:180px;
-}
-
-.header img{
-height:55px;
-}
-}
-
-@media(max-width:600px){
-.roundArea{
-grid-template-columns:1fr 1fr;
-}
-
-.optionCard{
-height:150px;
+.card{
 padding:5px;
 }
 
-#speakBtn{
-width:42px;
-height:42px;
+.train img{
+height:80px;
 }
 }
 
@@ -261,230 +317,156 @@ height:42px;
 
 <body>
 
-<div id="gameContainer">
+<div id="game">
 
-<canvas id="confettiCanvas"></canvas>
+<canvas id="confetti"></canvas>
 
-<div id="logoScreen">
-<img src="assets/innovine-logo.png" alt="logo">
+<!-- LOGO -->
+<div class="screen active" id="logoScreen">
+<img src="assets/innovine-logo.png">
 </div>
 
-<div id="gameScreen">
+<!-- INTRO -->
+<div class="screen" id="introScreen">
 
-<div class="header">
+<div class="sparkle" style="top:10%;left:15%;">✨</div>
+<div class="sparkle" style="top:20%;right:15%;">⭐</div>
+<div class="sparkle" style="bottom:30%;left:20%;">✨</div>
+
+<div class="letterBox">
+<div class="bigLetter">I</div>
+<div class="smallLetter">i</div>
+<div class="phonics">I says iiiii</div>
+<button class="btn" onclick="startQuiz()">Start</button>
+</div>
+
+<div class="train">
 <img src="assets/engine.png">
-<div class="title">Magic Letter Train I–L</div>
 <img src="assets/compartment.png">
 </div>
 
-<div class="questionBox" id="questionBox">
-Question
-<button id="speakBtn">🔊</button>
 </div>
 
-<div class="roundArea" id="roundArea"></div>
+<!-- QUIZ -->
+<div class="screen" id="quizScreen">
 
-<div class="footer" id="footerText">
-Tap the correct picture
+<div class="question">
+Tap the picture that starts with letter I 🔊
+</div>
+
+<div class="options">
+<div class="card" data-correct="true">
+<img src="assets/ice-cream.jpeg">
+</div>
+
+<div class="card">
+<img src="assets/fish.png">
+</div>
+
+<div class="card">
+<img src="assets/apple.png">
+</div>
+
+<div class="card">
+<img src="assets/banana.png">
+</div>
 </div>
 
 </div>
 
-<div id="endScreen">
-<h1>🎉 Amazing Job! 🎉</h1>
-<button id="playAgainBtn">Play Again</button>
+<!-- CATCH GAME -->
+<div class="screen" id="catchScreen">
+<div class="catchTitle">Catch the Ice Creams! 🍦</div>
+
+<div id="gameArea">
+<img src="assets/basket.jpg" id="basket">
 </div>
 
-<audio id="correctSound" src="assets/correct.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
-<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+</div>
+
+<!-- TRACE -->
+<div class="screen" id="traceScreen">
+
+<div class="traceTitle">Trace Letter I</div>
+
+<div class="traceBox">
+<img src="assets/redandblueline.png" class="traceLines">
+<div class="traceLetter">I</div>
+<canvas id="traceCanvas"></canvas>
+</div>
+
+<button class="btn" onclick="finishGame()">Finish</button>
+
+</div>
+
+<!-- END -->
+<div class="screen" id="endScreen">
+<h1>🎉 Great Job! 🎉</h1>
+<button class="btn" onclick="location.reload()">Play Again</button>
+</div>
+
+<audio id="correctAudio" src="assets/correct.mp3"></audio>
+<audio id="wrongAudio" src="assets/wrong.mp3"></audio>
+<audio id="clapAudio" src="assets/freesound_community-claps-44774.mp3"></audio>
 
 </div>
 
 <script>
-const rounds = [
-{
-question:"Tap the picture that starts with letter I",
-voice:"Tap the picture that starts with letter I",
-correct:"assets/ice-cream.jpeg",
-options:[
-"assets/ice-cream.jpeg",
-"assets/apple.png",
-"assets/fish.png",
-"assets/banana.png"
-]
-},
-{
-question:"Tap the picture that starts with letter J",
-voice:"Tap the picture that starts with letter J",
-correct:"assets/jam.jpg",
-options:[
-"assets/jam.jpg",
-"assets/cat.png",
-"assets/orange.png",
-"assets/fish.png"
-]
-},
-{
-question:"Tap the picture that starts with letter K",
-voice:"Tap the picture that starts with letter K",
-correct:"assets/kite.png",
-options:[
-"assets/kite.png",
-"assets/bus.jpg",
-"assets/apple.png",
-"assets/lion.png"
-]
-},
-{
-question:"Tap the picture that starts with letter L",
-voice:"Tap the picture that starts with letter L",
-correct:"assets/lion.png",
-options:[
-"assets/lion.png",
-"assets/banana.png",
-"assets/fish.png",
-"assets/orange.png"
-]
-},
-{
-question:"Tap the object that starts with J",
-voice:"Find the picture that starts with J",
-correct:"assets/jet.png",
-options:[
-"assets/jet.png",
-"assets/apple.png",
-"assets/banana.png",
-"assets/fish.png"
-]
-},
-{
-question:"Tap the object that starts with K",
-voice:"Find the picture that starts with K",
-correct:"assets/key.jpeg",
-options:[
-"assets/key.jpeg",
-"assets/cat.png",
-"assets/fish.png",
-"assets/orange.png"
-]
-},
-{
-question:"Tap the object that starts with L",
-voice:"Find the picture that starts with L",
-correct:"assets/leaf.jpeg",
-options:[
-"assets/leaf.jpeg",
-"assets/apple.png",
-"assets/bus.jpg",
-"assets/cat.png"
-]
-},
-{
-question:"Tap the picture that starts with I",
-voice:"Find the picture that starts with I",
-correct:"assets/igloo.png",
-options:[
-"assets/igloo.png",
-"assets/banana.png",
-"assets/fish.png",
-"assets/cat.png"
-]
-}
-];
-
-let currentRound = 0;
-let wrongAttempts = 0;
-
-const roundArea = document.getElementById('roundArea');
-const questionBox = document.getElementById('questionBox');
-const correctSound = document.getElementById('correctSound');
-const wrongSound = document.getElementById('wrongSound');
-const clapSound = document.getElementById('clapSound');
-const footerText = document.getElementById('footerText');
+const logoScreen = document.getElementById('logoScreen');
+const introScreen = document.getElementById('introScreen');
+const quizScreen = document.getElementById('quizScreen');
+const catchScreen = document.getElementById('catchScreen');
+const traceScreen = document.getElementById('traceScreen');
 const endScreen = document.getElementById('endScreen');
 
+const correctAudio = document.getElementById('correctAudio');
+const wrongAudio = document.getElementById('wrongAudio');
+const clapAudio = document.getElementById('clapAudio');
+
 setTimeout(()=>{
-document.getElementById('logoScreen').style.display='none';
-document.getElementById('gameScreen').style.display='block';
-loadRound();
+logoScreen.classList.remove('active');
+introScreen.classList.add('active');
+speak('I says iiiii');
 },5000);
 
-function speakText(text){
+function speak(text){
 if('speechSynthesis' in window){
 window.speechSynthesis.cancel();
 const speech = new SpeechSynthesisUtterance(text);
 speech.rate = 0.8;
 speech.pitch = 1;
-speech.volume = 1;
 window.speechSynthesis.speak(speech);
 }
 }
 
-function shuffle(array){
-for(let i=array.length-1;i>0;i--){
-const j=Math.floor(Math.random()*(i+1));
-[array[i],array[j]]=[array[j],array[i]];
-}
-return array;
+function startQuiz(){
+introScreen.classList.remove('active');
+quizScreen.classList.add('active');
+speak('Tap the picture that starts with letter I');
 }
 
-function loadRound(){
-wrongAttempts = 0;
-roundArea.innerHTML = '';
+let wrongAttempts = 0;
 
-const round = rounds[currentRound];
-questionBox.childNodes[0].textContent = round.question;
+const cards = document.querySelectorAll('.card');
 
-speakText(round.voice);
+cards.forEach(card=>{
+card.addEventListener('click',()=>{
 
-const shuffled = shuffle([...round.options]);
+if(card.dataset.correct === 'true'){
+correctAudio.play();
+clapAudio.play();
 
-shuffled.forEach(option=>{
-const card = document.createElement('div');
-card.className = 'optionCard';
+card.style.border='8px solid #2ecc71';
+card.innerHTML += '<div style="position:absolute;top:10px;right:10px;font-size:40px;">✅</div>';
 
-const img = document.createElement('img');
-img.src = option;
-
-card.appendChild(img);
-
-card.onclick = ()=>checkAnswer(option, card, round.correct);
-
-roundArea.appendChild(card);
-});
-}
-
-function checkAnswer(selected, card, correct){
-if(selected === correct){
-correctSound.currentTime = 0;
-correctSound.play();
-
-clapSound.currentTime = 0;
-setTimeout(()=>{
-clapSound.play();
-},500);
-
-card.innerHTML += '<div class="tick">✅</div>';
-card.style.border = '6px solid #2ecc71';
-footerText.innerHTML = '⭐ Good Job! ⭐';
-
-speakText('Good Job');
+speak('Good Job');
 
 setTimeout(()=>{
-currentRound++;
-
-if(currentRound >= rounds.length){
-showEndScreen();
-}else{
-footerText.innerHTML = 'Tap the correct picture';
-loadRound();
-}
+startCatchGame();
 },1800);
 
 }else{
-wrongSound.currentTime = 0;
-wrongSound.play();
+wrongAudio.play();
 card.classList.add('giggle');
 
 setTimeout(()=>{
@@ -493,84 +475,209 @@ card.classList.remove('giggle');
 
 wrongAttempts++;
 
-if(wrongAttempts >= 2){
-const cards = document.querySelectorAll('.optionCard');
-
-cards.forEach(c=>{
-const image = c.querySelector('img').src;
-if(image.includes(correct.split('/').pop())){
-c.classList.add('glow');
+if(wrongAttempts>=2){
+document.querySelector('[data-correct="true"]').classList.add('glow');
 }
+}
+
 });
+});
+
+/* CATCH GAME */
+const gameArea = document.getElementById('gameArea');
+const basket = document.getElementById('basket');
+let basketX = window.innerWidth/2;
+let caught = 0;
+
+function startCatchGame(){
+quizScreen.classList.remove('active');
+catchScreen.classList.add('active');
+
+speak('Catch the ice creams');
+
+spawnIceCream();
 }
+
+function spawnIceCream(){
+const fall = document.createElement('img');
+fall.src = 'assets/icecream.jpeg';
+fall.className = 'falling';
+fall.style.left = Math.random()*(window.innerWidth-100)+'px';
+fall.style.top='-100px';
+
+gameArea.appendChild(fall);
+
+let topPos = -100;
+
+const move = setInterval(()=>{
+
+if(!catchScreen.classList.contains('active')){
+clearInterval(move);
+return;
+}
+
+topPos += 4;
+fall.style.top = topPos+'px';
+
+const fallRect = fall.getBoundingClientRect();
+const basketRect = basket.getBoundingClientRect();
+
+if(
+fallRect.bottom > basketRect.top &&
+fallRect.left < basketRect.right &&
+fallRect.right > basketRect.left
+){
+fall.remove();
+clearInterval(move);
+
+caught++;
+correctAudio.currentTime=0;
+correctAudio.play();
+
+if(caught >= 5){
+setTimeout(()=>{
+startTrace();
+},1000);
+}else{
+spawnIceCream();
 }
 }
 
-function showEndScreen(){
-endScreen.style.display = 'flex';
-startConfetti();
-speakText('Amazing Job');
+if(topPos > window.innerHeight){
+fall.remove();
+clearInterval(move);
+spawnIceCream();
 }
 
-document.getElementById('playAgainBtn').onclick = ()=>{
-currentRound = 0;
-endScreen.style.display = 'none';
-stopConfetti();
-loadRound();
+},20);
 }
 
-document.getElementById('speakBtn').onclick = ()=>{
-speakText(rounds[currentRound].voice);
+function moveBasket(x){
+basketX = x - basket.offsetWidth/2;
+
+if(basketX < 0) basketX = 0;
+if(basketX > window.innerWidth - basket.offsetWidth){
+basketX = window.innerWidth - basket.offsetWidth;
 }
 
-/* Confetti */
-const canvas = document.getElementById('confettiCanvas');
+basket.style.left = basketX + 'px';
+}
+
+document.addEventListener('mousemove',(e)=>{
+moveBasket(e.clientX);
+});
+
+document.addEventListener('touchmove',(e)=>{
+moveBasket(e.touches[0].clientX);
+});
+
+/* TRACE */
+function startTrace(){
+catchScreen.classList.remove('active');
+traceScreen.classList.add('active');
+speak('Trace the letter I');
+}
+
+const canvas = document.getElementById('traceCanvas');
 const ctx = canvas.getContext('2d');
-let confetti = [];
-let animationId;
 
 function resizeCanvas(){
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width = canvas.offsetWidth;
+canvas.height = canvas.offsetHeight;
 }
 resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
+window.addEventListener('resize',resizeCanvas);
+
+let drawing = false;
+
+function startDraw(e){
+drawing = true;
+draw(e);
+}
+
+function endDraw(){
+drawing = false;
+ctx.beginPath();
+}
+
+function draw(e){
+if(!drawing) return;
+
+const rect = canvas.getBoundingClientRect();
+const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+
+ctx.lineWidth = 14;
+ctx.lineCap = 'round';
+ctx.strokeStyle = '#2ecc71';
+
+ctx.lineTo(x,y);
+ctx.stroke();
+ctx.beginPath();
+ctx.moveTo(x,y);
+}
+
+canvas.addEventListener('mousedown',startDraw);
+canvas.addEventListener('mouseup',endDraw);
+canvas.addEventListener('mousemove',draw);
+
+canvas.addEventListener('touchstart',startDraw);
+canvas.addEventListener('touchend',endDraw);
+canvas.addEventListener('touchmove',draw);
+
+/* END */
+function finishGame(){
+traceScreen.classList.remove('active');
+endScreen.classList.add('active');
+clapAudio.play();
+startConfetti();
+speak('Amazing Job');
+}
+
+/* CONFETTI */
+const confettiCanvas = document.getElementById('confetti');
+const confettiCtx = confettiCanvas.getContext('2d');
+
+function resizeConfetti(){
+confettiCanvas.width = window.innerWidth;
+confettiCanvas.height = window.innerHeight;
+}
+resizeConfetti();
+
+let pieces = [];
 
 function startConfetti(){
-confetti = [];
-for(let i=0;i<150;i++){
-confetti.push({
-x:Math.random()*canvas.width,
-y:Math.random()*canvas.height-canvas.height,
+pieces=[];
+
+for(let i=0;i<120;i++){
+pieces.push({
+x:Math.random()*confettiCanvas.width,
+y:Math.random()*confettiCanvas.height-confettiCanvas.height,
 r:Math.random()*6+4,
-d:Math.random()*150
+s:Math.random()*3+2
 });
 }
+
 animateConfetti();
 }
 
 function animateConfetti(){
-ctx.clearRect(0,0,canvas.width,canvas.height);
+confettiCtx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
 
-confetti.forEach((c,i)=>{
-ctx.beginPath();
-ctx.arc(c.x,c.y,c.r,0,Math.PI*2);
-ctx.fillStyle = ['#ff7675','#74b9ff','#55efc4','#ffeaa7','#fd79a8'][i%5];
-ctx.fill();
+pieces.forEach((p,i)=>{
+confettiCtx.beginPath();
+confettiCtx.arc(p.x,p.y,p.r,0,Math.PI*2);
+confettiCtx.fillStyle=['#ff7979','#badc58','#7ed6df','#f9ca24','#e056fd'][i%5];
+confettiCtx.fill();
 
-c.y += 3;
+p.y += p.s;
 
-if(c.y > canvas.height){
-c.y = -10;
+if(p.y > confettiCanvas.height){
+p.y = -10;
 }
 });
 
-animationId = requestAnimationFrame(animateConfetti);
-}
-
-function stopConfetti(){
-cancelAnimationFrame(animationId);
-ctx.clearRect(0,0,canvas.width,canvas.height);
+requestAnimationFrame(animateConfetti);
 }
 
 </script>
