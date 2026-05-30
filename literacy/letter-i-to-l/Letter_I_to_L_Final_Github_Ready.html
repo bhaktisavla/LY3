@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Letter Ii to Ll</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:url('assets/backgroundd.jpg') center/cover fixed;color:#222}
+#splash,#end{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#fff;z-index:99}
+#splash img{max-width:320px;width:70%}
+.header{background:#ffd54f;padding:10px;text-align:center;font-size:2rem;font-weight:bold}
+.question{background:#fff;padding:10px;margin:8px;border-radius:12px;text-align:center;font-weight:bold}
+.layout{display:flex;gap:10px;padding:8px;height:calc(100vh - 140px);box-sizing:border-box}
+.left{width:28%;text-align:center}
+.left img{max-width:100%;max-height:250px}
+.right{flex:1;background:#eef7ff;border-radius:15px;padding:10px;display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px}
+.card{background:#fff;border-radius:10px;padding:5px;cursor:pointer;border:3px solid transparent}
+.card img{width:100%;height:90px;object-fit:contain}
+.spk{font-size:40px;cursor:pointer}
+.glow{box-shadow:0 0 15px gold}
+.wiggle{animation:w .3s}
+@keyframes w{25%{transform:translateX(-4px)}50%{transform:translateX(4px)}75%{transform:translateX(-4px)}}
+.trace{display:flex;flex-direction:column;align-items:center;padding:10px}
+canvas{background:url('assets/redandblueline.png') center/contain no-repeat #fff;border:1px solid #ccc;width:90%;height:300px;touch-action:none}
+button{padding:10px 20px;border:none;border-radius:10px;background:#4caf50;color:#fff}
+#end{display:none;flex-direction:column}
+@media(max-width:768px){.layout{height:auto;flex-direction:row}.left{width:35%}canvas{height:220px}}
+</style>
+</head>
+<body>
+<div id="splash"><img src="assets/innovine-logo.png"></div>
+<div id="game" style="display:none">
+<div class="header">Letter Ii to Ll</div>
+<div id="content"></div>
+</div>
+<div id="end"><h1>🎉 Great Job! 🎉</h1><button onclick="location.reload()">Play Again</button></div>
+
+<audio id="correct" src="assets/correct.mp3"></audio>
+<audio id="wrong" src="assets/wrong.mp3"></audio>
+<audio id="clap" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<script>
+const rounds=[
+{t:'select',L:'Ii',img:'Ii.png',snd:'letterI.mp3',a:['igloo','iguana','infant','inkpot','insects'],i:['igloo.png','iguana.png','infant.png','inkpot.png','insects.png','jet.png','key.jpeg']},
+{t:'trace',L:'Ii',snd:'letterI.mp3'},
+{t:'select',L:'Jj',img:'Jj.png',snd:'letterJ.mp3',a:['jet','jam','jar','jeep','jelly'],i:['jet.png','jam.png','jar.png','jeep.png','jelly.jpeg','igloo.png','kettle.jpeg']},
+{t:'trace',L:'Jj',snd:'letterJ.mp3'},
+{t:'select',L:'Kk',img:'Kk.png',snd:'letterK.mp3',a:['kettle','ketchup','key','kitepink','kitten','Kiwi'],i:['kettle.jpeg','ketchup.png','key.jpeg','kitepink.png','kitten.jpg','Kiwi.png','lantern.png','infant.png']},
+{t:'trace',L:'Kk',snd:'letterK.mp3'},
+{t:'select',L:'Ll',img:'Ll.png',snd:'letterL.mp3',a:['lantern','leaf','lemon','lilypad','lion','log','lollipop','lotus'],i:['lantern.png','leaf.png','lemon.jpeg','lilypad.jpg','lion.png','log.png','lollipop.png','lotus.png','jelly.jpeg','kitten.jpg']},
+{t:'trace',L:'Ll',snd:'letterL.mp3'}
+];
+let r=0;
+function narrate(txt){speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(txt));}
+function play(s){new Audio('assets/'+s).play();}
+function sh(a){return [...a].sort(()=>Math.random()-0.5);}
+function load(){
+if(r>=rounds.length){document.getElementById('game').style.display='none';document.getElementById('end').style.display='flex';return;}
+let x=rounds[r],c=document.getElementById('content');
+if(x.t==='select'){
+let need=x.a.length,got=0,wrongs=0;
+c.innerHTML=`<div class='question'>Identify the letter, listen to the sound and tap all pictures beginning with ${x.L} <span class='spk' onclick="play('${x.snd}')">🔊</span></div>
+<div class='layout'><div class='left'><img src='assets/${x.img}'></div><div class='right' id='grid'></div></div>`;
+let g=document.getElementById('grid');
+sh(x.i).forEach(f=>{
+let d=document.createElement('div');d.className='card';d.innerHTML=`<img src="assets/${f}">`;
+d.onclick=()=>{
+let n=f.split('.')[0];
+if(x.a.includes(n)){
+d.style.visibility='hidden';got++;correct.play();
+if(got===need){clap.play();setTimeout(()=>{r++;load();},1200);}
+}else{
+wrong.play();wrongs++;d.classList.add('wiggle');setTimeout(()=>d.classList.remove('wiggle'),300);
+if(wrongs>=2){document.querySelectorAll('.card').forEach(cd=>{let src=cd.querySelector('img').src; x.a.forEach(a=>{if(src.includes(a))cd.classList.add('glow');});});}
+}
+};
+g.appendChild(d);
+});
+narrate("Tap all pictures beginning with "+x.L);
+}else{
+c.innerHTML=`<div class='question'>Listen and write letter ${x.L} <span class='spk' onclick="play('${x.snd}')">🔊</span></div>
+<div class='trace'><canvas id='cv'></canvas><br><button onclick='doneTrace()'>Done</button></div>`;
+setupCanvas();
+narrate("Write letter "+x.L);
+}
+}
+function doneTrace(){correct.play();clap.play();setTimeout(()=>{r++;load();},1000);}
+function setupCanvas(){
+let cv=document.getElementById('cv');cv.width=cv.offsetWidth;cv.height=cv.offsetHeight;
+let ctx=cv.getContext('2d');ctx.lineWidth=6;let draw=false;
+const p=e=>{let r=cv.getBoundingClientRect();let t=e.touches?e.touches[0]:e;return{x:t.clientX-r.left,y:t.clientY-r.top}};
+cv.onmousedown=e=>{draw=true;let m=p(e);ctx.beginPath();ctx.moveTo(m.x,m.y)};
+cv.onmousemove=e=>{if(!draw)return;let m=p(e);ctx.lineTo(m.x,m.y);ctx.stroke();};
+cv.onmouseup=()=>draw=false;
+cv.ontouchstart=e=>{draw=true;let m=p(e);ctx.beginPath();ctx.moveTo(m.x,m.y)};
+cv.ontouchmove=e=>{e.preventDefault();if(!draw)return;let m=p(e);ctx.lineTo(m.x,m.y);ctx.stroke();};
+cv.ontouchend=()=>draw=false;
+}
+const correct=document.getElementById('correct'),wrong=document.getElementById('wrong'),clap=document.getElementById('clap');
+setTimeout(()=>{document.getElementById('splash').style.display='none';document.getElementById('game').style.display='block';load();},5000);
+</script>
+</body>
+</html>
