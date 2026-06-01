@@ -68,15 +68,15 @@ cursor:pointer; border:3px solid #ffb347; font-size:1.5em; user-select:none; tra
 <script>
 let currentRound=0;
 const rounds=[
-  {type:'memory', letters:['Mm','Nn','Oo','Pp'], pics:['milk.png','napkin.png','octopus.png','paintbrush.png'], question:'Flip over cards to find matching pairs of letter and picture card.', questionVoice:'assets/voice_round1.mp3'},
-  {type:'tracing', letter:'M', sound:'assets/letterM.mp3', question:'Listen to the letter sound and write the letter Mm.', ref:'assets/Mm.png', questionVoice:'assets/voice_round2.mp3'},
-  {type:'memory', letters:['Mm','Nn','Oo','Pp'], pics:['mirror.png','nest.png','olive.jpg','panda.png'], question:'Flip over cards to find matching pairs of letter and picture card.', questionVoice:'assets/voice_round3.mp3'},
-  {type:'tracing', letter:'N', sound:'assets/letterN.mp3', question:'Listen to the letter sound and write the letter Nn.', ref:'assets/Nn.png', questionVoice:'assets/voice_round4.mp3'},
-  {type:'memory', letters:['Mm','Nn','Oo','Pp'], pics:['monkey.png','net.png','onion.png','parrot.png'], question:'Flip over cards to find matching pairs of letter and picture card.', questionVoice:'assets/voice_round5.mp3'},
-  {type:'tracing', letter:'O', sound:'assets/letterO.mp3', question:'Listen to the letter sound and write the letter Oo.', ref:'assets/Oo.png', questionVoice:'assets/voice_round6.mp3'},
-  {type:'memory', letters:['Mm','Nn','Oo','Pp'], pics:['mountain.png','newspaper.png','orange.png','pumpkin.png'], question:'Flip over cards to find matching pairs of letter and picture card.', questionVoice:'assets/voice_round7.mp3'},
-  {type:'tracing', letter:'P', sound:'assets/letterP.mp3', question:'Listen to the letter sound and write the letter Pp.', ref:'assets/Pp.png', questionVoice:'assets/voice_round8.mp3'},
-  {type:'memory', letters:['Mm','Nn','Oo','Pp'], pics:['mushroom.png','nose.png','ostrich.png','purse.png'], question:'Flip over cards to find matching pairs of letter and picture card.', questionVoice:'assets/voice_round9.mp3'}
+  {type:'memory', letters:['Mm','Nn','Oo','Pp'], pics:['milk.png','napkin.png','octopus.png','paintbrush.png'], question:'Flip over cards to find matching pairs of letter and picture card.'},
+  {type:'tracing', letter:'M', sound:'assets/letterM.mp3', question:'Listen to the letter sound and write the letter Mm.', ref:'assets/Mm.png'},
+  {type:'memory', letters:['Mm','Nn','Oo','Pp'], pics:['mirror.png','nest.png','olive.jpg','panda.png'], question:'Flip over cards to find matching pairs of letter and picture card.'},
+  {type:'tracing', letter:'N', sound:'assets/letterN.mp3', question:'Listen to the letter sound and write the letter Nn.', ref:'assets/Nn.png'},
+  {type:'memory', letters:['Mm','Nn','Oo','Pp'], pics:['monkey.png','net.png','onion.png','parrot.png'], question:'Flip over cards to find matching pairs of letter and picture card.'},
+  {type:'tracing', letter:'O', sound:'assets/letterO.mp3', question:'Listen to the letter sound and write the letter Oo.', ref:'assets/Oo.png'},
+  {type:'memory', letters:['Mm','Nn','Oo','Pp'], pics:['mountain.png','newspaper.png','orange.png','pumpkin.png'], question:'Flip over cards to find matching pairs of letter and picture card.'},
+  {type:'tracing', letter:'P', sound:'assets/letterP.mp3', question:'Listen to the letter sound and write the letter Pp.', ref:'assets/Pp.png'},
+  {type:'memory', letters:['Mm','Nn','Oo','Pp'], pics:['mushroom.png','nose.png','ostrich.png','purse.png'], question:'Flip over cards to find matching pairs of letter and picture card.'}
 ];
 
 const splash=document.getElementById('splash');
@@ -93,36 +93,33 @@ const letterRef=document.getElementById('letterRef');
 const soundBtn=document.getElementById('soundBtn');
 const canvas=document.getElementById('tracingCanvas');
 const ctx=canvas.getContext('2d');
-const voiceAudio=document.getElementById('voiceAudio');
 const correctAudio=document.getElementById('correctAudio');
 const wrongAudio=document.getElementById('wrongAudio');
 const clapAudio=document.getElementById('clapAudio');
 const confettiCanvas=document.getElementById('confettiCanvas');
 const confettiCtx=confettiCanvas.getContext('2d');
-let confettiActive=false;
 
 let firstCard=null, secondCard=null, wrongAttempts=0, drawing=false;
+let confettiActive=false;
 
 splash.style.display='flex';
 setTimeout(()=>{ splash.style.display='none'; game.style.display='flex'; startRound(); },5000);
 
-hearAgainBtn.addEventListener('click', playVoice);
+hearAgainBtn.addEventListener('click', ()=>{ speakText(rounds[currentRound].question); });
 playAgainBtn.addEventListener('click', ()=>{
   confettiActive=false;
   confettiCtx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
   currentRound=0; endScreen.style.display='none'; game.style.display='flex'; startRound();
 });
 doneBtn.addEventListener('click', ()=>{if(rounds[currentRound].type==='tracing') nextRound();});
-soundBtn.addEventListener('click', ()=>{ if(rounds[currentRound].type==='tracing'){ voiceAudio.src=rounds[currentRound].sound; voiceAudio.play(); } });
+soundBtn.addEventListener('click', ()=>{ if(rounds[currentRound].type==='tracing'){ const a=new Audio(rounds[currentRound].sound); a.play(); } });
 
-// allow mobile playback
-document.body.addEventListener('touchstart', ()=>{ voiceAudio.play().then(()=>voiceAudio.pause()); }, {once:true});
-
-function playVoice(){ 
-  const round = rounds[currentRound];
-  if(round.questionVoice){ 
-    voiceAudio.src = round.questionVoice; 
-    voiceAudio.play();
+// TTS for question
+function speakText(text){
+  if('speechSynthesis' in window){
+    const utter=new SpeechSynthesisUtterance(text);
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utter);
   }
 }
 
@@ -132,7 +129,8 @@ function startRound(){
   memoryCards.innerHTML=''; tracingArea.style.display='none';
   firstCard=null; secondCard=null; wrongAttempts=0;
   confettiActive=false; confettiCtx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
-  playVoice();
+
+  speakText(round.question);
 
   if(round.type==='memory'){
     memoryCards.style.display='grid';
@@ -155,14 +153,7 @@ function startRound(){
   }
 }
 
-// tracing
-canvas.addEventListener('pointerdown', e => { drawing=true; const rect=canvas.getBoundingClientRect(); ctx.beginPath(); ctx.moveTo(e.clientX-rect.left, e.clientY-rect.top); });
-canvas.addEventListener('pointerup', ()=>{drawing=false; ctx.beginPath();});
-canvas.addEventListener('pointerout', ()=>{drawing=false; ctx.beginPath();});
-canvas.addEventListener('pointermove', e=>{ if(!drawing) return; const rect=canvas.getBoundingClientRect(); ctx.lineWidth=5; ctx.strokeStyle='black'; ctx.lineCap='round'; ctx.lineTo(e.clientX-rect.left,e.clientY-rect.top); ctx.stroke(); ctx.beginPath(); ctx.moveTo(e.clientX-rect.left,e.clientY-rect.top); });
-eraserBtn.addEventListener('click',()=>{ const bgImg=new Image(); bgImg.src='assets/redandblueline.png'; bgImg.onload = ()=>{ ctx.clearRect(0,0,canvas.width,canvas.height); ctx.drawImage(bgImg,0,0,canvas.width,canvas.height); }});
-
-// memory game
+// Memory game
 function revealCard(card,round){
   if(card.classList.contains('correct')) return;
   if(card.dataset.revealed==='false'){ card.dataset.revealed='true';
@@ -170,6 +161,7 @@ function revealCard(card,round){
     if(card.dataset.pic) card.querySelector('img').style.display='block';
   } else return;
 
+  // handle invalid first selection
   if(!firstCard && card.dataset.pic){
     setTimeout(()=>{ card.dataset.revealed='false'; card.querySelector('img').style.display='none'; },700);
     wrongAudio.play();
