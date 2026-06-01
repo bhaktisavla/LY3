@@ -3,301 +3,194 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Letter Mm to Pp</title>
+<title>Letter Mm to Pp Game</title>
 <style>
-  body {
-    font-family: 'Comic Sans MS', cursive, sans-serif;
-    background-color: #ffe8d6;
-    text-align: center;
-    margin: 0;
-    padding: 0;
-  }
-  #game-container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
-    position: relative;
-  }
-  h1 {
-    font-size: 2em;
-    color: #5b3481;
-  }
-  .instruction {
-    font-size: 1.2em;
-    margin-bottom: 20px;
-  }
-  .hear-btn {
-    background-color: #ff704d;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    font-size: 1em;
-    cursor: pointer;
-    border-radius: 5px;
-  }
-  .hear-btn img {
-    width: 20px;
-    vertical-align: middle;
-    margin-right: 5px;
-  }
-  canvas {
-    border: 2px solid #ccc;
-    border-radius: 10px;
-    touch-action: none;
-    margin-bottom: 10px;
-    background-size: cover;
-    width: 90%;
-    max-width: 600px;
-    height: auto;
-  }
-  .letter-img {
-    width: 80px;
-    margin: 10px 0;
-  }
-  .card-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 100px);
-    grid-gap: 10px;
-    justify-content: center;
-    margin: 20px 0;
-  }
-  .card {
-    width: 100px;
-    height: 100px;
-    border: 2px solid orange;
-    border-radius: 10px;
-    font-size: 2em;
-    line-height: 100px;
-    cursor: pointer;
-    background-color: #fff0f0;
-    position: relative;
-  }
-  .card img {
-    width: 80px;
-    height: 80px;
-    display: none;
-    margin-top: 10px;
-  }
-  .card.flipped img {
-    display: block;
-  }
-  .card.correct {
-    border-color: green;
-    background-color: #d0ffd0;
-  }
-  #eraser, #done {
-    padding: 10px 20px;
-    margin: 5px;
-    font-size: 1em;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    background-color: #ff9999;
-    color: white;
-  }
-  #done-memory {
-    padding: 10px 20px;
-    margin-top: 10px;
-    display: none;
-    font-size: 1em;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    background-color: #66cc66;
-    color: white;
-  }
+  body { margin:0; font-family: 'Comic Sans MS', cursive, sans-serif; background:#fde9d9; text-align:center; }
+  #logoScreen, #gameScreen, #endScreen { display:none; }
+  #logoScreen img { width:200px; margin-top:100px; }
+  .roundTitle { font-size:2rem; margin-top:20px; color:#4b2e83; }
+  .instruction { font-size:1.2rem; margin:10px; }
+  .hearAgain { background:#ff7f50; color:white; border:none; padding:8px 15px; border-radius:5px; font-size:1rem; cursor:pointer; margin-left:10px; }
+  .cards, .tracingContainer { display:flex; flex-wrap:wrap; justify-content:center; margin-top:20px; }
+  .card { width:80px; height:80px; border:3px solid orange; margin:10px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; background:#fff0f0; cursor:pointer; position:relative; }
+  .card.flipped { background:#cfffcc; border-color:green; }
+  canvas { border:2px solid #ccc; background: url('assets/redandblueline.png') center/cover no-repeat; margin-top:10px; touch-action: none; }
+  #eraser, #done { background:#ff7f7f; color:white; border:none; padding:8px 15px; margin:10px; border-radius:5px; font-size:1rem; cursor:pointer; }
+  #letterImg { width:80px; display:block; margin: 0 auto; }
+  #letterSound { cursor:pointer; margin-top:5px; }
 </style>
 </head>
 <body>
-<div id="game-container">
-  <h1>Letter Mm to Pp</h1>
-  <div class="instruction" id="instruction">Loading...</div>
-  <button class="hear-btn" id="hear-question"><img src="assets/speaker.png"> Hear Again</button>
-  
-  <!-- Trace Round Elements -->
-  <div id="trace-container" style="display:none;">
-    <img id="letter-image" class="letter-img" src="" alt="Letter">
-    <br>
-    <button class="hear-btn" id="hear-letter"><img src="assets/speaker.png"> Hear Letter</button>
-    <br>
-    <canvas id="trace-canvas"></canvas>
-    <br>
+
+<!-- Logo Screen -->
+<div id="logoScreen">
+  <img src="assets/innovine-logo.png" alt="Innovine Logo">
+</div>
+
+<!-- Game Screen -->
+<div id="gameScreen">
+  <div class="roundTitle" id="roundTitle"></div>
+  <div class="instruction" id="instructionText"></div>
+  <button class="hearAgain" id="hearAgainBtn"><img src="https://img.icons8.com/ios-filled/24/ffffff/speaker.png"/> Hear Again</button>
+
+  <!-- Memory Cards -->
+  <div class="cards" id="memoryCards"></div>
+
+  <!-- Tracing -->
+  <img id="letterImg" src="" alt="Letter">
+  <img id="letterSound" src="https://img.icons8.com/ios-filled/24/000000/speaker.png" alt="Play Letter Sound">
+  <div class="tracingContainer" id="tracingContainer">
+    <canvas id="tracingCanvas" width="350" height="200"></canvas>
     <button id="eraser">Eraser</button>
     <button id="done">Done</button>
   </div>
+</div>
 
-  <!-- Memory Round Elements -->
-  <div id="memory-container" style="display:none;">
-    <div class="card-grid" id="card-grid"></div>
-    <button id="done-memory">Next Round</button>
-  </div>
+<!-- End Screen -->
+<div id="endScreen">
+  <h1>Good Job!</h1>
+  <button id="playAgain">Play Again</button>
 </div>
 
 <script>
 const rounds = [
-  { type: 'memory', questionAudio: 'assets/question1.mp3', cards: [
-    { letter: 'Mm', image: 'assets/mountain.png' },
-    { letter: 'Nn', image: 'assets/newspaper.png' },
-    { letter: 'Oo', image: 'assets/olive.jpg' },
-    { letter: 'Pp', image: 'assets/panda.png' }
-  ]},
-  { type: 'trace', letter: 'Mm', letterImage: 'assets/Mm.png', letterAudio: 'assets/letterM.mp3', questionAudio: 'assets/question2.mp3' },
-  { type: 'memory', questionAudio: 'assets/question3.mp3', cards: [
-    { letter: 'Mm', image: 'assets/napkin.png' },
-    { letter: 'Nn', image: 'assets/nest.png' },
-    { letter: 'Oo', image: 'assets/onion.png' },
-    { letter: 'Pp', image: 'assets/purse.png' }
-  ]},
-  { type: 'trace', letter: 'Nn', letterImage: 'assets/Nn.png', letterAudio: 'assets/letterN.mp3', questionAudio: 'assets/question4.mp3' },
-  { type: 'memory', questionAudio: 'assets/question5.mp3', cards: [
-    { letter: 'Mm', image: 'assets/mushroom.png' },
-    { letter: 'Nn', image: 'assets/milk.png' },
-    { letter: 'Oo', image: 'assets/octopus.png' },
-    { letter: 'Pp', image: 'assets/paintbrush.png' }
-  ]},
-  { type: 'trace', letter: 'Oo', letterImage: 'assets/Oo.png', letterAudio: 'assets/letterO.mp3', questionAudio: 'assets/question6.mp3' },
-  { type: 'memory', questionAudio: 'assets/question7.mp3', cards: [
-    { letter: 'Mm', image: 'assets/monkey.png' },
-    { letter: 'Nn', image: 'assets/mirror.png' },
-    { letter: 'Oo', image: 'assets/olive.jpg' },
-    { letter: 'Pp', image: 'assets/parrot.png' }
-  ]},
-  { type: 'trace', letter: 'Pp', letterImage: 'assets/Pp.png', letterAudio: 'assets/letterP.mp3', questionAudio: 'assets/question8.mp3' },
-  { type: 'memory', questionAudio: 'assets/question9.mp3', cards: [
-    { letter: 'Mm', image: 'assets/mountain.png' },
-    { letter: 'Nn', image: 'assets/newspaper.png' },
-    { letter: 'Oo', image: 'assets/ostrich.png' },
-    { letter: 'Pp', image: 'assets/purse.png' }
-  ]}
+  { type:'memory', letters:['Mm','Nn','Oo','Pp'], images:['napkin.png','milk.png','olive.jpg','octopus.png'], question:'Flip over cards to find matching pairs of letter and picture card.' },
+  { type:'trace', letter:'Mm', letterAudio:'assets/letterM.mp3', question:'Listen to the letter sound and write the letter Mm.' },
+  { type:'memory', letters:['Mm','Nn','Oo','Pp'], images:['mountain.png','newspaper.png','pumpkin.png','panda.png'], question:'Flip over cards to find matching pairs of letter and picture card.' },
+  { type:'trace', letter:'Nn', letterAudio:'assets/letterN.mp3', question:'Listen to the letter sound and write the letter Nn.' },
+  { type:'memory', letters:['Mm','Nn','Oo','Pp'], images:['napkin.png','milk.png','onion.png','octopus.png'], question:'Flip over cards to find matching pairs of letter and picture card.' },
+  { type:'trace', letter:'Oo', letterAudio:'assets/letterO.mp3', question:'Listen to the letter sound and write the letter Oo.' },
+  { type:'memory', letters:['Mm','Nn','Oo','Pp'], images:['napkin.png','milk.png','mushroom.png','octopus.png'], question:'Flip over cards to find matching pairs of letter and picture card.' },
+  { type:'trace', letter:'Pp', letterAudio:'assets/letterP.mp3', question:'Listen to the letter sound and write the letter Pp.' },
+  { type:'memory', letters:['Mm','Nn','Oo','Pp'], images:['mountain.png','napkin.png','orange.png','ostrich.png'], question:'Flip over cards to find matching pairs of letter and picture card.' }
 ];
 
 let currentRound = 0;
+let selectedCards = [];
 
-// Elements
-const instructionEl = document.getElementById('instruction');
-const traceContainer = document.getElementById('trace-container');
-const memoryContainer = document.getElementById('memory-container');
-const letterImg = document.getElementById('letter-image');
-const traceCanvas = document.getElementById('trace-canvas');
-const hearQuestionBtn = document.getElementById('hear-question');
-const hearLetterBtn = document.getElementById('hear-letter');
+const logoScreen = document.getElementById('logoScreen');
+const gameScreen = document.getElementById('gameScreen');
+const memoryCards = document.getElementById('memoryCards');
+const roundTitle = document.getElementById('roundTitle');
+const instructionText = document.getElementById('instructionText');
+const hearAgainBtn = document.getElementById('hearAgainBtn');
+const letterImg = document.getElementById('letterImg');
+const letterSound = document.getElementById('letterSound');
+const tracingCanvas = document.getElementById('tracingCanvas');
 const eraserBtn = document.getElementById('eraser');
 const doneBtn = document.getElementById('done');
-const cardGrid = document.getElementById('card-grid');
-const doneMemoryBtn = document.getElementById('done-memory');
+const endScreen = document.getElementById('endScreen');
+const playAgainBtn = document.getElementById('playAgain');
+const ctx = tracingCanvas.getContext('2d');
 
-const ctx = traceCanvas.getContext('2d');
-ctx.lineWidth = 4;
-ctx.lineCap = 'round';
-let drawing = false;
+let isDrawing = false;
 
-// Make canvas responsive
-function resizeCanvas() {
-  traceCanvas.width = Math.min(window.innerWidth * 0.9, 600);
-  traceCanvas.height = traceCanvas.width * 0.5;
-  if (rounds[currentRound].type === 'trace') {
-    traceCanvas.style.backgroundImage = "url('assets/redandblueline.png')";
-    traceCanvas.style.backgroundSize = '100% 100%';
-  }
-}
+// Initialize logo
+logoScreen.style.display = 'block';
+setTimeout(() => { logoScreen.style.display = 'none'; startRound(); }, 5000);
 
-window.addEventListener('resize', resizeCanvas);
-
-function playAudio(src) {
-  const audio = new Audio(src);
-  audio.play();
-  return audio;
-}
-
-function startRound() {
-  traceContainer.style.display = 'none';
-  memoryContainer.style.display = 'none';
-  doneMemoryBtn.style.display = 'none';
-  ctx.clearRect(0, 0, traceCanvas.width, traceCanvas.height);
-  
+// Start current round
+function startRound(){
+  memoryCards.innerHTML=''; ctx.clearRect(0,0,tracingCanvas.width,tracingCanvas.height);
+  roundTitle.textContent = `Round ${currentRound+1}`;
   const round = rounds[currentRound];
-  
-  // Auto-play question
-  playAudio(round.questionAudio);
-  instructionEl.textContent = 'Listen to the question above!';
-  
-  if (round.type === 'trace') {
-    traceContainer.style.display = 'block';
-    letterImg.src = round.letterImage;
-    resizeCanvas();
-    
-    hearLetterBtn.onclick = () => playAudio(round.letterAudio);
-    hearQuestionBtn.onclick = () => playAudio(round.questionAudio);
-    
-    traceCanvas.onpointerdown = (e) => { drawing = true; ctx.beginPath(); ctx.moveTo(e.offsetX, e.offsetY); }
-    traceCanvas.onpointermove = (e) => { if (drawing) ctx.lineTo(e.offsetX, e.offsetY); ctx.stroke(); }
-    traceCanvas.onpointerup = () => { drawing = false; ctx.beginPath(); }
-    
-    eraserBtn.onclick = () => ctx.clearRect(0, 0, traceCanvas.width, traceCanvas.height);
-    doneBtn.onclick = () => { currentRound++; nextRound(); }
-    
-  } else if (round.type === 'memory') {
-    memoryContainer.style.display = 'block';
-    hearQuestionBtn.onclick = () => playAudio(round.questionAudio);
-    generateMemoryCards(round.cards);
-  }
-}
+  instructionText.textContent = round.question;
+  gameScreen.style.display = 'block';
 
-function generateMemoryCards(cards) {
-  cardGrid.innerHTML = '';
-  const shuffled = [...cards, ...cards].sort(() => 0.5 - Math.random());
-  let flipped = [];
-  
-  shuffled.forEach((c) => {
-    const div = document.createElement('div');
-    div.className = 'card';
-    div.dataset.letter = c.letter;
-    
-    const img = document.createElement('img');
-    img.src = c.image;
-    div.appendChild(img);
-    
-    div.onclick = () => {
-      if (div.classList.contains('flipped') || div.classList.contains('correct')) return;
-      div.classList.add('flipped');
-      flipped.push(div);
-      
-      if (flipped.length === 2) {
-        const [first, second] = flipped;
-        if (first.dataset.letter === second.dataset.letter) {
-          first.classList.add('correct'); second.classList.add('correct');
-          playAudio('assets/correct.mp3');
-        } else {
-          setTimeout(() => {
-            first.classList.remove('flipped');
-            second.classList.remove('flipped');
-            playAudio('assets/wrong.mp3');
-          }, 800);
-        }
-        flipped = [];
-        setTimeout(() => {
-          if ([...cardGrid.children].every(card => card.classList.contains('correct'))) {
-            doneMemoryBtn.style.display = 'inline-block';
-          }
-        }, 900);
-      }
-    };
-    cardGrid.appendChild(div);
-  });
-  doneMemoryBtn.onclick = () => { currentRound++; nextRound(); }
-}
+  // Play question audio automatically
+  if(round.type === 'memory') playAudio(`assets/question${currentRound+1}.mp3`);
+  else if(round.type === 'trace') playAudio(`assets/question${currentRound+1}.mp3`);
 
-function nextRound() {
-  if (currentRound >= rounds.length) {
-    instructionEl.textContent = 'Congratulations! You finished all rounds!';
-    memoryContainer.style.display = 'none';
-    traceContainer.style.display = 'none';
+  hearAgainBtn.onclick = ()=> playAudio(`assets/question${currentRound+1}.mp3`);
+
+  if(round.type==='memory'){
+    const shuffled = shuffleArray([...round.letters.map((l,i)=>({letter:l,image:round.images[i]}))]);
+    shuffled.forEach((cardObj,i)=>{
+      const card = document.createElement('div');
+      card.className='card';
+      card.dataset.letter=cardObj.letter;
+      card.dataset.image=cardObj.image;
+      card.addEventListener('click', ()=> flipCard(card));
+      memoryCards.appendChild(card);
+    });
   } else {
-    startRound();
+    // Tracing round setup
+    letterImg.src = `assets/${round.letter}.png`;
+    letterSound.onclick = ()=> playAudio(round.letterAudio);
+    enableTracing();
   }
 }
 
-window.onload = startRound;
+// Memory card flip logic
+function flipCard(card){
+  if(card.classList.contains('flipped')) return;
+  if(selectedCards.length===1 && selectedCards[0].dataset.letter===card.dataset.letter) return;
+  
+  card.classList.add('flipped'); card.textContent = card.dataset.letter;
+  selectedCards.push(card);
+
+  if(selectedCards.length===2){
+    setTimeout(()=>{
+      const [first,second] = selectedCards;
+      if(first.dataset.letter === second.dataset.letter){
+        // correct
+        playAudio('assets/correct.mp3');
+        first.style.borderColor='green';
+        second.style.borderColor='green';
+      } else {
+        // wrong
+        playAudio('assets/wrong.mp3');
+        first.classList.remove('flipped'); first.textContent='';
+        second.classList.remove('flipped'); second.textContent='';
+      }
+      selectedCards = [];
+      if(document.querySelectorAll('.card:not(.flipped)').length===0){
+        nextRound();
+      }
+    },600);
+  }
+}
+
+// Tracing
+function enableTracing(){
+  let round = rounds[currentRound];
+  ctx.lineWidth = 4;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  tracingCanvas.onpointerdown = e=> { isDrawing=true; ctx.beginPath(); ctx.moveTo(e.offsetX,e.offsetY);}
+  tracingCanvas.onpointermove = e=> { if(isDrawing) { ctx.lineTo(e.offsetX,e.offsetY); ctx.stroke(); } }
+  tracingCanvas.onpointerup = e=> { isDrawing=false; }
+  eraserBtn.onclick = ()=> ctx.clearRect(0,0,tracingCanvas.width,tracingCanvas.height);
+  doneBtn.onclick = ()=> nextRound();
+}
+
+// Next round
+function nextRound(){
+  currentRound++;
+  if(currentRound>=rounds.length){
+    gameScreen.style.display='none';
+    endScreen.style.display='block';
+  } else startRound();
+}
+
+// Play audio
+function playAudio(path){
+  let audio = new Audio(path);
+  audio.play();
+}
+
+// Play again
+playAgainBtn.onclick = ()=> { currentRound=0; endScreen.style.display='none'; startRound(); }
+
+// Shuffle helper
+function shuffleArray(array){
+  for(let i=array.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [array[i],array[j]]=[array[j],array[i]];
+  }
+  return array;
+}
 </script>
 </body>
 </html>
