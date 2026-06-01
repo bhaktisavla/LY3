@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Letter Mm to Pp</title>
+<style>
+  body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background-color: #ffe8d6;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+  }
+  #game-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+  }
+  h1 {
+    font-size: 2em;
+    color: #5b3481;
+  }
+  .instruction {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+  }
+  .hear-btn {
+    background-color: #ff704d;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  .hear-btn img {
+    width: 20px;
+    vertical-align: middle;
+    margin-right: 5px;
+  }
+  canvas {
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    touch-action: none;
+    margin-bottom: 10px;
+    background-size: cover;
+    width: 90%;
+    max-width: 600px;
+    height: auto;
+  }
+  .letter-img {
+    width: 80px;
+    margin: 10px 0;
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 100px);
+    grid-gap: 10px;
+    justify-content: center;
+    margin: 20px 0;
+  }
+  .card {
+    width: 100px;
+    height: 100px;
+    border: 2px solid orange;
+    border-radius: 10px;
+    font-size: 2em;
+    line-height: 100px;
+    cursor: pointer;
+    background-color: #fff0f0;
+    position: relative;
+  }
+  .card img {
+    width: 80px;
+    height: 80px;
+    display: none;
+    margin-top: 10px;
+  }
+  .card.flipped img {
+    display: block;
+  }
+  .card.correct {
+    border-color: green;
+    background-color: #d0ffd0;
+  }
+  #eraser, #done {
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 1em;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    background-color: #ff9999;
+    color: white;
+  }
+  #done-memory {
+    padding: 10px 20px;
+    margin-top: 10px;
+    display: none;
+    font-size: 1em;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    background-color: #66cc66;
+    color: white;
+  }
+</style>
+</head>
+<body>
+<div id="game-container">
+  <h1>Letter Mm to Pp</h1>
+  <div class="instruction" id="instruction">Loading...</div>
+  <button class="hear-btn" id="hear-question"><img src="assets/speaker.png"> Hear Again</button>
+  
+  <!-- Trace Round Elements -->
+  <div id="trace-container" style="display:none;">
+    <img id="letter-image" class="letter-img" src="" alt="Letter">
+    <br>
+    <button class="hear-btn" id="hear-letter"><img src="assets/speaker.png"> Hear Letter</button>
+    <br>
+    <canvas id="trace-canvas"></canvas>
+    <br>
+    <button id="eraser">Eraser</button>
+    <button id="done">Done</button>
+  </div>
+
+  <!-- Memory Round Elements -->
+  <div id="memory-container" style="display:none;">
+    <div class="card-grid" id="card-grid"></div>
+    <button id="done-memory">Next Round</button>
+  </div>
+</div>
+
+<script>
+const rounds = [
+  { type: 'memory', questionAudio: 'assets/question1.mp3', cards: [
+    { letter: 'Mm', image: 'assets/mountain.png' },
+    { letter: 'Nn', image: 'assets/newspaper.png' },
+    { letter: 'Oo', image: 'assets/olive.jpg' },
+    { letter: 'Pp', image: 'assets/panda.png' }
+  ]},
+  { type: 'trace', letter: 'Mm', letterImage: 'assets/Mm.png', letterAudio: 'assets/letterM.mp3', questionAudio: 'assets/question2.mp3' },
+  { type: 'memory', questionAudio: 'assets/question3.mp3', cards: [
+    { letter: 'Mm', image: 'assets/napkin.png' },
+    { letter: 'Nn', image: 'assets/nest.png' },
+    { letter: 'Oo', image: 'assets/onion.png' },
+    { letter: 'Pp', image: 'assets/purse.png' }
+  ]},
+  { type: 'trace', letter: 'Nn', letterImage: 'assets/Nn.png', letterAudio: 'assets/letterN.mp3', questionAudio: 'assets/question4.mp3' },
+  { type: 'memory', questionAudio: 'assets/question5.mp3', cards: [
+    { letter: 'Mm', image: 'assets/mushroom.png' },
+    { letter: 'Nn', image: 'assets/milk.png' },
+    { letter: 'Oo', image: 'assets/octopus.png' },
+    { letter: 'Pp', image: 'assets/paintbrush.png' }
+  ]},
+  { type: 'trace', letter: 'Oo', letterImage: 'assets/Oo.png', letterAudio: 'assets/letterO.mp3', questionAudio: 'assets/question6.mp3' },
+  { type: 'memory', questionAudio: 'assets/question7.mp3', cards: [
+    { letter: 'Mm', image: 'assets/monkey.png' },
+    { letter: 'Nn', image: 'assets/mirror.png' },
+    { letter: 'Oo', image: 'assets/olive.jpg' },
+    { letter: 'Pp', image: 'assets/parrot.png' }
+  ]},
+  { type: 'trace', letter: 'Pp', letterImage: 'assets/Pp.png', letterAudio: 'assets/letterP.mp3', questionAudio: 'assets/question8.mp3' },
+  { type: 'memory', questionAudio: 'assets/question9.mp3', cards: [
+    { letter: 'Mm', image: 'assets/mountain.png' },
+    { letter: 'Nn', image: 'assets/newspaper.png' },
+    { letter: 'Oo', image: 'assets/ostrich.png' },
+    { letter: 'Pp', image: 'assets/purse.png' }
+  ]}
+];
+
+let currentRound = 0;
+
+// Elements
+const instructionEl = document.getElementById('instruction');
+const traceContainer = document.getElementById('trace-container');
+const memoryContainer = document.getElementById('memory-container');
+const letterImg = document.getElementById('letter-image');
+const traceCanvas = document.getElementById('trace-canvas');
+const hearQuestionBtn = document.getElementById('hear-question');
+const hearLetterBtn = document.getElementById('hear-letter');
+const eraserBtn = document.getElementById('eraser');
+const doneBtn = document.getElementById('done');
+const cardGrid = document.getElementById('card-grid');
+const doneMemoryBtn = document.getElementById('done-memory');
+
+const ctx = traceCanvas.getContext('2d');
+ctx.lineWidth = 4;
+ctx.lineCap = 'round';
+let drawing = false;
+
+// Make canvas responsive
+function resizeCanvas() {
+  traceCanvas.width = Math.min(window.innerWidth * 0.9, 600);
+  traceCanvas.height = traceCanvas.width * 0.5;
+  if (rounds[currentRound].type === 'trace') {
+    traceCanvas.style.backgroundImage = "url('assets/redandblueline.png')";
+    traceCanvas.style.backgroundSize = '100% 100%';
+  }
+}
+
+window.addEventListener('resize', resizeCanvas);
+
+function playAudio(src) {
+  const audio = new Audio(src);
+  audio.play();
+  return audio;
+}
+
+function startRound() {
+  traceContainer.style.display = 'none';
+  memoryContainer.style.display = 'none';
+  doneMemoryBtn.style.display = 'none';
+  ctx.clearRect(0, 0, traceCanvas.width, traceCanvas.height);
+  
+  const round = rounds[currentRound];
+  
+  // Auto-play question
+  playAudio(round.questionAudio);
+  instructionEl.textContent = 'Listen to the question above!';
+  
+  if (round.type === 'trace') {
+    traceContainer.style.display = 'block';
+    letterImg.src = round.letterImage;
+    resizeCanvas();
+    
+    hearLetterBtn.onclick = () => playAudio(round.letterAudio);
+    hearQuestionBtn.onclick = () => playAudio(round.questionAudio);
+    
+    traceCanvas.onpointerdown = (e) => { drawing = true; ctx.beginPath(); ctx.moveTo(e.offsetX, e.offsetY); }
+    traceCanvas.onpointermove = (e) => { if (drawing) ctx.lineTo(e.offsetX, e.offsetY); ctx.stroke(); }
+    traceCanvas.onpointerup = () => { drawing = false; ctx.beginPath(); }
+    
+    eraserBtn.onclick = () => ctx.clearRect(0, 0, traceCanvas.width, traceCanvas.height);
+    doneBtn.onclick = () => { currentRound++; nextRound(); }
+    
+  } else if (round.type === 'memory') {
+    memoryContainer.style.display = 'block';
+    hearQuestionBtn.onclick = () => playAudio(round.questionAudio);
+    generateMemoryCards(round.cards);
+  }
+}
+
+function generateMemoryCards(cards) {
+  cardGrid.innerHTML = '';
+  const shuffled = [...cards, ...cards].sort(() => 0.5 - Math.random());
+  let flipped = [];
+  
+  shuffled.forEach((c) => {
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.dataset.letter = c.letter;
+    
+    const img = document.createElement('img');
+    img.src = c.image;
+    div.appendChild(img);
+    
+    div.onclick = () => {
+      if (div.classList.contains('flipped') || div.classList.contains('correct')) return;
+      div.classList.add('flipped');
+      flipped.push(div);
+      
+      if (flipped.length === 2) {
+        const [first, second] = flipped;
+        if (first.dataset.letter === second.dataset.letter) {
+          first.classList.add('correct'); second.classList.add('correct');
+          playAudio('assets/correct.mp3');
+        } else {
+          setTimeout(() => {
+            first.classList.remove('flipped');
+            second.classList.remove('flipped');
+            playAudio('assets/wrong.mp3');
+          }, 800);
+        }
+        flipped = [];
+        setTimeout(() => {
+          if ([...cardGrid.children].every(card => card.classList.contains('correct'))) {
+            doneMemoryBtn.style.display = 'inline-block';
+          }
+        }, 900);
+      }
+    };
+    cardGrid.appendChild(div);
+  });
+  doneMemoryBtn.onclick = () => { currentRound++; nextRound(); }
+}
+
+function nextRound() {
+  if (currentRound >= rounds.length) {
+    instructionEl.textContent = 'Congratulations! You finished all rounds!';
+    memoryContainer.style.display = 'none';
+    traceContainer.style.display = 'none';
+  } else {
+    startRound();
+  }
+}
+
+window.onload = startRound;
+</script>
+</body>
+</html>
