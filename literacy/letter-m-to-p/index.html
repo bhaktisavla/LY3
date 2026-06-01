@@ -114,7 +114,7 @@ soundBtn.addEventListener('click', ()=>{ if(rounds[currentRound].type==='tracing
 function playVoice(){ 
   const round = rounds[currentRound]; 
   if(round.type==='memory') voiceAudio.src=round.voice;
-  else voiceAudio.src=round.questionAudio||round.sound; // play question for tracing
+  else voiceAudio.src=round.questionAudio||round.sound; 
   voiceAudio.play();
 }
 
@@ -124,10 +124,7 @@ function startRound(){
   memoryCards.innerHTML=''; tracingArea.style.display='none';
   firstCard=null; secondCard=null; wrongAttempts=0;
 
-  // stop confetti if any
   confettiActive=false; confettiCtx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
-
-  // auto-play question
   playVoice();
 
   if(round.type==='memory'){
@@ -151,12 +148,11 @@ function startRound(){
   }
 }
 
-// tracing events
+// --- tracing ---
 canvas.addEventListener('pointerdown', e => { drawing=true; const rect=canvas.getBoundingClientRect(); ctx.beginPath(); ctx.moveTo(e.clientX-rect.left, e.clientY-rect.top); });
 canvas.addEventListener('pointerup', ()=>{drawing=false; ctx.beginPath();});
 canvas.addEventListener('pointerout', ()=>{drawing=false; ctx.beginPath();});
 canvas.addEventListener('pointermove', e=>{ if(!drawing) return; const rect=canvas.getBoundingClientRect(); ctx.lineWidth=5; ctx.strokeStyle='black'; ctx.lineCap='round'; ctx.lineTo(e.clientX-rect.left,e.clientY-rect.top); ctx.stroke(); ctx.beginPath(); ctx.moveTo(e.clientX-rect.left,e.clientY-rect.top); });
-
 eraserBtn.addEventListener('click',()=>{ const bgImg=new Image(); bgImg.src='assets/redandblueline.png'; bgImg.onload = ()=>{ ctx.clearRect(0,0,canvas.width,canvas.height); ctx.drawImage(bgImg,0,0,canvas.width,canvas.height); }});
 
 function revealCard(card,round){
@@ -165,6 +161,13 @@ function revealCard(card,round){
     if(card.dataset.letter) card.textContent=card.dataset.letter;
     if(card.dataset.pic) card.querySelector('img').style.display='block';
   } else return;
+
+  // --- handle invalid first click ---
+  if(!firstCard && card.dataset.pic){ // picture clicked first
+    setTimeout(()=>{ card.dataset.revealed='false'; card.querySelector('img').style.display='none'; },700);
+    wrongAudio.play();
+    return;
+  }
 
   if(!firstCard) firstCard=card;
   else{
