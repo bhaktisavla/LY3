@@ -45,6 +45,9 @@ const rounds=[
 {t:'s',L:'Ll',img:'Ll.png',snd:'letterL.mp3',a:['lantern','leaf','lemon','lilypad','lion','log','lollipop','lotus'],i:['lantern.png','leaf.png','lemon.jpeg','lilypad.jpg','lion.png','log.png','lollipop.png','lotus.png','jelly.jpg','kitten.jpg']},
 {t:'w',L:'Ll',snd:'letterL.mp3'}
 ];
+
+// Original game method and layout preserved exactly as in uploaded file, only asset file names corrected for insects, jam, jelly
+
 let n=0,ctx,cv;
 function speak(t){if(window.speechSynthesis){speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(t));}}
 function qAgain(t){speak(t)}
