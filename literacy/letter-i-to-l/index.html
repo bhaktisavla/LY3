@@ -19,7 +19,7 @@ body{margin:0;font-family:Arial;background:url('assets/backgroundd.jpg') center/
 .card{background:#fff;border-radius:8px;padding:4px}
 .card img{width:100%;height:80px;object-fit:contain}
 .glow{box-shadow:0 0 12px gold}
-canvas{background:url('assets/redandblueline.png') center/contain no-repeat #fff;border:1px solid #999;width:90%;height:300px;touch-action:none}
+canvas{background:url('assets/redandblueline.png') center/contain no-repeat #fff;border:1px solid #999;width:100%;height:400px;touch-action:none}
 </style>
 </head>
 <body>
@@ -45,8 +45,6 @@ const rounds=[
 {t:'s',L:'Ll',img:'Ll.png',snd:'letterL.mp3',a:['lantern','leaf','lemon','lilypad','lion','log','lollipop','lotus'],i:['lantern.png','leaf.png','lemon.jpeg','lilypad.jpg','lion.png','log.png','lollipop.png','lotus.png','jelly.jpg','kitten.jpg']},
 {t:'w',L:'Ll',snd:'letterL.mp3'}
 ];
-
-// Original uploaded game preserved exactly, only asset file names corrected
 
 let n=0,ctx,cv;
 function speak(t){if(window.speechSynthesis){speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(t));}}
@@ -90,7 +88,7 @@ setupCanvas(); playBoth(q,r.snd);
 function playBoth(q,s){speak(q);setTimeout(()=>new Audio('assets/'+s).play(),1000);}
 function doneWrite(){ok.play();clap.play();setTimeout(()=>{n++;load();},800);}
 function setupCanvas(){
-cv=document.getElementById('cv');cv.width=cv.offsetWidth;cv.height=300;ctx=cv.getContext('2d');ctx.lineWidth=6;
+cv=document.getElementById('cv');cv.width=cv.offsetWidth;cv.height=400;ctx=cv.getContext('2d');ctx.lineWidth=6;
 let d=false;
 const p=e=>{let r=cv.getBoundingClientRect();let t=e.touches?e.touches[0]:e;return{x:t.clientX-r.left,y:t.clientY-r.top};}
 cv.onmousedown=e=>{d=true;let m=p(e);ctx.beginPath();ctx.moveTo(m.x,m.y)}
