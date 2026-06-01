@@ -3,371 +3,158 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Letter Mm to Pp - Memory & Writing Game</title>
+<title>Letter Mm to Pp – Memory & Tracing Game</title>
 <style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: url('assets/backdrop.png') no-repeat center center fixed;
-    background-size: cover;
-    color: #333;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  #logoScreen, #gameScreen, #endScreen {
-    display: none;
-    width: 100%;
-    max-width: 900px;
-    text-align: center;
-    margin-top: 20px;
-  }
-  #logoScreen img {
-    width: 200px;
-    margin-top: 100px;
-  }
-  h1 {
-    font-size: 2rem;
-    margin: 10px 0;
-    color: #4a2caa;
-  }
-  .questionBox {
-    background: rgba(255,255,255,0.9);
-    padding: 10px;
-    border-radius: 15px;
-    margin: 10px 0;
-    position: relative;
-  }
-  .questionBox button {
-    border: none;
-    background: none;
-    font-size: 1.2rem;
-    cursor: pointer;
-  }
-  #memoryGrid {
-    display: grid;
-    grid-template-columns: repeat(4, 120px);
-    grid-gap: 15px;
-    justify-content: center;
-    margin: 20px 0;
-  }
-  .card {
-    width: 120px;
-    height: 120px;
-    border-radius: 15px;
-    background: #fff;
-    box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    position: relative;
-  }
-  .card img {
-    max-width: 100%;
-    max-height: 100%;
-    display: none;
-  }
-  .card.show img {
-    display: block;
-  }
-  .card.correct {
-    border: 4px solid #00b300;
-  }
-  .card.incorrect {
-    animation: shake 0.5s;
-  }
-  @keyframes shake {
-    0% { transform: translateX(0px); }
-    25% { transform: translateX(-5px); }
-    50% { transform: translateX(5px); }
-    75% { transform: translateX(-5px); }
-    100% { transform: translateX(0px); }
-  }
-  #redBlueCanvas {
-    border: 2px solid #000;
-    border-radius: 10px;
-    touch-action: none;
-    margin: 10px 0;
-    background: white;
-  }
-  #controls {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 15px;
-  }
-  button {
-    padding: 10px 15px;
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
-    font-size: 1rem;
-  }
-  #endScreen {
-    margin-top: 50px;
-  }
-  #confettiCanvas {
-    position: fixed;
-    top: 0;
-    left:0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-  }
-  @media(max-width:600px){
-    #memoryGrid {
-      grid-template-columns: repeat(2, 120px);
-    }
-    .card {
-      width: 100px;
-      height: 100px;
-    }
-  }
+body { margin:0; font-family:'Arbutus', cursive; background: url('assets/backdrop.png') center/cover no-repeat; display:flex; flex-direction:column; align-items:center; min-height:100vh; color:#333; }
+#splash, #game, #endScreen { width:100%; height:100vh; display:none; flex-direction:column; align-items:center; justify-content:center; }
+#splash img { width:200px; height:auto; }
+h1 { font-size:2em; margin:10px; text-align:center; color:#4b2e83; }
+#questionBox { margin:10px 0; font-size:1.2em; text-align:center; display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; }
+#hearAgain, #soundBtn { cursor:pointer; color:#fff; background:#ff7f50; border:none; padding:5px 10px; border-radius:5px; display:flex; align-items:center; gap:5px; font-size:1em; }
+#memoryCards { display:grid; gap:15px; justify-content:center; margin-top:20px; grid-template-columns:repeat(auto-fit,minmax(70px,1fr)); width:95%; max-width:400px; }
+.card { width:70px; height:70px; background:#f8f1f1; border-radius:12px; display:flex; justify-content:center; align-items:center; cursor:pointer; border:3px solid #ffb347; font-size:1.5em; user-select:none; transition:transform 0.2s; position:relative; }
+.card img { width:65px; height:65px; display:none; }
+.card.giggle { animation:giggle 0.3s; }
+@keyframes giggle {0%{transform:rotate(0deg);}25%{transform:rotate(10deg);}50%{transform:rotate(-10deg);}75%{transform:rotate(10deg);}100%{transform:rotate(0deg);}}
+.card.correct { border-color:green; background:#b9fbc0; }
+#tracingArea { display:flex; flex-direction:column; align-items:center; position:relative; width:95%; max-width:500px; margin-top:20px; }
+#tracingCanvas { border:2px solid #ccc; border-radius:10px; touch-action:none; width:100%; height:250px; }
+#letterRef { width:80px; height:auto; margin-bottom:5px; }
+#eraserBtn, #doneBtn { margin-top:10px; padding:5px 10px; background:#f08080; color:white; border:none; border-radius:5px; cursor:pointer; font-size:1em; }
+#endScreen button { margin-top:20px; padding:10px 20px; background:#4caf50; color:white; border:none; border-radius:10px; font-size:1.2em; cursor:pointer; }
+#confettiCanvas { position:absolute; top:0; left:0; pointer-events:none; width:100%; height:100%; z-index:100; }
 </style>
 </head>
 <body>
 
-<div id="logoScreen">
+<div id="splash">
   <img src="assets/innovine-logo.png" alt="Innovine Logo">
 </div>
 
-<div id="gameScreen">
+<div id="game">
   <h1>Letter Mm to Pp</h1>
-  <div class="questionBox">
-    <span id="roundTitle"></span>
-    <button id="hearQuestion"><img src="assets/speaker.png" width="24"> Hear Again</button>
+  <div id="questionBox">
+    <span id="questionText"></span>
+    <button id="hearAgain"><span>🔊</span> Hear Again</button>
   </div>
-  <div id="memoryGrid"></div>
-  <canvas id="redBlueCanvas" width="300" height="150"></canvas>
-  <div id="controls">
-    <button id="playLetterSound"><img src="assets/speaker.png" width="24"> Play Sound</button>
-    <button id="eraseCanvas">Eraser</button>
+  <div id="memoryCards"></div>
+  <div id="tracingArea">
+    <img id="letterRef" src="" alt="Letter Reference">
+    <button id="soundBtn">🔊</button>
+    <canvas id="tracingCanvas"></canvas>
   </div>
+  <button id="eraserBtn">Eraser</button>
+  <button id="doneBtn">Done</button>
 </div>
 
 <div id="endScreen">
-  <h1>Good Job!</h1>
-  <button id="playAgain">Play Again</button>
+  <h1>Well Done!</h1>
+  <button id="playAgainBtn">Play Again</button>
 </div>
 
 <canvas id="confettiCanvas"></canvas>
-
 <audio id="correctAudio" src="assets/correct.mp3"></audio>
 <audio id="wrongAudio" src="assets/wrong.mp3"></audio>
 <audio id="clapAudio" src="assets/freesound_community-claps-44774.mp3"></audio>
-<audio id="letterM" src="assets/letterM.mp3"></audio>
-<audio id="letterN" src="assets/letterN.mp3"></audio>
-<audio id="letterO" src="assets/letterO.mp3"></audio>
-<audio id="letterP" src="assets/letterP.mp3"></audio>
 
 <script>
-// ------------------------- Game Data --------------------------
-const rounds = [
-  {type:'memory', letters:['Mm','Nn','Oo','Pp'], images:['milk.png','napkin.png','octopus.png','paintbrush.png'], sound:'letterM'},
-  {type:'write', letter:'Mm', sound:'letterM'},
-  {type:'memory', letters:['Mm','Nn','Oo','Pp'], images:['mirror.png','nest.png','olive.jpg','panda.png'], sound:'letterM'},
-  {type:'write', letter:'Nn', sound:'letterN'},
-  {type:'memory', letters:['Mm','Nn','Oo','Pp'], images:['monkey.png','net.png','onion.png','parrot.png'], sound:'letterM'},
-  {type:'write', letter:'Oo', sound:'letterO'},
-  {type:'memory', letters:['Mm','Nn','Oo','Pp'], images:['mountain.png','newspaper.png','orange.png','pumpkin.png'], sound:'letterM'},
-  {type:'write', letter:'Pp', sound:'letterP'},
-  {type:'memory', letters:['Mm','Nn','Oo','Pp'], images:['mushroom.png','nose.png','ostrich.png','purse.png'], sound:'letterM'}
+let currentRound=0;
+const rounds=[
+  {type:'memory', letters:['Mm','Nn','Oo','Pp'], pics:['milk.png','napkin.png','octopus.png','paintbrush.png'], question:'Flip over cards to find matching pairs of letter and picture card.'},
+  {type:'tracing', letter:'M', sound:'assets/letterM.mp3', question:'Listen to the letter sound and write the letter Mm.', ref:'assets/Mm.png'},
+  {type:'memory', letters:['Mm','Nn','Oo','Pp'], pics:['mirror.png','nest.png','olive.jpg','panda.png'], question:'Flip over cards to find matching pairs of letter and picture card.'},
+  {type:'tracing', letter:'N', sound:'assets/letterN.mp3', question:'Listen to the letter sound and write the letter Nn.', ref:'assets/Nn.png'},
+  {type:'memory', letters:['Mm','Nn','Oo','Pp'], pics:['monkey.png','net.png','onion.png','parrot.png'], question:'Flip over cards to find matching pairs of letter and picture card.'},
+  {type:'tracing', letter:'O', sound:'assets/letterO.mp3', question:'Listen to the letter sound and write the letter Oo.', ref:'assets/Oo.png'},
+  {type:'memory', letters:['Mm','Nn','Oo','Pp'], pics:['mountain.png','newspaper.png','orange.png','pumpkin.png'], question:'Flip over cards to find matching pairs of letter and picture card.'},
+  {type:'tracing', letter:'P', sound:'assets/letterP.mp3', question:'Listen to the letter sound and write the letter Pp.', ref:'assets/Pp.png'},
+  {type:'memory', letters:['Mm','Nn','Oo','Pp'], pics:['mushroom.png','nose.png','ostrich.png','purse.png'], question:'Flip over cards to find matching pairs of letter and picture card.'}
 ];
 
-// ------------------------- Global Variables --------------------------
-let currentRound = 0;
-let selectedLetterCard = null;
-let memoryCards = [];
-let canvas, ctx, drawing=false;
-let lastX=0,lastY=0;
+const splash=document.getElementById('splash');
+const game=document.getElementById('game');
+const endScreen=document.getElementById('endScreen');
+const questionText=document.getElementById('questionText');
+const hearAgainBtn=document.getElementById('hearAgain');
+const memoryCards=document.getElementById('memoryCards');
+const tracingArea=document.getElementById('tracingArea');
+const eraserBtn=document.getElementById('eraserBtn');
+const doneBtn=document.getElementById('doneBtn');
+const playAgainBtn=document.getElementById('playAgainBtn');
+const letterRef=document.getElementById('letterRef');
+const soundBtn=document.getElementById('soundBtn');
+const canvas=document.getElementById('tracingCanvas');
+const ctx=canvas.getContext('2d');
+const correctAudio=document.getElementById('correctAudio');
+const wrongAudio=document.getElementById('wrongAudio');
+const clapAudio=document.getElementById('clapAudio');
+const confettiCanvas=document.getElementById('confettiCanvas');
+const confettiCtx=confettiCanvas.getContext('2d');
 
-// ------------------------- Utility Functions --------------------------
-function shuffle(array){
-  return array.sort(()=> Math.random()-0.5);
-}
+let firstCard=null, secondCard=null, wrongAttempts=0, drawing=false, lastX=0, lastY=0;
 
-// ------------------------- Logo Splash --------------------------
-const logoScreen = document.getElementById('logoScreen');
-const gameScreen = document.getElementById('gameScreen');
-const endScreen = document.getElementById('endScreen');
-logoScreen.style.display='block';
-setTimeout(()=>{ 
-  logoScreen.style.display='none';
-  startRound();
-},5000);
+splash.style.display='flex';
+setTimeout(()=>{ splash.style.display='none'; game.style.display='flex'; startRound(); },5000);
 
-// ------------------------- Start Round --------------------------
+hearAgainBtn.addEventListener('click', ()=>{ speakText(rounds[currentRound].question); });
+playAgainBtn.addEventListener('click', ()=>{ confettiActive=false; confettiCtx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height); currentRound=0; endScreen.style.display='none'; game.style.display='flex'; startRound(); });
+doneBtn.addEventListener('click', ()=>{if(rounds[currentRound].type==='tracing') nextRound();});
+soundBtn.addEventListener('click', ()=>{ if(rounds[currentRound].type==='tracing'){ const a=new Audio(rounds[currentRound].sound); a.play(); } });
+
+function speakText(text){ if('speechSynthesis' in window){ const utter=new SpeechSynthesisUtterance(text); window.speechSynthesis.cancel(); window.speechSynthesis.speak(utter); }}
+
 function startRound(){
-  if(currentRound >= rounds.length){
-    showEndScreen();
-    return;
-  }
-  const round = rounds[currentRound];
-  document.getElementById('memoryGrid').innerHTML='';
-  document.getElementById('redBlueCanvas').style.display='none';
-  document.getElementById('controls').style.display='none';
+  const round=rounds[currentRound];
+  questionText.textContent=round.question;
+  memoryCards.innerHTML=''; tracingArea.style.display='none';
+  firstCard=null; secondCard=null; wrongAttempts=0;
+  speakText(round.question);
 
   if(round.type==='memory'){
-    setupMemoryRound(round);
-  } else if(round.type==='write'){
-    setupWritingRound(round);
-  }
-}
-
-// ------------------------- Memory Round --------------------------
-function setupMemoryRound(round){
-  const grid = document.getElementById('memoryGrid');
-  const letters = round.letters.map(l=>({type:'letter',img:`assets/${l}.png`}));
-  const images = round.images.map(img=>({type:'image',img:`assets/${img}`}));
-  memoryCards = shuffle([...letters,...images]);
-
-  memoryCards.forEach((cardData,index)=>{
-    const card = document.createElement('div');
-    card.classList.add('card');
-    card.dataset.index=index;
-    const img = document.createElement('img');
-    img.src = cardData.img;
-    card.appendChild(img);
-    card.addEventListener('click',()=>handleCardClick(card,index));
-    grid.appendChild(card);
-  });
-
-  document.getElementById('roundTitle').textContent = 'Find a pair. Flip over cards to match letter & picture.';
-  document.getElementById('hearQuestion').onclick = ()=>{
-    new Audio(`assets/${round.sound}.mp3`).play();
-  };
-}
-
-function handleCardClick(card,index){
-  const data = memoryCards[index];
-  if(card.classList.contains('show') || card.classList.contains('correct')) return;
-
-  if(data.type==='letter'){
-    if(selectedLetterCard) selectedLetterCard.classList.remove('show'); // auto close previous letter
-    card.classList.add('show');
-    selectedLetterCard = card;
-  } else {
-    card.classList.add('show');
-    if(!selectedLetterCard){
-      setTimeout(()=>card.classList.remove('show'),500);
-      return;
-    }
-    const letterIndex = memoryCards.indexOf(selectedLetterCard.dataset.index);
-    if(data.img[7].toLowerCase() === selectedLetterCard.dataset.index){ // rough match by first char
-      card.classList.add('correct');
-      selectedLetterCard.classList.add('correct');
-      selectedLetterCard = null;
-      new Audio('assets/correct.mp3').play();
-      checkMemoryComplete();
-    } else {
-      card.classList.add('incorrect');
-      new Audio('assets/wrong.mp3').play();
-      setTimeout(()=>{card.classList.remove('show','incorrect');},800);
-      selectedLetterCard.classList.remove('show');
-      selectedLetterCard=null;
-    }
-  }
-}
-
-function checkMemoryComplete(){
-  const correct = document.querySelectorAll('.card.correct');
-  if(correct.length === memoryCards.length){
-    new Audio('assets/freesound_community-claps-44774.mp3').play();
-    setTimeout(()=>{
-      currentRound++;
-      startRound();
-    },1000);
-  }
-}
-
-// ------------------------- Writing Round --------------------------
-function setupWritingRound(round){
-  const canvasEl = document.getElementById('redBlueCanvas');
-  canvasEl.style.display='block';
-  canvas = canvasEl;
-  ctx = canvas.getContext('2d');
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  document.getElementById('controls').style.display='flex';
-  document.getElementById('roundTitle').textContent = `Letter ${round.letter}`;
-  document.getElementById('hearQuestion').onclick = ()=>document.getElementById(round.sound).play();
-  document.getElementById('playLetterSound').onclick = ()=>document.getElementById(round.sound).play();
-  document.getElementById('eraseCanvas').onclick = ()=>ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  canvas.addEventListener('pointerdown', e=>{
-    drawing=true;
-    [lastX,lastY]=[e.offsetX,e.offsetY];
-  });
-  canvas.addEventListener('pointermove', e=>{
-    if(!drawing) return;
-    ctx.strokeStyle='black';
-    ctx.lineWidth=4;
-    ctx.lineJoin='round';
-    ctx.lineCap='round';
-    ctx.beginPath();
-    ctx.moveTo(lastX,lastY);
-    ctx.lineTo(e.offsetX,e.offsetY);
-    ctx.stroke();
-    [lastX,lastY]=[e.offsetX,e.offsetY];
-  });
-  canvas.addEventListener('pointerup', e=>{
-    drawing=false;
-    setTimeout(()=>{
-      currentRound++;
-      startRound();
-    },500);
-  });
-}
-
-// ------------------------- End Screen --------------------------
-function showEndScreen(){
-  gameScreen.style.display='none';
-  endScreen.style.display='block';
-  runConfetti();
-  document.getElementById('playAgain').onclick = ()=>{currentRound=0; endScreen.style.display='none'; startRound();}
-}
-
-// ------------------------- Confetti --------------------------
-function runConfetti(){
-  const confetti = document.getElementById('confettiCanvas');
-  confetti.width = window.innerWidth;
-  confetti.height = window.innerHeight;
-  const ctx = confetti.getContext('2d');
-  const particles = [];
-  for(let i=0;i<150;i++){
-    particles.push({
-      x:Math.random()*confetti.width,
-      y:Math.random()*confetti.height,
-      r:Math.random()*6+4,
-      d:Math.random()*10+2,
-      color:`hsl(${Math.random()*360},70%,60%)`,
-      tilt:Math.random()*10-10,
-      tiltAngleIncrement:Math.random()*0.07+0.05,
-      tiltAngle:0
+    memoryCards.style.display='grid';
+    const picsShuffled=[...round.pics].sort(()=>Math.random()-0.5);
+    round.letters.forEach(l=>{
+      const div=document.createElement('div'); div.classList.add('card'); div.dataset.letter=l; div.dataset.revealed=false;
+      div.addEventListener('click',()=>revealCard(div,round)); memoryCards.appendChild(div);
     });
-  }
-  function draw(){
-    ctx.clearRect(0,0,confetti.width,confetti.height);
-    particles.forEach(p=>{
-      ctx.beginPath();
-      ctx.lineWidth = p.r/2;
-      ctx.strokeStyle = p.color;
-      ctx.moveTo(p.x + p.tilt + p.r/4, p.y);
-      ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r/4);
-      ctx.stroke();
-      p.tiltAngle += p.tiltAngleIncrement;
-      p.y += (Math.cos(p.d)+3+p.r/2)/2;
-      p.x += Math.sin(p.d);
-      p.tilt = Math.sin(p.tiltAngle)*15;
-      if(p.y>confetti.height){p.y= -10; p.x=Math.random()*confetti.width;}
+    picsShuffled.forEach(p=>{
+      const div=document.createElement('div'); div.classList.add('card'); div.dataset.pic=p; div.dataset.revealed=false;
+      const img=document.createElement('img'); img.src='assets/'+p; div.appendChild(img);
+      div.addEventListener('click',()=>revealCard(div,round)); memoryCards.appendChild(div);
     });
-    requestAnimationFrame(draw);
-  }
-  draw();
+  } else if(round.type==='tracing'){
+    memoryCards.style.display='none'; tracingArea.style.display='flex';
+    letterRef.src=round.ref;
+    canvas.width = canvas.parentElement.clientWidth; canvas.height = 250;
+    const bgImg = new Image(); bgImg.src='assets/redandblueline.png';
+    bgImg.onload = ()=>{ ctx.clearRect(0,0,canvas.width,canvas.height); ctx.drawImage(bgImg,0,0,canvas.width,canvas.height); }
 }
 
-// ------------------------- Initialize --------------------------
-gameScreen.style.display='block';
+// Tracing logic
+canvas.addEventListener('pointerdown', e=>{ drawing=true; lastX=e.offsetX; lastY=e.offsetY; });
+canvas.addEventListener('pointermove', e=>{ if(!drawing) return; ctx.strokeStyle='black'; ctx.lineWidth=3; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(e.offsetX,e.offsetY); ctx.stroke(); lastX=e.offsetX; lastY=e.offsetY; });
+canvas.addEventListener('pointerup', ()=>{drawing=false;});
+canvas.addEventListener('pointerout', ()=>{drawing=false;});
+
+// Eraser
+eraserBtn.addEventListener('click', ()=>{ const bgImg=new Image(); bgImg.src='assets/redandblueline.png'; bgImg.onload=()=>{ctx.clearRect(0,0,canvas.width,canvas.height); ctx.drawImage(bgImg,0,0,canvas.width,canvas.height);}});
+
+// Memory card logic remains same as before, robust for young children
+function revealCard(card,round){
+  if(card.classList.contains('correct') || card.dataset.revealed==='true') return;
+  if(card.dataset.pic && !firstCard){ card.dataset.revealed='true'; card.querySelector('img').style.display='block'; setTimeout(()=>{ card.dataset.revealed='false'; card.querySelector('img').style.display='none'; wrongAudio.play(); },700); return; }
+  card.dataset.revealed='true'; if(card.dataset.letter) card.textContent=card.dataset.letter; if(card.dataset.pic) card.querySelector('img').style.display='block';
+  if(!firstCard) firstCard=card; else{ secondCard=card; if(firstCard.dataset.letter && secondCard.dataset.letter){ setTimeout(()=>{ secondCard.dataset.revealed='false'; secondCard.textContent=''; secondCard=null; wrongAudio.play(); },700); return; }
+  if(firstCard.dataset.pic && secondCard.dataset.pic){ setTimeout(()=>{ secondCard.dataset.revealed='false'; secondCard.querySelector('img').style.display='none'; secondCard=null; wrongAudio.play(); },700); return; }
+  if(checkMatch(firstCard,secondCard)){ firstCard.classList.add('correct'); secondCard.classList.add('correct'); correctAudio.play(); firstCard=null; secondCard=null;
+  if(document.querySelectorAll('.card.correct').length===round.letters.length*2){ clapAudio.play(); setTimeout(()=>nextRound(),1000); }}
+  else{ wrongAudio.play(); [firstCard,secondCard].forEach(c=>c.classList.add('giggle')); setTimeout(()=>{ [firstCard,secondCard].forEach(c=>c.classList.remove('giggle')); [firstCard,secondCard].forEach(c=>{ if(c.dataset.letter) c.textContent=''; if(c.dataset.pic) c.querySelector('img').style.display='none'; c.dataset.revealed='false'; }); firstCard=null; secondCard=null; },700); }}
+}
+function checkMatch(c1,c2){ let l=c1.dataset.letter?.toLowerCase(); let p=c2.dataset.pic?.toLowerCase(); return p?.startsWith(l?.[0]); }
+function nextRound(){ currentRound++; firstCard=null; secondCard=null; wrongAttempts=0; if(currentRound>=rounds.length){ game.style.display='none'; endScreen.style.display='flex'; startConfetti(); } else startRound(); }
+
+// confetti logic remains same
+let confettiActive=false; function startConfetti(){ confettiCanvas.width=window.innerWidth; confettiCanvas.height=window.innerHeight; confettiActive=true; const confetti=[]; for(let i=0;i<100;i++){ confetti.push({x:Math.random()*confettiCanvas.width,y:Math.random()*confettiCanvas.height,r:Math.random()*6+4,dx:Math.random()*2-1,dy:Math.random()*3+2,color:`hsl(${Math.random()*360},70%,60%)`}); } function draw(){ if(!confettiActive) return; confettiCtx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height); confetti.forEach(c=>{ confettiCtx.beginPath(); confettiCtx.arc(c.x,c.y,c.r,0,2*Math.PI); confettiCtx.fillStyle=c.color; confettiCtx.fill(); c.x+=c.dx;c.y+=c.dy;if(c.y>confettiCanvas.height){c.y=0;c.x=Math.random()*confettiCanvas.width;} }); requestAnimationFrame(draw); } draw(); }
 </script>
 </body>
 </html>
