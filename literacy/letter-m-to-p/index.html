@@ -103,16 +103,25 @@ let firstCard=null, secondCard=null, wrongAttempts=0, drawing=false;
 splash.style.display='flex';
 setTimeout(()=>{ splash.style.display='none'; game.style.display='flex'; startRound(); },5000);
 
-hearAgainBtn.addEventListener('click', ()=>{ if(rounds[currentRound].voice){ voiceAudio.src=rounds[currentRound].voice; voiceAudio.play(); } });
+hearAgainBtn.addEventListener('click', ()=>{playVoice();});
 playAgainBtn.addEventListener('click', ()=>{currentRound=0; endScreen.style.display='none'; game.style.display='flex'; startRound();});
 doneBtn.addEventListener('click', ()=>{if(rounds[currentRound].type==='tracing') nextRound();});
 soundBtn.addEventListener('click', ()=>{ if(rounds[currentRound].type==='tracing'){ voiceAudio.src=rounds[currentRound].sound; voiceAudio.play(); } });
+
+function playVoice(){ 
+  const round = rounds[currentRound]; 
+  if(round.voice){ voiceAudio.src=round.voice; voiceAudio.play(); }
+  else if(round.sound){ voiceAudio.src=round.sound; voiceAudio.play(); }
+}
 
 function startRound(){
   const round=rounds[currentRound];
   questionText.textContent=round.question;
   memoryCards.innerHTML=''; tracingArea.style.display='none';
   firstCard=null; secondCard=null; wrongAttempts=0;
+
+  // auto-play question
+  playVoice();
 
   if(round.type==='memory'){
     memoryCards.style.display='grid';
@@ -126,7 +135,6 @@ function startRound(){
       const img=document.createElement('img'); img.src='assets/'+p; div.appendChild(img);
       div.addEventListener('click',()=>revealCard(div,round)); memoryCards.appendChild(div);
     });
-    if(round.voice){ voiceAudio.src=round.voice; voiceAudio.play(); }
   } else if(round.type==='tracing'){
     memoryCards.style.display='none'; tracingArea.style.display='flex';
     letterRef.src=round.ref;
@@ -137,17 +145,21 @@ function startRound(){
   }
 }
 
-canvas.addEventListener('pointerdown',e=>{
-  drawing=true; const rect=canvas.getBoundingClientRect(); ctx.beginPath();
-  ctx.moveTo(e.clientX-rect.left,e.clientY-rect.top);
+// --- pointer drawing for tracing ---
+canvas.addEventListener('pointerdown', e => {
+  drawing=true;
+  const rect=canvas.getBoundingClientRect();
+  ctx.beginPath();
+  ctx.moveTo(e.clientX-rect.left, e.clientY-rect.top);
 });
-canvas.addEventListener('pointerup',()=>{drawing=false; ctx.beginPath();});
-canvas.addEventListener('pointerout',()=>{drawing=false; ctx.beginPath();});
-canvas.addEventListener('pointermove',e=>{
+canvas.addEventListener('pointerup', ()=>{drawing=false; ctx.beginPath();});
+canvas.addEventListener('pointerout', ()=>{drawing=false; ctx.beginPath();});
+canvas.addEventListener('pointermove', e=>{
   if(!drawing) return;
   const rect=canvas.getBoundingClientRect();
   ctx.lineWidth=5; ctx.strokeStyle='black'; ctx.lineCap='round';
-  ctx.lineTo(e.clientX-rect.left,e.clientY-rect.top); ctx.stroke(); ctx.beginPath(); ctx.moveTo(e.clientX-rect.left,e.clientY-rect.top);
+  ctx.lineTo(e.clientX-rect.left,e.clientY-rect.top); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(e.clientX-rect.left,e.clientY-rect.top);
 });
 
 eraserBtn.addEventListener('click',()=>{
@@ -175,7 +187,7 @@ function revealCard(card,round){
       setTimeout(()=>{ [firstCard,secondCard].forEach(c=>c.classList.remove('giggle'));
         secondCard.dataset.revealed='false'; if(secondCard.dataset.letter) secondCard.textContent='';
         if(secondCard.dataset.pic) secondCard.querySelector('img').style.display='none'; secondCard=null;
-      },500);
+      },700); // auto-close wrong card after 700ms
       if(wrongAttempts>=2) firstCard.classList.add('correct');
     }
   }
@@ -184,7 +196,6 @@ function revealCard(card,round){
 function checkMatch(c1,c2){
   let l=c1.dataset.letter.toLowerCase();
   let p=c2.dataset.pic.toLowerCase();
-  // Use startsWith to match first letter of Oo/letter
   return p.startsWith(l[0]);
 }
 
