@@ -103,13 +103,10 @@ let firstCard=null, secondCard=null, wrongAttempts=0, drawing=false;
 splash.style.display='flex';
 setTimeout(()=>{ splash.style.display='none'; game.style.display='flex'; startRound(); },5000);
 
-hearAgainBtn.addEventListener('click', ()=>playVoice());
+hearAgainBtn.addEventListener('click', ()=>{ if(rounds[currentRound].voice){ voiceAudio.src=rounds[currentRound].voice; voiceAudio.play(); } });
 playAgainBtn.addEventListener('click', ()=>{currentRound=0; endScreen.style.display='none'; game.style.display='flex'; startRound();});
 doneBtn.addEventListener('click', ()=>{if(rounds[currentRound].type==='tracing') nextRound();});
-
 soundBtn.addEventListener('click', ()=>{ if(rounds[currentRound].type==='tracing'){ voiceAudio.src=rounds[currentRound].sound; voiceAudio.play(); } });
-
-function playVoice(){ const round=rounds[currentRound]; if(round.voice) voiceAudio.src=round.voice; else if(round.sound) voiceAudio.src=round.sound; voiceAudio.play(); }
 
 function startRound(){
   const round=rounds[currentRound];
@@ -129,12 +126,14 @@ function startRound(){
       const img=document.createElement('img'); img.src='assets/'+p; div.appendChild(img);
       div.addEventListener('click',()=>revealCard(div,round)); memoryCards.appendChild(div);
     });
-    playVoice();
+    if(round.voice){ voiceAudio.src=round.voice; voiceAudio.play(); }
   } else if(round.type==='tracing'){
     memoryCards.style.display='none'; tracingArea.style.display='flex';
     letterRef.src=round.ref;
-    const bgImg=new Image(); bgImg.src='assets/redandblueline.png';
-    bgImg.onload=()=>{ ctx.clearRect(0,0,canvas.width,canvas.height); ctx.drawImage(bgImg,0,0,canvas.width,canvas.height); }
+
+    canvas.width = window.innerWidth * 0.85; canvas.height = 250;
+    const bgImg = new Image(); bgImg.src='assets/redandblueline.png';
+    bgImg.onload = ()=>{ ctx.clearRect(0,0,canvas.width,canvas.height); ctx.drawImage(bgImg,0,0,canvas.width,canvas.height); }
   }
 }
 
@@ -163,6 +162,7 @@ function revealCard(card,round){
     if(card.dataset.letter) card.textContent=card.dataset.letter;
     if(card.dataset.pic) card.querySelector('img').style.display='block';
   } else return;
+
   if(!firstCard) firstCard=card; else{
     secondCard=card;
     if(checkMatch(firstCard,secondCard)){
@@ -181,7 +181,13 @@ function revealCard(card,round){
   }
 }
 
-function checkMatch(c1,c2){ return c1.dataset.letter && c2.dataset.pic && c1.dataset.letter[0].toLowerCase()===c2.dataset.pic[0].toLowerCase(); }
+function checkMatch(c1,c2){
+  let l=c1.dataset.letter.toLowerCase();
+  let p=c2.dataset.pic.toLowerCase();
+  // Use startsWith to match first letter of Oo/letter
+  return p.startsWith(l[0]);
+}
+
 function nextRound(){ currentRound++; firstCard=null; secondCard=null; wrongAttempts=0;
   if(currentRound>=rounds.length){ game.style.display='none'; endScreen.style.display='flex'; startConfetti(); }
   else startRound();
