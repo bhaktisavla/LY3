@@ -7,7 +7,7 @@
 <style>
   body {
     margin: 0;
-    font-family: 'Arial', sans-serif;
+    font-family: Arial, sans-serif;
     background: url('assets/backdrop.png') no-repeat center center fixed;
     background-size: cover;
     color: #333;
@@ -60,7 +60,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2rem;
     cursor: pointer;
     position: relative;
   }
@@ -71,9 +70,6 @@
   }
   .card.show img {
     display: block;
-  }
-  .card.show span {
-    display: none;
   }
   .card.correct {
     border: 4px solid #00b300;
@@ -222,19 +218,16 @@ function startRound(){
 // ------------------------- Memory Round --------------------------
 function setupMemoryRound(round){
   const grid = document.getElementById('memoryGrid');
-  const letters = round.letters.map(l=>({type:'letter',value:l,img:`assets/${l}.png`}));
-  const images = round.images.map(img=>({type:'image',value:img,img:`assets/${img}`}));
+  const letters = round.letters.map(l=>({type:'letter',img:`assets/${l}.png`}));
+  const images = round.images.map(img=>({type:'image',img:`assets/${img}`}));
   memoryCards = shuffle([...letters,...images]);
 
   memoryCards.forEach((cardData,index)=>{
     const card = document.createElement('div');
     card.classList.add('card');
     card.dataset.index=index;
-    const span = document.createElement('span');
-    span.textContent=cardData.value;
     const img = document.createElement('img');
-    img.src=cardData.img;
-    card.appendChild(span);
+    img.src = cardData.img;
     card.appendChild(img);
     card.addEventListener('click',()=>handleCardClick(card,index));
     grid.appendChild(card);
@@ -250,8 +243,6 @@ function handleCardClick(card,index){
   const data = memoryCards[index];
   if(card.classList.contains('show') || card.classList.contains('correct')) return;
 
-  if(selectedLetterCard && selectedLetterCard.dataset.index === index) return;
-
   if(data.type==='letter'){
     if(selectedLetterCard) selectedLetterCard.classList.remove('show'); // auto close previous letter
     card.classList.add('show');
@@ -262,8 +253,8 @@ function handleCardClick(card,index){
       setTimeout(()=>card.classList.remove('show'),500);
       return;
     }
-    const letterData = memoryCards[selectedLetterCard.dataset.index];
-    if(data.value.toLowerCase().startsWith(letterData.value[0].toLowerCase())){
+    const letterIndex = memoryCards.indexOf(selectedLetterCard.dataset.index);
+    if(data.img[7].toLowerCase() === selectedLetterCard.dataset.index){ // rough match by first char
       card.classList.add('correct');
       selectedLetterCard.classList.add('correct');
       selectedLetterCard = null;
@@ -378,6 +369,5 @@ function runConfetti(){
 // ------------------------- Initialize --------------------------
 gameScreen.style.display='block';
 </script>
-
 </body>
 </html>
