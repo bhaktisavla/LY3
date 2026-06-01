@@ -3,222 +3,191 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Letter Mm to Pp Memory & Writing Game</title>
+<title>Letter Mm to Pp – Memory & Tracing Game</title>
 <style>
-body, html { margin:0; padding:0; font-family:'Comic Sans MS', cursive, sans-serif; height:100%; overflow:hidden; }
-h1,h2,p{margin:0;padding:0;}
-body { background: url('assets/backdrop.png') no-repeat center center fixed; background-size: cover; }
-
-/* Splash Screen */
-#splashScreen {
-  position: fixed; top:0; left:0; width:100%; height:100%; background:white;
-  display:flex; justify-content:center; align-items:center; z-index:9999;
-}
-#splashScreen img { width:250px; max-width:80%; height:auto; display:block; }
-
-/* Header */
-#gameHeader{ text-align:center; font-size:2rem; color:#3b3b3b; margin-top:10px; font-weight:bold; }
-
-/* Question Section */
-#questionContainer{ text-align:center; font-size:1.5rem; margin:10px auto; color:#444; max-width:90%; }
-#hearAgain{ font-size:1rem; cursor:pointer; color:#2e8b57; margin-left:10px; }
-
-/* Memory Cards */
-#memoryContainer{ display:flex; flex-wrap:wrap; justify-content:center; max-width:800px; margin:20px auto; gap:10px; }
-.card{ width:90px; height:90px; display:flex; justify-content:center; align-items:center; background:linear-gradient(135deg,#fceabb,#f8b500); border-radius:12px; box-shadow:0 4px 8px rgba(0,0,0,0.2); cursor:pointer; position:relative; font-size:2rem; font-weight:bold; }
-.card img{ width:70%; height:auto; pointer-events:none; }
-.card.flipped{ background:#fff; }
-
-/* Tracing Section */
-#tracingContainer{ text-align:center; display:none; }
-#tracingCanvas{ border:2px solid #333; border-radius:8px; touch-action:none; margin-top:10px; background:url('assets/redandblueline.png') center/contain no-repeat; }
-
-/* Buttons */
-button{ padding:10px 20px; font-size:1.2rem; border:none; border-radius:10px; margin-top:15px; cursor:pointer; background:linear-gradient(135deg,#66ccff,#3399ff); color:white; }
-button:hover{opacity:0.9;}
-
-/* Completion Screen */
-#completeScreen{ display:none; text-align:center; margin-top:50px; font-size:2rem; color:#3b3b3b; }
-
-/* Responsive */
-@media(max-width:768px){ .card{width:70px;height:70px;font-size:1.5rem;} #tracingCanvas{width:300px;height:150px;} }
-@media(min-width:769px){ #tracingCanvas{width:500px;height:250px;} }
+body { margin:0; font-family:'Arbutus', cursive; background: url('assets/backdrop.png') center/cover no-repeat; display:flex; flex-direction:column; align-items:center; min-height:100vh; color:#333; }
+#splash, #game, #endScreen { width:100%; height:100vh; display:none; flex-direction:column; align-items:center; justify-content:center; }
+#splash img { width:200px; height:auto; }
+h1 { font-size:2em; margin:10px; text-align:center; color:#4b2e83; }
+#questionBox { margin:10px 0; font-size:1.2em; text-align:center; display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; }
+#hearAgain, #soundBtn { cursor:pointer; color:#fff; background:#ff7f50; border:none; padding:5px 10px; border-radius:5px; display:flex; align-items:center; gap:5px; font-size:1em; }
+#memoryCards { display:grid; gap:15px; justify-content:center; margin-top:20px; grid-template-columns:repeat(auto-fit,minmax(70px,1fr)); width:95%; max-width:400px; }
+.card { width:70px; height:70px; background:#f8f1f1; border-radius:12px; display:flex; justify-content:center; align-items:center; cursor:pointer; border:3px solid #ffb347; font-size:1.5em; user-select:none; transition:transform 0.2s; position:relative; }
+.card img { width:65px; height:65px; display:none; }
+.card.giggle { animation:giggle 0.3s; }
+@keyframes giggle {0%{transform:rotate(0deg);}25%{transform:rotate(10deg);}50%{transform:rotate(-10deg);}75%{transform:rotate(10deg);}100%{transform:rotate(0deg);}}
+.card.correct { border-color:green; background:#b9fbc0; }
+#tracingArea { display:flex; flex-direction:column; align-items:center; position:relative; width:95%; max-width:500px; margin-top:20px; }
+#tracingCanvas { border:2px solid #ccc; border-radius:10px; touch-action:none; width:100%; height:250px; }
+#letterRef { width:80px; height:auto; margin-bottom:5px; }
+#eraserBtn, #doneBtn { margin-top:10px; padding:5px 10px; background:#f08080; color:white; border:none; border-radius:5px; cursor:pointer; font-size:1em; }
+#endScreen button { margin-top:20px; padding:10px 20px; background:#4caf50; color:white; border:none; border-radius:10px; font-size:1.2em; cursor:pointer; }
+#confettiCanvas { position:absolute; top:0; left:0; pointer-events:none; width:100%; height:100%; z-index:100; }
 </style>
 </head>
 <body>
 
-<!-- Splash -->
-<div id="splashScreen">
+<div id="splash">
   <img src="assets/innovine-logo.png" alt="Innovine Logo">
 </div>
 
-<h1 id="gameHeader">Letter Mm to Pp</h1>
-
-<div id="questionContainer">
-  <span id="questionText"></span>
-  <span id="hearAgain">🔊 Hear Again</span>
+<div id="game">
+  <h1>Letter Mm to Pp</h1>
+  <div id="questionBox">
+    <span id="questionText"></span>
+    <button id="hearAgain"><span>🔊</span> Hear Again</button>
+  </div>
+  <div id="memoryCards"></div>
+  <div id="tracingArea">
+    <img id="letterRef" src="" alt="Letter Reference">
+    <button id="soundBtn">🔊</button>
+    <canvas id="tracingCanvas"></canvas>
+  </div>
+  <button id="eraserBtn">Eraser</button>
+  <button id="doneBtn">Done</button>
 </div>
 
-<div id="memoryContainer"></div>
-
-<div id="tracingContainer">
-  <p id="tracingInstruction"></p>
-  <audio id="letterAudio"></audio>
-  <button id="playLetterAudio">🔊 Play Sound</button><br>
-  <canvas id="tracingCanvas"></canvas><br>
-  <button id="eraseBtn">🧹 Erase</button>
-  <button id="tracingNextBtn">Next</button>
-</div>
-
-<div id="completeScreen">
-  <h2>Good Job!</h2>
-  <canvas id="confettiCanvas"></canvas>
-  <br>
+<div id="endScreen">
+  <h1>Well Done!</h1>
   <button id="playAgainBtn">Play Again</button>
 </div>
 
-<!-- Audio -->
-<audio id="correctSound" src="assets/correct.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
-<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+<canvas id="confettiCanvas"></canvas>
+<audio id="correctAudio" src="assets/correct.mp3"></audio>
+<audio id="wrongAudio" src="assets/wrong.mp3"></audio>
+<audio id="clapAudio" src="assets/freesound_community-claps-44774.mp3"></audio>
 
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 <script>
+let currentRound=0;
 const rounds=[
-  {type:'memory', letterImgs:['Mm.png','Nn.png','Oo.png','Pp.png'], picImgs:['milk.png','napkin.png','octopus.png','paintbrush.png'], question:"Flip over cards to find matching pairs of letter and picture."},
-  {type:'tracing', letter:'Mm', sound:'letterM.mp3'},
-  {type:'memory', letterImgs:['Mm.png','Nn.png','Oo.png','Pp.png'], picImgs:['mirror.png','nest.png','olive.jpg','panda.png'], question:"Flip over cards to find matching pairs of letter and picture."},
-  {type:'tracing', letter:'Nn', sound:'letterN.mp3'},
-  {type:'memory', letterImgs:['Mm.png','Nn.png','Oo.png','Pp.png'], picImgs:['monkey.png','net.png','onion.png','parrot.png'], question:"Flip over cards to find matching pairs of letter and picture."},
-  {type:'tracing', letter:'Oo', sound:'letterO.mp3'},
-  {type:'memory', letterImgs:['Mm.png','Nn.png','Oo.png','Pp.png'], picImgs:['mountain.png','newspaper.png','orange.png','pumpkin.png'], question:"Flip over cards to find matching pairs of letter and picture."},
-  {type:'tracing', letter:'Pp', sound:'letterP.mp3'},
-  {type:'memory', letterImgs:['Mm.png','Nn.png','Oo.png','Pp.png'], picImgs:['mushroom.png','nose.png','ostrich.png','purse.png'], question:"Flip over cards to find matching pairs of letter and picture."}
+  {type:'memory', letters:['Mm','Nn','Oo','Pp'], pics:['milk.png','napkin.png','octopus.png','paintbrush.png'], question:'Flip over cards to find matching pairs of letter and picture card.'},
+  {type:'tracing', letter:'M', sound:'assets/letterM.mp3', question:'Listen to the letter sound and write the letter Mm.', ref:'assets/Mm.png'},
+  {type:'memory', letters:['Mm','Nn','Oo','Pp'], pics:['mirror.png','nest.png','olive.jpg','panda.png'], question:'Flip over cards to find matching pairs of letter and picture card.'},
+  {type:'tracing', letter:'N', sound:'assets/letterN.mp3', question:'Listen to the letter sound and write the letter Nn.', ref:'assets/Nn.png'},
+  {type:'memory', letters:['Mm','Nn','Oo','Pp'], pics:['monkey.png','net.png','onion.png','parrot.png'], question:'Flip over cards to find matching pairs of letter and picture card.'},
+  {type:'tracing', letter:'O', sound:'assets/letterO.mp3', question:'Listen to the letter sound and write the letter Oo.', ref:'assets/Oo.png'},
+  {type:'memory', letters:['Mm','Nn','Oo','Pp'], pics:['mountain.png','newspaper.png','orange.png','pumpkin.png'], question:'Flip over cards to find matching pairs of letter and picture card.'},
+  {type:'tracing', letter:'P', sound:'assets/letterP.mp3', question:'Listen to the letter sound and write the letter Pp.', ref:'assets/Pp.png'},
+  {type:'memory', letters:['Mm','Nn','Oo','Pp'], pics:['mushroom.png','nose.png','ostrich.png','purse.png'], question:'Flip over cards to find matching pairs of letter and picture card.'}
 ];
 
-let currentRound=0;
-
-/* Splash */
-const splash=document.getElementById('splashScreen');
-setTimeout(()=>{
-  splash.style.transition="opacity 0.5s";
-  splash.style.opacity=0;
-  setTimeout(()=>{ splash.style.display='none'; startRound(); },500);
-},5000);
-
-/* Confetti */
-function fireConfetti(){
-  const duration=3*1000;
-  const animationEnd=Date.now()+duration;
-  const defaults={startVelocity:30, spread:360, ticks:60, zIndex:999};
-  const interval=setInterval(function(){
-    const timeLeft=animationEnd-Date.now();
-    if(timeLeft<=0){clearInterval(interval);}
-    confetti({...defaults, particleCount:5+Math.random()*5, origin:{x:Math.random(),y:Math.random()*0.6}});
-  },250);
-}
-
-/* Start Round */
-function startRound(){
-  const round=rounds[currentRound];
-  document.getElementById('memoryContainer').style.display='none';
-  document.getElementById('tracingContainer').style.display='none';
-  document.getElementById('completeScreen').style.display='none';
-  if(!round){ showCompletion(); return; }
-
-  if(round.type==='memory'){
-    document.getElementById('memoryContainer').style.display='flex';
-    document.getElementById('questionText').innerText=round.question;
-    createMemoryCards(round.letterImgs,round.picImgs);
-  } else{
-    document.getElementById('tracingContainer').style.display='block';
-    document.getElementById('tracingInstruction').innerText=`Write the letter: ${round.letter}`;
-    const audioElem=document.getElementById('letterAudio');
-    audioElem.src=`assets/${round.sound}`;
-  }
-}
-
-/* Memory Cards Hidden Initially */
-let flippedCard=null;
-function createMemoryCards(letters, pics) {
-  const container=document.getElementById('memoryContainer');
-  container.innerHTML='';
-  const allCards=[];
-  letters.forEach(l=>allCards.push({type:'letter',src:`assets/${l}`,value:l[0]}));
-  pics.forEach(p=>allCards.push({type:'pic',src:`assets/${p}`,value:p[0].toUpperCase()}));
-  allCards.sort(()=>Math.random()-0.5);
-
-  allCards.forEach(cardData=>{
-    const card=document.createElement('div');
-    card.className='card';
-    card.dataset.value=cardData.value;
-    card.dataset.type=cardData.type;
-    card.dataset.src=cardData.src;
-    card.dataset.reveal='false';
-    card.innerHTML='';
-
-    card.addEventListener('click',()=>{
-      if(card.dataset.reveal==='true') return;
-      // Reveal
-      if(card.dataset.type==='letter'){ card.textContent=card.dataset.value; }
-      else{ const img=document.createElement('img'); img.src=card.dataset.src; card.appendChild(img);}
-      card.dataset.reveal='true';
-
-      if(!flippedCard){ flippedCard=card; card.style.border='2px solid green'; }
-      else{
-        if(flippedCard.dataset.value===card.dataset.value){
-          setTimeout(()=>{
-            flippedCard.style.visibility='hidden';
-            card.style.visibility='hidden';
-            document.getElementById('correctSound').play();
-            flippedCard=null;
-            if([...container.children].every(c=>c.style.visibility==='hidden')){
-              document.getElementById('clapSound').play();
-              setTimeout(()=>{ currentRound++; startRound(); },1500);
-            }
-          },300);
-        } else{
-          card.style.border='2px solid red';
-          document.getElementById('wrongSound').play();
-          setTimeout(()=>{
-            card.innerHTML=''; flippedCard.innerHTML='';
-            card.dataset.reveal='false'; flippedCard.dataset.reveal='false';
-            card.style.border=''; flippedCard.style.border=''; flippedCard=null;
-          },800);
-        }
-      }
-    });
-
-    container.appendChild(card);
-  });
-}
-
-/* Tracing */
+const splash=document.getElementById('splash');
+const game=document.getElementById('game');
+const endScreen=document.getElementById('endScreen');
+const questionText=document.getElementById('questionText');
+const hearAgainBtn=document.getElementById('hearAgain');
+const memoryCards=document.getElementById('memoryCards');
+const tracingArea=document.getElementById('tracingArea');
+const eraserBtn=document.getElementById('eraserBtn');
+const doneBtn=document.getElementById('doneBtn');
+const playAgainBtn=document.getElementById('playAgainBtn');
+const letterRef=document.getElementById('letterRef');
+const soundBtn=document.getElementById('soundBtn');
 const canvas=document.getElementById('tracingCanvas');
 const ctx=canvas.getContext('2d');
-let drawing=false;
-function resizeCanvas(){canvas.width=canvas.offsetWidth; canvas.height=canvas.offsetHeight;}
-window.addEventListener('resize',resizeCanvas); resizeCanvas();
-canvas.addEventListener('pointerdown',e=>{drawing=true; ctx.beginPath(); ctx.moveTo(e.offsetX,e.offsetY);});
-canvas.addEventListener('pointermove',e=>{if(drawing){ctx.lineTo(e.offsetX,e.offsetY); ctx.strokeStyle='black'; ctx.lineWidth=4; ctx.stroke();}});
-canvas.addEventListener('pointerup',e=>{drawing=false;});
-document.getElementById('eraseBtn').addEventListener('click',()=>{ctx.clearRect(0,0,canvas.width,canvas.height);});
-document.getElementById('tracingNextBtn').addEventListener('click',()=>{currentRound++; startRound(); ctx.clearRect(0,0,canvas.width,canvas.height);});
-document.getElementById('playLetterAudio').addEventListener('click',()=>{document.getElementById('letterAudio').play();});
+const correctAudio=document.getElementById('correctAudio');
+const wrongAudio=document.getElementById('wrongAudio');
+const clapAudio=document.getElementById('clapAudio');
+const confettiCanvas=document.getElementById('confettiCanvas');
+const confettiCtx=confettiCanvas.getContext('2d');
 
-/* Hear Again for memory */
-document.getElementById('hearAgain').addEventListener('click',()=>{
+let firstCard=null, secondCard=null, wrongAttempts=0, drawing=false, lastX=0, lastY=0;
+
+// Splash
+splash.style.display='flex';
+setTimeout(()=>{ splash.style.display='none'; game.style.display='flex'; startRound(); },5000);
+
+hearAgainBtn.addEventListener('click', ()=>{ speakText(rounds[currentRound].question); });
+playAgainBtn.addEventListener('click', ()=>{ confettiActive=false; confettiCtx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height); currentRound=0; endScreen.style.display='none'; game.style.display='flex'; startRound(); });
+doneBtn.addEventListener('click', ()=>{if(rounds[currentRound].type==='tracing') nextRound();});
+soundBtn.addEventListener('click', ()=>{ if(rounds[currentRound].type==='tracing'){ const a=new Audio(rounds[currentRound].sound); a.play(); } });
+
+function speakText(text){ if('speechSynthesis' in window){ const utter=new SpeechSynthesisUtterance(text); window.speechSynthesis.cancel(); window.speechSynthesis.speak(utter); }}
+
+function startRound(){
   const round=rounds[currentRound];
-  if(round.type==='memory' && round.letterImgs){
-    const audio=new Audio(`assets/letter${round.letterImgs[0][0].toUpperCase()}.mp3`);
-    audio.play();
+  questionText.textContent=round.question;
+  memoryCards.innerHTML=''; tracingArea.style.display='none';
+  firstCard=null; secondCard=null; wrongAttempts=0;
+  speakText(round.question);
+
+  if(round.type==='memory'){
+    memoryCards.style.display='grid';
+    const picsShuffled=[...round.pics].sort(()=>Math.random()-0.5);
+    round.letters.forEach(l=>{
+      const div=document.createElement('div'); div.classList.add('card'); div.dataset.letter=l; div.dataset.revealed=false;
+      div.addEventListener('click',()=>revealCard(div,round)); memoryCards.appendChild(div);
+    });
+    picsShuffled.forEach(p=>{
+      const div=document.createElement('div'); div.classList.add('card'); div.dataset.pic=p; div.dataset.revealed=false;
+      const img=document.createElement('img'); img.src='assets/'+p; div.appendChild(img);
+      div.addEventListener('click',()=>revealCard(div,round)); memoryCards.appendChild(div);
+    });
+  } else if(round.type==='tracing'){
+    memoryCards.style.display='none'; tracingArea.style.display='flex';
+    letterRef.src=round.ref;
+
+    // Set canvas size
+    canvas.width = canvas.parentElement.clientWidth;
+    canvas.height = 250;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    // Draw background lines
+    const bgImg = new Image();
+    bgImg.src='assets/redandblueline.png';
+    bgImg.onload = ()=>{
+      ctx.drawImage(bgImg,0,0,canvas.width,canvas.height);
+    }
   }
+}
+
+// Tracing logic with proper scaling
+canvas.addEventListener('pointerdown', e=>{
+  drawing=true;
+  const rect=canvas.getBoundingClientRect();
+  lastX=(e.clientX-rect.left)*(canvas.width/rect.width);
+  lastY=(e.clientY-rect.top)*(canvas.height/rect.height);
+});
+canvas.addEventListener('pointermove', e=>{
+  if(!drawing) return;
+  const rect=canvas.getBoundingClientRect();
+  const x=(e.clientX-rect.left)*(canvas.width/rect.width);
+  const y=(e.clientY-rect.top)*(canvas.height/rect.height);
+  ctx.strokeStyle='black';
+  ctx.lineWidth=3;
+  ctx.lineCap='round';
+  ctx.beginPath();
+  ctx.moveTo(lastX,lastY);
+  ctx.lineTo(x,y);
+  ctx.stroke();
+  lastX=x; lastY=y;
+});
+canvas.addEventListener('pointerup', ()=>{drawing=false;});
+canvas.addEventListener('pointerout', ()=>{drawing=false;});
+
+// Eraser
+eraserBtn.addEventListener('click', ()=>{
+  const bgImg=new Image();
+  bgImg.src='assets/redandblueline.png';
+  bgImg.onload=()=>{ ctx.clearRect(0,0,canvas.width,canvas.height); ctx.drawImage(bgImg,0,0,canvas.width,canvas.height);}
 });
 
-/* Completion */
-function showCompletion(){ document.getElementById('completeScreen').style.display='block'; fireConfetti(); }
-/* Play Again */
-document.getElementById('playAgainBtn').addEventListener('click',()=>{currentRound=0; startRound();});
+// Memory card logic remains same as before
+function revealCard(card,round){
+  if(card.classList.contains('correct') || card.dataset.revealed==='true') return;
+  if(card.dataset.pic && !firstCard){ card.dataset.revealed='true'; card.querySelector('img').style.display='block'; setTimeout(()=>{ card.dataset.revealed='false'; card.querySelector('img').style.display='none'; wrongAudio.play(); },700); return; }
+  card.dataset.revealed='true'; if(card.dataset.letter) card.textContent=card.dataset.letter; if(card.dataset.pic) card.querySelector('img').style.display='block';
+  if(!firstCard) firstCard=card; else{ secondCard=card; if(firstCard.dataset.letter && secondCard.dataset.letter){ setTimeout(()=>{ secondCard.dataset.revealed='false'; secondCard.textContent=''; secondCard=null; wrongAudio.play(); },700); return; }
+  if(firstCard.dataset.pic && secondCard.dataset.pic){ setTimeout(()=>{ secondCard.dataset.revealed='false'; secondCard.querySelector('img').style.display='none'; secondCard=null; wrongAudio.play(); },700); return; }
+  if(checkMatch(firstCard,secondCard)){ firstCard.classList.add('correct'); secondCard.classList.add('correct'); correctAudio.play(); firstCard=null; secondCard=null;
+  if(document.querySelectorAll('.card.correct').length===round.letters.length*2){ clapAudio.play(); setTimeout(()=>nextRound(),1000); }}
+  else{ wrongAudio.play(); [firstCard,secondCard].forEach(c=>c.classList.add('giggle')); setTimeout(()=>{ [firstCard,secondCard].forEach(c=>c.classList.remove('giggle')); [firstCard,secondCard].forEach(c=>{ if(c.dataset.letter) c.textContent=''; if(c.dataset.pic) c.querySelector('img').style.display='none'; c.dataset.revealed='false'; }); firstCard=null; secondCard=null; },700); }}
+}
+function checkMatch(c1,c2){ let l=c1.dataset.letter?.toLowerCase(); let p=c2.dataset.pic?.toLowerCase(); return p?.startsWith(l?.[0]); }
+function nextRound(){ currentRound++; firstCard=null; secondCard=null; wrongAttempts=0; if(currentRound>=rounds.length){ game.style.display='none'; endScreen.style.display='flex'; startConfetti(); } else startRound(); }
+
+// confetti logic
+let confettiActive=false; function startConfetti(){ confettiCanvas.width=window.innerWidth; confettiCanvas.height=window.innerHeight; confettiActive=true; const confetti=[]; for(let i=0;i<100;i++){ confetti.push({x:Math.random()*confettiCanvas.width,y:Math.random()*confettiCanvas.height,r:Math.random()*6+4,dx:Math.random()*2-1,dy:Math.random()*3+2,color:`hsl(${Math.random()*360},70%,60%)`}); } function draw(){ if(!confettiActive) return; confettiCtx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height); confetti.forEach(c=>{ confettiCtx.beginPath(); confettiCtx.arc(c.x,c.y,c.r,0,2*Math.PI); confettiCtx.fillStyle=c.color; confettiCtx.fill(); c.x+=c.dx;c.y+=c.dy;if(c.y>confettiCanvas.height){c.y=0;c.x=Math.random()*confettiCanvas.width;} }); requestAnimationFrame(draw); } draw(); }
 </script>
 </body>
 </html>
