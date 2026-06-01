@@ -13,20 +13,20 @@ body {
 #splash, #game, #endScreen { width:100%; height:100vh; display:none; flex-direction:column; align-items:center; justify-content:center; }
 #splash img { width:200px; height:auto; }
 h1 { font-size:2em; margin:10px; text-align:center; color:#4b2e83; }
-#questionBox { margin:10px 0; font-size:1.2em; text-align:center; display:flex; align-items:center; justify-content:center; gap:10px; }
-#hearAgain, #soundBtn { cursor:pointer; color:#fff; background:#ff7f50; border:none; padding:5px 10px; border-radius:5px; display:flex; align-items:center; gap:5px; }
+#questionBox { margin:10px 0; font-size:1.2em; text-align:center; display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; }
+#hearAgain, #soundBtn { cursor:pointer; color:#fff; background:#ff7f50; border:none; padding:5px 10px; border-radius:5px; display:flex; align-items:center; gap:5px; font-size:1em; }
 #memoryCards, #tracingArea { display:grid; gap:15px; justify-content:center; margin-top:20px; }
-#memoryCards { grid-template-columns:repeat(4, 80px); }
-.card { width:80px; height:80px; background:#f8f1f1; border-radius:12px; display:flex; justify-content:center; align-items:center;
-cursor:pointer; border:3px solid #ffb347; font-size:2em; user-select:none; transition:transform 0.2s; position:relative; }
-.card img { width:70px; height:70px; display:none; }
+#memoryCards { grid-template-columns:repeat(auto-fit,minmax(70px,1fr)); width:95%; max-width:400px; }
+.card { width:70px; height:70px; background:#f8f1f1; border-radius:12px; display:flex; justify-content:center; align-items:center;
+cursor:pointer; border:3px solid #ffb347; font-size:1.5em; user-select:none; transition:transform 0.2s; position:relative; }
+.card img { width:65px; height:65px; display:none; }
 .card.giggle { animation:giggle 0.3s; }
 @keyframes giggle {0%{transform:rotate(0deg);}25%{transform:rotate(10deg);}50%{transform:rotate(-10deg);}75%{transform:rotate(10deg);}100%{transform:rotate(0deg);}}
 .card.correct { border-color:green; background:#b9fbc0; }
-#tracingArea { display:flex; flex-direction:column; align-items:center; position:relative; }
-#tracingCanvas { border:2px solid #ccc; border-radius:10px; touch-action:none; background-size:cover; }
+#tracingArea { display:flex; flex-direction:column; align-items:center; position:relative; width:95%; max-width:500px; }
+#tracingCanvas { border:2px solid #ccc; border-radius:10px; touch-action:none; width:100%; height:250px; }
 #letterRef { width:80px; height:auto; margin-bottom:5px; }
-#eraserBtn, #doneBtn { margin-top:10px; padding:5px 10px; background:#f08080; color:white; border:none; border-radius:5px; cursor:pointer; }
+#eraserBtn, #doneBtn { margin-top:10px; padding:5px 10px; background:#f08080; color:white; border:none; border-radius:5px; cursor:pointer; font-size:1em; }
 #endScreen button { margin-top:20px; padding:10px 20px; background:#4caf50; color:white; border:none; border-radius:10px; font-size:1.2em; cursor:pointer; }
 #confettiCanvas { position:absolute; top:0; left:0; pointer-events:none; width:100%; height:100%; z-index:100; }
 </style>
@@ -115,6 +115,9 @@ playAgainBtn.addEventListener('click', ()=>{
 doneBtn.addEventListener('click', ()=>{if(rounds[currentRound].type==='tracing') nextRound();});
 soundBtn.addEventListener('click', ()=>{ if(rounds[currentRound].type==='tracing'){ voiceAudio.src=rounds[currentRound].sound; voiceAudio.play(); } });
 
+// allow mobile playback
+document.body.addEventListener('touchstart', ()=>{ voiceAudio.play().then(()=>voiceAudio.pause()); }, {once:true});
+
 function playVoice(){ 
   const round = rounds[currentRound];
   if(round.questionVoice){ 
@@ -128,11 +131,7 @@ function startRound(){
   questionText.textContent=round.question;
   memoryCards.innerHTML=''; tracingArea.style.display='none';
   firstCard=null; secondCard=null; wrongAttempts=0;
-
-  // stop confetti if any
   confettiActive=false; confettiCtx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
-
-  // play question narration automatically
   playVoice();
 
   if(round.type==='memory'){
@@ -150,20 +149,20 @@ function startRound(){
   } else if(round.type==='tracing'){
     memoryCards.style.display='none'; tracingArea.style.display='flex';
     letterRef.src=round.ref;
-    canvas.width = window.innerWidth * 0.85; canvas.height = 250;
+    canvas.width = canvas.parentElement.clientWidth; canvas.height = 250;
     const bgImg = new Image(); bgImg.src='assets/redandblueline.png';
     bgImg.onload = ()=>{ ctx.clearRect(0,0,canvas.width,canvas.height); ctx.drawImage(bgImg,0,0,canvas.width,canvas.height); }
   }
 }
 
-// --- tracing ---
+// tracing
 canvas.addEventListener('pointerdown', e => { drawing=true; const rect=canvas.getBoundingClientRect(); ctx.beginPath(); ctx.moveTo(e.clientX-rect.left, e.clientY-rect.top); });
 canvas.addEventListener('pointerup', ()=>{drawing=false; ctx.beginPath();});
 canvas.addEventListener('pointerout', ()=>{drawing=false; ctx.beginPath();});
 canvas.addEventListener('pointermove', e=>{ if(!drawing) return; const rect=canvas.getBoundingClientRect(); ctx.lineWidth=5; ctx.strokeStyle='black'; ctx.lineCap='round'; ctx.lineTo(e.clientX-rect.left,e.clientY-rect.top); ctx.stroke(); ctx.beginPath(); ctx.moveTo(e.clientX-rect.left,e.clientY-rect.top); });
 eraserBtn.addEventListener('click',()=>{ const bgImg=new Image(); bgImg.src='assets/redandblueline.png'; bgImg.onload = ()=>{ ctx.clearRect(0,0,canvas.width,canvas.height); ctx.drawImage(bgImg,0,0,canvas.width,canvas.height); }});
 
-// --- memory game logic with first-click any card ---
+// memory game
 function revealCard(card,round){
   if(card.classList.contains('correct')) return;
   if(card.dataset.revealed==='false'){ card.dataset.revealed='true';
@@ -171,7 +170,6 @@ function revealCard(card,round){
     if(card.dataset.pic) card.querySelector('img').style.display='block';
   } else return;
 
-  // If first card is picture, flip back immediately
   if(!firstCard && card.dataset.pic){
     setTimeout(()=>{ card.dataset.revealed='false'; card.querySelector('img').style.display='none'; },700);
     wrongAudio.play();
@@ -181,14 +179,11 @@ function revealCard(card,round){
   if(!firstCard) firstCard=card;
   else{
     secondCard=card;
-
-    // If two letters selected consecutively, flip back second
     if(firstCard.dataset.letter && secondCard.dataset.letter){
       setTimeout(()=>{ secondCard.dataset.revealed='false'; secondCard.textContent=''; secondCard=null; },700);
-      wrongAudio.play(); firstCard.classList.remove('correct'); return;
+      wrongAudio.play(); return;
     }
 
-    // check match
     if(checkMatch(firstCard,secondCard)){
       firstCard.classList.add('correct'); secondCard.classList.add('correct'); correctAudio.play();
       firstCard=null; secondCard=null; wrongAttempts=0;
@@ -210,7 +205,8 @@ function checkMatch(c1,c2){
   return p?.startsWith(l?.[0]);
 }
 
-function nextRound(){ currentRound++; firstCard=null; secondCard=null; wrongAttempts=0;
+function nextRound(){ currentRound++;
+  firstCard=null; secondCard=null; wrongAttempts=0;
   if(currentRound>=rounds.length){ game.style.display='none'; endScreen.style.display='flex'; startConfetti(); }
   else startRound();
 }
