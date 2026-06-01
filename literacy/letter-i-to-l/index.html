@@ -1,195 +1,103 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Letter Ii to Ll Game</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Letter Ii to Ll</title>
 <style>
-    body, html { margin:0; padding:0; font-family: 'Arial', sans-serif; }
-    body { background: url('assets/backgroundd.jpg') no-repeat center center fixed; background-size: cover; }
-    #game-container { width: 100vw; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; }
-    #header { font-size: 2rem; text-align: center; margin: 10px; color: #4A2C2A; font-weight: bold; }
-    #logo-screen { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background:white; }
-    #logo-screen img { max-width: 50%; height: auto; }
-    .round-title { font-size: 1.5rem; margin: 10px; color: #5A3E36; }
-    .question { font-size: 1.2rem; margin: 10px; text-align:center; color:#5A3E36; }
-    .letter-container { display: flex; flex-direction: column; align-items: center; margin:10px; }
-    .letter-container img { max-width: 80px; margin-bottom:5px; }
-    .play-sound { cursor: pointer; margin-bottom:10px; }
-    #options-box { display:flex; flex-wrap: wrap; justify-content: center; align-items: center; background: rgba(255,255,255,0.8); padding:10px; border-radius:15px; width:90%; max-width:500px; }
-    .option { margin:5px; cursor:pointer; transition: transform 0.2s; position: relative; }
-    .option img { width:80px; height:80px; object-fit: contain; border-radius:10px; border:2px solid #ccc; }
-    .option.correct { border: 3px solid green; }
-    .option.wrong { animation: jiggle 0.3s; border: 3px solid red; }
-    @keyframes jiggle { 0% {transform: rotate(0deg);} 25% {transform: rotate(-10deg);} 50% {transform: rotate(10deg);} 75% {transform: rotate(-10deg);} 100% {transform: rotate(0deg);} }
-    #tracing-box { position: relative; }
-    #tracing-canvas { border:2px solid #5A3E36; border-radius:10px; touch-action: none; }
-    #erase-btn { margin:5px; padding:5px 10px; cursor:pointer; background:#e07c7c; border:none; border-radius:5px; color:white; }
-    #next-btn { margin:10px; padding:5px 15px; font-size:1rem; cursor:pointer; border-radius:8px; background:#7ce0a1; border:none; }
-    #confetti-canvas { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; }
-    .play-again-sound { margin-top:5px; padding:3px 8px; font-size:0.9rem; border-radius:5px; cursor:pointer; background:#f0ad4e; color:white; border:none; }
+body{margin:0;font-family:Arial;background:url('assets/backgroundd.jpg') center/cover no-repeat;min-height:100vh}
+#splash,#finish{position:fixed;inset:0;background:#fff;display:flex;align-items:center;justify-content:center;z-index:10}
+#finish{display:none;flex-direction:column}
+.header{background:#ffd54f;padding:10px;text-align:center;font-size:32px;font-weight:bold}
+.question{margin:8px;background:#fff8d6;padding:10px;border-radius:10px;text-align:center}
+.main{display:flex;gap:10px;padding:8px}
+.left{width:28%;text-align:center}
+.left img{max-width:100%;max-height:220px}
+.btn{padding:8px 12px;margin:4px;border:none;border-radius:8px;background:#4caf50;color:#fff}
+.box{flex:1;background:#eef7ff;border-radius:12px;padding:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px}
+.card{background:#fff;border-radius:8px;padding:4px}
+.card img{width:100%;height:80px;object-fit:contain}
+.glow{box-shadow:0 0 12px gold}
+canvas{background:url('assets/redandblueline.png') center/contain no-repeat #fff;border:1px solid #999;width:90%;height:300px;touch-action:none}
 </style>
 </head>
 <body>
-<div id="game-container">
-<div id="logo-screen"><img src="assets/innovine-logo.png" alt="Logo"></div>
-<div id="header">Letter Ii to Ll</div>
-<div id="round-container" style="display:none;"></div>
-<canvas id="confetti-canvas"></canvas>
+<div id="splash"><img src="assets/innovine-logo.png" width="250"></div>
+<div id="game" style="display:none">
+<div class="header">Letter Ii to Ll</div>
+<div id="content"></div>
 </div>
+<div id="finish"><h1>🎉 Great Job! 🎉</h1><button onclick="location.reload()">Play Again</button></div>
+
+<audio id="ok" src="assets/correct.mp3"></audio>
+<audio id="bad" src="assets/wrong.mp3"></audio>
+<audio id="clap" src="assets/freesound_community-claps-44774.mp3"></audio>
 
 <script>
-const rounds = [
-    // Round 1 - Letter recognition Ii
-    { title:'Letter Ii', type:'recognition', letter:'Ii', letterImg:'assets/Ii.png', letterSound:'assets/letterI.mp3', options:['assets/igloo.png','assets/iguana.png','assets/infant.png','assets/inkpot.png','assets/insects.jpg','assets/jet.png','assets/key.jpeg'], multiple:true },
-    // Round 2 - Tracing Ii
-    { title:'Letter Ii', type:'tracing', letter:'Ii', letterSound:'assets/letterI.mp3' },
-    // Round 3 - Letter recognition Jj
-    { title:'Letter Jj', type:'recognition', letter:'Jj', letterImg:'assets/Jj.png', letterSound:'assets/letterJ.mp3', options:['assets/jet.png','assets/jam.jpg','assets/jar.png','assets/jeep.png','assets/jelly.jpg','assets/igloo.png','assets/kettle.jpeg'], multiple:true },
-    // Round 4 - Tracing Jj
-    { title:'Letter Jj', type:'tracing', letter:'Jj', letterSound:'assets/letterJ.mp3' },
-    // Round 5 - Letter recognition Kk
-    { title:'Letter Kk', type:'recognition', letter:'Kk', letterImg:'assets/Kk.png', letterSound:'assets/letterK.mp3', options:['assets/kettle.jpeg','assets/ketchup.png','assets/key.jpeg','assets/kitepink.png','assets/kitten.jpg','assets/Kiwi.png','assets/lantern.png','assets/infant.png'], multiple:true },
-    // Round 6 - Tracing Kk
-    { title:'Letter Kk', type:'tracing', letter:'Kk', letterSound:'assets/letterK.mp3' },
-    // Round 7 - Letter recognition Ll
-    { title:'Letter Ll', type:'recognition', letter:'Ll', letterImg:'assets/Ll.png', letterSound:'assets/letterL.mp3', options:['assets/lantern.png','assets/leaf.png','assets/lemon.jpeg','assets/lilypad.jpg','assets/lion.png','assets/log.png','assets/lollipop.png','assets/lotus.png','assets/jelly.jpg','assets/kitten.jpg'], multiple:true },
-    // Round 8 - Tracing Ll
-    { title:'Letter Ll', type:'tracing', letter:'Ll', letterSound:'assets/letterL.mp3' }
+const rounds=[
+{t:'s',L:'Ii',img:'Ii.png',snd:'letterI.mp3',a:['igloo','iguana','infant','inkpot','insects'],i:['igloo.png','iguana.png','infant.png','inkpot.png','insects.jpg','jet.png','key.jpeg']},
+{t:'w',L:'Ii',snd:'letterI.mp3'},
+{t:'s',L:'Jj',img:'Jj.png',snd:'letterJ.mp3',a:['jet','jam','jar','jeep','jelly'],i:['jet.png','jam.jpg','jar.png','jeep.png','jelly.jpg','igloo.png','kettle.jpeg']},
+{t:'w',L:'Jj',snd:'letterJ.mp3'},
+{t:'s',L:'Kk',img:'Kk.png',snd:'letterK.mp3',a:['kettle','ketchup','key','kitepink','kitten','Kiwi'],i:['kettle.jpeg','ketchup.png','key.jpeg','kitepink.png','kitten.jpg','Kiwi.png','lantern.png','infant.png']},
+{t:'w',L:'Kk',snd:'letterK.mp3'},
+{t:'s',L:'Ll',img:'Ll.png',snd:'letterL.mp3',a:['lantern','leaf','lemon','lilypad','lion','log','lollipop','lotus'],i:['lantern.png','leaf.png','lemon.jpeg','lilypad.jpg','lion.png','log.png','lollipop.png','lotus.png','jelly.jpg','kitten.jpg']},
+{t:'w',L:'Ll',snd:'letterL.mp3'}
 ];
-
-let currentRound = 0;
-let wrongAttempts = {};
-const roundContainer = document.getElementById('round-container');
-const logoScreen = document.getElementById('logo-screen');
-const confettiCanvas = document.getElementById('confetti-canvas');
-const confettiCtx = confettiCanvas.getContext('2d');
-
-// Load first logo screen for 5 seconds
-setTimeout(() => { logoScreen.style.display='none'; roundContainer.style.display='flex'; loadRound(); },5000);
-
-function loadRound(){
-    roundContainer.innerHTML='';
-    if(currentRound>=rounds.length){
-        showConfetti();
-        const playAgainBtn = document.createElement('button');
-        playAgainBtn.id='next-btn';
-        playAgainBtn.innerText='Play Again';
-        playAgainBtn.onclick=()=>{currentRound=0; loadRound();};
-        roundContainer.appendChild(playAgainBtn);
-        return;
-    }
-    const round = rounds[currentRound];
-    const titleEl = document.createElement('div');
-    titleEl.className='round-title';
-    titleEl.innerText=round.title;
-    roundContainer.appendChild(titleEl);
-
-    if(round.type==='recognition'){
-        const questionEl = document.createElement('div');
-        questionEl.className='question';
-        questionEl.innerText=`Identify the letter, listen to the letter sound and tap on objects that start with ${round.letter}`;
-        roundContainer.appendChild(questionEl);
-
-        const letterContainer = document.createElement('div');
-        letterContainer.className='letter-container';
-        const letterImg = document.createElement('img');
-        letterImg.src=round.letterImg;
-        letterContainer.appendChild(letterImg);
-        const playSoundBtn = document.createElement('button');
-        playSoundBtn.className='play-sound';
-        playSoundBtn.innerText='🔊';
-        playSoundBtn.onclick=()=>{new Audio(round.letterSound).play();};
-        letterContainer.appendChild(playSoundBtn);
-        roundContainer.appendChild(letterContainer);
-
-        const optionsBox = document.createElement('div');
-        optionsBox.id='options-box';
-        let optionList = [...round.options];
-        optionList.sort(()=>Math.random()-0.5);
-        wrongAttempts[currentRound]=0;
-        optionList.forEach(opt => {
-            const optDiv = document.createElement('div');
-            optDiv.className='option';
-            const img = document.createElement('img');
-            img.src=opt;
-            optDiv.appendChild(img);
-            optDiv.onclick=()=>handleOptionClick(optDiv, opt);
-            optionsBox.appendChild(optDiv);
-        });
-        roundContainer.appendChild(optionsBox);
-    }
-
-    if(round.type==='tracing'){
-        const questionEl = document.createElement('div');
-        questionEl.className='question';
-        questionEl.innerText=`Listen to the letter sound and write the letter ${round.letter}`;
-        roundContainer.appendChild(questionEl);
-
-        const playSoundBtn = document.createElement('button');
-        playSoundBtn.className='play-again-sound';
-        playSoundBtn.innerText='🔊 Play Sound';
-        playSoundBtn.onclick=()=>{new Audio(round.letterSound).play();};
-        roundContainer.appendChild(playSoundBtn);
-
-        const tracingBox = document.createElement('div');
-        tracingBox.id='tracing-box';
-        const canvas = document.createElement('canvas');
-        canvas.id='tracing-canvas';
-        canvas.width=300;
-        canvas.height=200;
-        tracingBox.appendChild(canvas);
-        const eraseBtn = document.createElement('button');
-        eraseBtn.id='erase-btn';
-        eraseBtn.innerText='Erase';
-        eraseBtn.onclick=()=>{ ctx.clearRect(0,0,canvas.width,canvas.height); };
-        tracingBox.appendChild(eraseBtn);
-        roundContainer.appendChild(tracingBox);
-        const ctx = canvas.getContext('2d');
-        const img = new Image();
-        img.src='assets/redandblueline.png';
-        img.onload=()=>{ ctx.drawImage(img,0,0,canvas.width,canvas.height); };
-
-        let drawing=false;
-        canvas.addEventListener('pointerdown', e=>{ drawing=true; ctx.strokeStyle='black'; ctx.lineWidth=3; ctx.lineJoin='round'; ctx.beginPath(); ctx.moveTo(e.offsetX,e.offsetY); });
-        canvas.addEventListener('pointermove', e=>{ if(drawing){ ctx.lineTo(e.offsetX,e.offsetY); ctx.stroke(); } });
-        canvas.addEventListener('pointerup', e=>{ drawing=false; });
-    }
-}
-
-function handleOptionClick(optDiv,optSrc){
-    const round = rounds[currentRound];
-    const correctOptions = round.options.slice(0,5); // first 5 are correct for simplicity
-    if(correctOptions.includes(optSrc)){
-        optDiv.classList.add('correct');
-        new Audio('assets/correct.mp3').play();
-        setTimeout(()=>{ currentRound++; loadRound(); },1000);
-    } else {
-        optDiv.classList.add('wrong');
-        new Audio('assets/wrong.mp3').play();
-        wrongAttempts[currentRound]++;
-        if(wrongAttempts[currentRound]>=2){
-            const allOptions = document.querySelectorAll('.option');
-            allOptions.forEach(o=>{ if(correctOptions.includes(o.children[0].src.split('/').pop())){ o.classList.add('correct'); } });
-        }
-    }
-}
-
-function showConfetti(){
-    confettiCanvas.style.display='block';
-    // Basic confetti for demo
-    for(let i=0;i<100;i++){
-        confettiCtx.fillStyle=`hsl(${Math.random()*360},100%,50%)`;
-        confettiCtx.fillRect(Math.random()*confettiCanvas.width,Math.random()*confettiCanvas.height,5,10);
-    }
-    setTimeout(()=>{ confettiCtx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height); },3000);
-}
-
-window.addEventListener('resize',()=>{
-    confettiCanvas.width=window.innerWidth;
-    confettiCanvas.height=window.innerHeight;
+let n=0,ctx,cv;
+function speak(t){if(window.speechSynthesis){speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(t));}}
+function qAgain(t){speak(t)}
+function load(){
+if(n>=8){game.style.display='none';finish.style.display='flex';return;}
+let r=rounds[n],c=document.getElementById('content');
+if(r.t==='s'){
+let q="Identify the letter, listen to the letter sound and tap the pictures that start with "+r.L;
+let found=0,wrongs=0;
+c.innerHTML=`<div class='question'>Round ${n+1} of 8<br>${q}</div>
+<div class='main'><div class='left'>
+<img src='assets/${r.img}'><br>
+<button class='btn' onclick="new Audio('assets/${r.snd}').play()">🔊 Letter Sound</button><br>
+<button class='btn' onclick="qAgain('${q}')">🔊 Hear Question</button>
+</div><div class='box'><div class='grid' id='g'></div></div></div>`;
+let g=document.getElementById('g');
+r.i.sort(()=>Math.random()-0.5).forEach(f=>{
+let d=document.createElement('div');d.className='card';d.innerHTML=`<img src="assets/${f}">`;
+d.onclick=()=>{
+let name=f.split('.')[0];
+if(r.a.includes(name)){d.style.visibility='hidden';ok.play();found++;
+if(found===r.a.length){clap.play();setTimeout(()=>{n++;load();},1000);}}
+else{bad.play();wrongs++;if(wrongs>=2){document.querySelectorAll('.card').forEach(x=>{let s=x.innerHTML;r.a.forEach(a=>{if(s.includes(a))x.classList.add('glow');});});}}
+};
+g.appendChild(d);
 });
-window.dispatchEvent(new Event('resize'));
+speak(q);
+}else{
+let q="Listen to the letter sound and write the letter "+r.L;
+c.innerHTML=`<div class='question'>Round ${n+1} of 8<br>${q}</div>
+<div style='text-align:center'>
+<button class='btn' onclick="playBoth('${q}','${r.snd}')">🔊 Hear Question Again</button><br><br>
+<canvas id='cv'></canvas><br>
+<button class='btn' onclick='eraseCanvas()'>🧹 Erase</button>
+<button class='btn' onclick='doneWrite()'>✓ Done</button>
+</div>`;
+setupCanvas(); playBoth(q,r.snd);
+}
+}
+function playBoth(q,s){speak(q);setTimeout(()=>new Audio('assets/'+s).play(),1000);}
+function doneWrite(){ok.play();clap.play();setTimeout(()=>{n++;load();},800);}
+function setupCanvas(){
+cv=document.getElementById('cv');cv.width=cv.offsetWidth;cv.height=300;ctx=cv.getContext('2d');ctx.lineWidth=6;
+let d=false;
+const p=e=>{let r=cv.getBoundingClientRect();let t=e.touches?e.touches[0]:e;return{x:t.clientX-r.left,y:t.clientY-r.top};}
+cv.onmousedown=e=>{d=true;let m=p(e);ctx.beginPath();ctx.moveTo(m.x,m.y)}
+cv.onmousemove=e=>{if(!d)return;let m=p(e);ctx.lineTo(m.x,m.y);ctx.stroke();}
+cv.onmouseup=()=>d=false;
+cv.ontouchstart=e=>{d=true;let m=p(e);ctx.beginPath();ctx.moveTo(m.x,m.y)}
+cv.ontouchmove=e=>{e.preventDefault();if(!d)return;let m=p(e);ctx.lineTo(m.x,m.y);ctx.stroke();}
+cv.ontouchend=()=>d=false;
+}
+function eraseCanvas(){ctx.clearRect(0,0,cv.width,cv.height);}
+setTimeout(()=>{splash.style.display='none';game.style.display='block';load();},5000);
 </script>
-</body>
-</html>
+</body></html>
