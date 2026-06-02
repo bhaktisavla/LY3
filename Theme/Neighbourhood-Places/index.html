@@ -6,24 +6,29 @@
 <title>Neighbourhood Places - Jr KG Game</title>
 <link href="https://fonts.googleapis.com/css2?family=Arbutus&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin:0; padding:0; }
-  body { font-family: 'Arbutus', cursive; background: linear-gradient(to bottom, #a0e3ff, #b8f2ff); display:flex; justify-content:center; align-items:center; min-height:100vh; }
-  #splash, #header, #game, #endScreen { width:100%; max-width:600px; display:none; flex-direction:column; align-items:center; justify-content:center; padding:10px; }
-  #splash img, #header h1 { max-width: 250px; width:50%; margin: 20px 0; }
-  #header h1 { font-size:2em; color:#ff6f61; }
-  #game img.place-img { width:60%; max-width:300px; margin:15px 0; border-radius:10px; border: 3px solid #fff; }
-  #game .options { display:flex; justify-content:space-around; width:100%; margin-top:15px; }
-  .option-box { width:45%; text-align:center; background:#fff; border-radius:10px; padding:5px; cursor:pointer; border:3px solid #ccc; transition: transform 0.2s, border 0.3s; }
-  .option-box img { width:100%; max-width:120px; border-radius:8px; }
-  .option-box.correct-glow { border:3px solid #2ecc71; box-shadow:0 0 10px #2ecc71; }
-  .wiggle { animation: wiggle 0.3s; }
-  @keyframes wiggle { 0%{transform:rotate(0deg);} 25%{transform:rotate(10deg);} 50%{transform:rotate(-10deg);} 75%{transform:rotate(10deg);} 100%{transform:rotate(0deg);} }
-  #game p { margin:10px 0; font-size:1.2em; color:#333; }
-  #hearBtn { margin:10px; padding:5px 10px; background:#ffcc5c; border:none; border-radius:5px; cursor:pointer; font-weight:bold; }
-  #endScreen { display:flex; flex-direction:column; align-items:center; }
-  #endScreen h1 { color:#2ecc71; font-size:2em; margin-bottom:10px; }
-  #playAgain { padding:10px 20px; font-size:1.2em; border:none; background:#ff6f61; color:#fff; border-radius:10px; cursor:pointer; }
-  .label { margin-top:5px; font-weight:bold; color:#333; }
+* { box-sizing: border-box; margin:0; padding:0; }
+body { font-family: 'Arbutus', cursive; background: linear-gradient(to bottom, #a0e3ff, #b8f2ff); display:flex; justify-content:center; align-items:center; min-height:100vh; }
+#splash, #header, #game, #endScreen { width:100%; max-width:700px; display:none; flex-direction:column; align-items:center; justify-content:center; padding:10px; }
+#splash img, #header h1 { max-width: 250px; width:50%; margin: 20px 0; }
+#header h1 { font-size:2em; color:#ff6f61; text-align:center; }
+#game { width:100%; }
+.place-container { position: relative; display: flex; justify-content: center; }
+#placeImg { width:60%; max-width:300px; border-radius:10px; border:3px solid #fff; }
+.place-label { position:absolute; bottom:0; width:100%; background:rgba(0,0,0,0.5); color:#fff; text-align:center; font-weight:bold; font-size:1em; padding:5px 0; border-radius:0 0 10px 10px; }
+
+#game .options { display:flex; justify-content:space-around; width:100%; margin-top:15px; flex-wrap:wrap; }
+.option-box { width:45%; text-align:center; background:#fff; border-radius:10px; padding:5px; cursor:pointer; border:3px solid #ccc; transition: transform 0.2s, border 0.3s; position:relative; overflow:hidden; margin:5px 0; }
+.option-box img { width:100%; border-radius:8px; }
+.option-label { position:absolute; bottom:0; left:0; width:100%; background:rgba(0,0,0,0.5); color:#fff; font-weight:bold; padding:2px 0; text-align:center; font-size:0.9em; border-radius:0 0 8px 8px; }
+.option-box.correct-glow { border:3px solid #2ecc71; box-shadow:0 0 10px #2ecc71; }
+.wiggle { animation: wiggle 0.3s; }
+@keyframes wiggle { 0%{transform:rotate(0deg);} 25%{transform:rotate(10deg);} 50%{transform:rotate(-10deg);} 75%{transform:rotate(10deg);} 100%{transform:rotate(0deg);} }
+
+#game p { margin:10px 0; font-size:1.2em; color:#333; text-align:center; }
+#hearBtn { margin:10px; padding:5px 10px; background:#ffcc5c; border:none; border-radius:5px; cursor:pointer; font-weight:bold; }
+#endScreen { display:flex; flex-direction:column; align-items:center; }
+#endScreen h1 { color:#2ecc71; font-size:2em; margin-bottom:10px; text-align:center; }
+#playAgain { padding:10px 20px; font-size:1.2em; border:none; background:#ff6f61; color:#fff; border-radius:10px; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -37,19 +42,22 @@
 </div>
 
 <div id="game">
-  <p id="question">Look at the place at the top. Tap on the vehicle or people or object that belongs there.</p>
+  <p id="question">Look at the place at the top. Tap on the vehicle or person or object that belongs there.</p>
   <button id="hearBtn">🔊 Hear Again</button>
-  <img id="placeImg" class="place-img" src="" alt="Place Image">
-  <div class="label" id="placeLabel"></div>
-  <p>Which one belongs here?</p>
+  
+  <div class="place-container">
+    <img id="placeImg" src="" alt="Place Image">
+    <div class="place-label" id="placeLabel"></div>
+  </div>
+  
   <div class="options">
-    <div class="option-box" id="option1"><img src="" alt=""><div class="label" id="label1"></div></div>
-    <div class="option-box" id="option2"><img src="" alt=""><div class="label" id="label2"></div></div>
+    <div class="option-box" id="option1"><img src="" alt=""><div class="option-label" id="label1"></div></div>
+    <div class="option-box" id="option2"><img src="" alt=""><div class="option-label" id="label2"></div></div>
   </div>
 </div>
 
 <div id="endScreen">
-  <h1>🎉 Good Job! 🎉</h1>
+  <h1>🎉 Congratulations! You Completed All Rounds! 🎉</h1>
   <button id="playAgain">Play Again</button>
 </div>
 
@@ -110,13 +118,15 @@ function loadRound() {
   const round = rounds[currentRound];
   placeImg.src = round.placeImg;
   placeLabel.textContent = round.place;
+  
   option1.querySelector('img').src = round.options[0].img;
   label1.textContent = round.options[0].label;
   option2.querySelector('img').src = round.options[1].img;
   label2.textContent = round.options[1].label;
-  // Remove glow/wiggle classes
+  
   option1.classList.remove('wiggle','correct-glow');
   option2.classList.remove('wiggle','correct-glow');
+
   playVoice(round.voice);
 }
 
@@ -131,7 +141,7 @@ option2.addEventListener('click', ()=> handleChoice(option2,1));
 
 function handleChoice(optionEl, index) {
   const round = rounds[currentRound];
-  const correctIndex = 0; // always first option in data is correct
+  const correctIndex = 0;
   if(index===correctIndex) {
     optionEl.classList.add('correct-glow');
     correctSound.play();
@@ -157,7 +167,7 @@ function nextRound() {
 function showEnd() {
   game.style.display='none';
   endScreen.style.display='flex';
-  confetti({particleCount:100, spread:70, origin:{y:0.6}});
+  confetti({particleCount:150, spread:80, origin:{y:0.6}});
 }
 
 playAgain.addEventListener('click', ()=> {
