@@ -5,72 +5,82 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Neighbourhood Places – Jr.KG Game</title>
 <style>
-    body {
-        margin:0;
-        font-family:'Arbutus', cursive;
-        background: linear-gradient(135deg, #a2caff, #ffd9a2);
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        min-height:100vh;
-        color:#333;
-    }
-    #splash, #titleScreen, #game, #endScreen { 
-        width:100%; 
-        height:100vh; 
-        display:none; 
-        flex-direction:column; 
-        align-items:center; 
-        justify-content:center; 
-    }
-    #splash img { width:200px; height:auto; }
-    h1 { font-size:2em; margin:10px; text-align:center; color:#4b2e83; }
-    #questionBox {
-        margin:10px 0; 
-        font-size:1.2em; 
-        text-align:center; 
-        display:flex; 
-        align-items:center; 
-        justify-content:center; 
-        gap:10px; 
-        flex-wrap:wrap;
-    }
-    .place-container, .options-container {
-        display:flex;
-        justify-content:center;
-        flex-wrap:wrap;
-        gap:15px;
-        margin:10px 0;
-    }
-    .place-box, .option-box {
-        border:2px solid #999;
-        border-radius:12px;
-        padding:5px;
-        background:#fff;
-        flex:1 1 40%;
-        max-width:200px;
-        text-align:center;
-        cursor:pointer;
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .place-box img, .option-box img {
-        width:100%;
-        height:auto;
-        display:block;
-        margin-bottom:5px;
-    }
-    .correct { border-color: green; box-shadow:0 0 15px green; }
-    .wrong { animation: wiggle 0.3s; }
-    @keyframes wiggle {
-        0% { transform: rotate(0deg); }
-        25% { transform: rotate(5deg); }
-        50% { transform: rotate(-5deg); }
-        75% { transform: rotate(5deg); }
-        100% { transform: rotate(0deg); }
-    }
-    #hearAgain { margin-left:10px; cursor:pointer; color:#fff; background:#4b2e83; padding:5px 10px; border-radius:8px; }
-    #endScreen h1 { color:#4b2e83; }
-    #playAgain { margin-top:20px; padding:10px 20px; font-size:1.2em; border:none; border-radius:12px; background:#4b2e83; color:#fff; cursor:pointer; }
+body {
+    margin:0;
+    font-family:'Arbutus', cursive;
+    background: linear-gradient(135deg, #a2caff, #ffd9a2);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    min-height:100vh;
+    color:#333;
+}
+#splash, #titleScreen, #game, #endScreen { 
+    width:100%; 
+    height:100vh; 
+    display:none; 
+    flex-direction:column; 
+    align-items:center; 
+    justify-content:center; 
+}
+#splash img { width:200px; height:auto; }
+h1 { font-size:2em; margin:10px; text-align:center; color:#4b2e83; }
+#questionBox {
+    margin:10px 0; 
+    font-size:1.4em; 
+    text-align:center; 
+    display:flex; 
+    align-items:center; 
+    justify-content:center; 
+    gap:10px; 
+    flex-wrap:wrap;
+}
+.place-container, .options-container {
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:15px;
+    margin:10px 0;
+    width: 95%;
+}
+.place-box, .option-box {
+    border:2px solid #999;
+    border-radius:12px;
+    padding:5px;
+    background:#fff;
+    flex:1 1 45%;
+    max-width:300px;
+    text-align:center;
+    cursor:pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.place-box img, .option-box img {
+    width:100%;
+    height:auto;
+    display:block;
+    margin-bottom:5px;
+}
+.option-box.horizontal img {
+    width: 200px; /* Horizontal adjustment for round 5 */
+}
+.correct { border-color: green; box-shadow:0 0 15px green; }
+.wrong { animation: wiggle 0.3s; }
+@keyframes wiggle {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(5deg); }
+    50% { transform: rotate(-5deg); }
+    75% { transform: rotate(5deg); }
+    100% { transform: rotate(0deg); }
+}
+#hearAgain { margin-left:10px; cursor:pointer; color:#fff; background:#4b2e83; padding:5px 10px; border-radius:8px; }
+#endScreen h1 { color:#4b2e83; text-align:center; }
+#playAgain { margin-top:20px; padding:10px 20px; font-size:1.2em; border:none; border-radius:12px; background:#4b2e83; color:#fff; cursor:pointer; }
+
+@media(max-width:600px){
+    #questionBox { font-size:1.2em; }
+    .place-box, .option-box { flex:1 1 90%; max-width:90%; }
+    .option-box.horizontal img { width: 100%; }
+}
 </style>
 </head>
 <body>
@@ -125,7 +135,7 @@ const rounds = [
     {place:'hospital', placeImg:'assets/hospital.png', options:[{img:'assets/ambulance.png', label:'ambulance'}, {img:'assets/train.png', label:'train'}], correct:'assets/ambulance.png'},
     {place:'bank', placeImg:'assets/bank.png', options:[{img:'assets/basket.png', label:'basket'}, {img:'assets/rupee.png', label:'rupee'}], correct:'assets/rupee.png'},
     {place:'school', placeImg:'assets/school.png', options:[{img:'assets/docto.png', label:'doctor'}, {img:'assets/teacher.png', label:'teacher'}], correct:'assets/teacher.png'},
-    {place:'supermarket', placeImg:'assets/supermarket.png', options:[{img:'assets/cart.png', label:'cart'}, {img:'assets/board.png', label:'board'}], correct:'assets/cart.png'},
+    {place:'supermarket', placeImg:'assets/supermarket.png', options:[{img:'assets/cart.png', label:'cart'}, {img:'assets/board.png', label:'board', horizontal:true}], correct:'assets/cart.png'},
     {place:'gasstation', placeImg:'assets/gasstation.png', options:[{img:'assets/gas.png', label:'petrol'}, {img:'assets/icecreamcart.png', label:'ice-cream cart'}], correct:'assets/gas.png'},
     {place:'firestation', placeImg:'assets/firestation.png', options:[{img:'assets/tractor.png', label:'tractor'}, {img:'assets/fireengine.png', label:'fire engine'}], correct:'assets/fireengine.png'},
     {place:'park', placeImg:'assets/park.png', options:[{img:'assets/bed.png', label:'bed'}, {img:'assets/slide.png', label:'slide'}], correct:'assets/slide.png'},
@@ -170,13 +180,15 @@ function loadRound(){
     placeImg.src = round.placeImg;
     placeLabel.textContent = round.place;
 
-    option1.querySelector('img').src = round.options[0].img;
-    option1.querySelector('.option-label').textContent = round.options[0].label;
-    option2.querySelector('img').src = round.options[1].img;
-    option2.querySelector('.option-label').textContent = round.options[1].label;
-
-    option1.className = 'option-box';
-    option2.className = 'option-box';
+    const opts = [option1, option2];
+    opts.forEach((opt,i)=>{
+        opt.querySelector('img').src = round.options[i].img;
+        opt.querySelector('.option-label').textContent = round.options[i].label;
+        opt.className = 'option-box';
+        if(round.options[i].horizontal){
+            opt.classList.add('horizontal');
+        }
+    });
 }
 
 function handleOptionClick(e){
@@ -193,6 +205,7 @@ function handleOptionClick(e){
             }else{
                 game.style.display = 'none';
                 endScreen.style.display = 'flex';
+                // Minimal confetti effect for end only
                 confettiEffect();
             }
         },1000);
@@ -202,22 +215,19 @@ function handleOptionClick(e){
         wrongAttempts++;
         if(wrongAttempts >=2){
             // Glow correct option
-            if(option1.querySelector('img').src.includes(correctImg)){
-                option1.classList.add('correct');
-            } else {
-                option2.classList.add('correct');
-            }
+            const opts = [option1, option2];
+            opts.forEach(opt=>{
+                if(opt.querySelector('img').src.includes(correctImg)){
+                    opt.classList.add('correct');
+                }
+            });
         }
     }
 }
 
-hearAgainBtn.addEventListener('click', ()=> {
-    speakText(questionText.textContent);
-});
-
+hearAgainBtn.addEventListener('click', ()=> speakText(questionText.textContent));
 option1.addEventListener('click', handleOptionClick);
 option2.addEventListener('click', handleOptionClick);
-
 playAgainBtn.addEventListener('click', ()=>{
     currentRound = 0;
     endScreen.style.display='none';
@@ -225,12 +235,10 @@ playAgainBtn.addEventListener('click', ()=>{
     loadRound();
 });
 
-// Confetti effect (simple)
 function confettiEffect(){
-    const duration = 3 * 1000;
+    const duration = 2 * 1000;
     const end = Date.now() + duration;
     const colors = ['#FFC107','#FF3D00','#4CAF50','#2196F3','#E91E63'];
-
     (function frame(){
         const timeLeft = end - Date.now();
         if(timeLeft <= 0) return;
@@ -247,7 +255,7 @@ function confettiEffect(){
     }());
 }
 
-// Start splash and title sequence
+// Splash and Title
 splash.style.display='flex';
 setTimeout(()=>{
     splash.style.display='none';
@@ -258,8 +266,6 @@ setTimeout(()=>{
         loadRound();
     },5000);
 },5000);
-
 </script>
-
 </body>
 </html>
