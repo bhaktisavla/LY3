@@ -3,180 +3,263 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Neighbourhood Places - Jr KG Game</title>
-<link href="https://fonts.googleapis.com/css2?family=Arbutus&display=swap" rel="stylesheet">
+<title>Neighbourhood Places – Jr.KG Game</title>
 <style>
-* { box-sizing: border-box; margin:0; padding:0; }
-body { font-family: 'Arbutus', cursive; background: linear-gradient(to bottom, #a0e3ff, #b8f2ff); display:flex; justify-content:center; align-items:center; min-height:100vh; }
-#splash, #header, #game, #endScreen { width:100%; max-width:700px; display:none; flex-direction:column; align-items:center; justify-content:center; padding:10px; }
-#splash img, #header h1 { max-width: 250px; width:50%; margin: 20px 0; }
-#header h1 { font-size:2em; color:#ff6f61; text-align:center; }
-#game { width:100%; }
-.place-container { position: relative; display: flex; justify-content: center; }
-#placeImg { width:60%; max-width:300px; border-radius:10px; border:3px solid #fff; }
-.place-label { position:absolute; bottom:0; width:100%; background:rgba(0,0,0,0.5); color:#fff; text-align:center; font-weight:bold; font-size:1em; padding:5px 0; border-radius:0 0 10px 10px; }
-
-#game .options { display:flex; justify-content:space-around; width:100%; margin-top:15px; flex-wrap:wrap; }
-.option-box { width:45%; text-align:center; background:#fff; border-radius:10px; padding:5px; cursor:pointer; border:3px solid #ccc; transition: transform 0.2s, border 0.3s; position:relative; overflow:hidden; margin:5px 0; }
-.option-box img { width:100%; border-radius:8px; }
-.option-label { position:absolute; bottom:0; left:0; width:100%; background:rgba(0,0,0,0.5); color:#fff; font-weight:bold; padding:2px 0; text-align:center; font-size:0.9em; border-radius:0 0 8px 8px; }
-.option-box.correct-glow { border:3px solid #2ecc71; box-shadow:0 0 10px #2ecc71; }
-.wiggle { animation: wiggle 0.3s; }
-@keyframes wiggle { 0%{transform:rotate(0deg);} 25%{transform:rotate(10deg);} 50%{transform:rotate(-10deg);} 75%{transform:rotate(10deg);} 100%{transform:rotate(0deg);} }
-
-#game p { margin:10px 0; font-size:1.2em; color:#333; text-align:center; }
-#hearBtn { margin:10px; padding:5px 10px; background:#ffcc5c; border:none; border-radius:5px; cursor:pointer; font-weight:bold; }
-#endScreen { display:flex; flex-direction:column; align-items:center; }
-#endScreen h1 { color:#2ecc71; font-size:2em; margin-bottom:10px; text-align:center; }
-#playAgain { padding:10px 20px; font-size:1.2em; border:none; background:#ff6f61; color:#fff; border-radius:10px; cursor:pointer; }
+    body {
+        margin:0;
+        font-family:'Arbutus', cursive;
+        background: linear-gradient(135deg, #a2caff, #ffd9a2);
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        min-height:100vh;
+        color:#333;
+    }
+    #splash, #titleScreen, #game, #endScreen { 
+        width:100%; 
+        height:100vh; 
+        display:none; 
+        flex-direction:column; 
+        align-items:center; 
+        justify-content:center; 
+    }
+    #splash img { width:200px; height:auto; }
+    h1 { font-size:2em; margin:10px; text-align:center; color:#4b2e83; }
+    #questionBox {
+        margin:10px 0; 
+        font-size:1.2em; 
+        text-align:center; 
+        display:flex; 
+        align-items:center; 
+        justify-content:center; 
+        gap:10px; 
+        flex-wrap:wrap;
+    }
+    .place-container, .options-container {
+        display:flex;
+        justify-content:center;
+        flex-wrap:wrap;
+        gap:15px;
+        margin:10px 0;
+    }
+    .place-box, .option-box {
+        border:2px solid #999;
+        border-radius:12px;
+        padding:5px;
+        background:#fff;
+        flex:1 1 40%;
+        max-width:200px;
+        text-align:center;
+        cursor:pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .place-box img, .option-box img {
+        width:100%;
+        height:auto;
+        display:block;
+        margin-bottom:5px;
+    }
+    .correct { border-color: green; box-shadow:0 0 15px green; }
+    .wrong { animation: wiggle 0.3s; }
+    @keyframes wiggle {
+        0% { transform: rotate(0deg); }
+        25% { transform: rotate(5deg); }
+        50% { transform: rotate(-5deg); }
+        75% { transform: rotate(5deg); }
+        100% { transform: rotate(0deg); }
+    }
+    #hearAgain { margin-left:10px; cursor:pointer; color:#fff; background:#4b2e83; padding:5px 10px; border-radius:8px; }
+    #endScreen h1 { color:#4b2e83; }
+    #playAgain { margin-top:20px; padding:10px 20px; font-size:1.2em; border:none; border-radius:12px; background:#4b2e83; color:#fff; cursor:pointer; }
 </style>
 </head>
 <body>
 
-<div id="splash">
-  <img src="assets/innovine-logo.png" alt="Innovine Logo">
+<!-- Splash Screen -->
+<div id="splash" style="display:flex;">
+    <img src="assets/innovine-logo.png" alt="Innovine Logo">
 </div>
 
-<div id="header">
-  <h1>Neighbourhood Places</h1>
+<!-- Title Screen -->
+<div id="titleScreen">
+    <h1>Neighbourhood Places</h1>
 </div>
 
+<!-- Game Screen -->
 <div id="game">
-  <p id="question">Look at the place at the top. Tap on the vehicle or person or object that belongs there.</p>
-  <button id="hearBtn">🔊 Hear Again</button>
-  
-  <div class="place-container">
-    <img id="placeImg" src="" alt="Place Image">
-    <div class="place-label" id="placeLabel"></div>
-  </div>
-  
-  <div class="options">
-    <div class="option-box" id="option1"><img src="" alt=""><div class="option-label" id="label1"></div></div>
-    <div class="option-box" id="option2"><img src="" alt=""><div class="option-label" id="label2"></div></div>
-  </div>
+    <div id="questionBox">
+        <span id="questionText"></span>
+        <button id="hearAgain">🔊 Hear Again</button>
+    </div>
+    <div class="place-container">
+        <div class="place-box" id="placeBox">
+            <img id="placeImg" src="" alt="Place">
+            <div id="placeLabel"></div>
+        </div>
+    </div>
+    <div class="options-container">
+        <div class="option-box" id="option1">
+            <img src="" alt="Option 1">
+            <div class="option-label"></div>
+        </div>
+        <div class="option-box" id="option2">
+            <img src="" alt="Option 2">
+            <div class="option-label"></div>
+        </div>
+    </div>
 </div>
 
+<!-- End Screen -->
 <div id="endScreen">
-  <h1>🎉 Congratulations! You Completed All Rounds! 🎉</h1>
-  <button id="playAgain">Play Again</button>
+    <h1>🎉 Good Job! You completed all rounds! 🎉</h1>
+    <button id="playAgain">Play Again</button>
 </div>
 
-<audio id="correctSound" src="assets/correct.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
-<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+<audio id="audioCorrect" src="assets/correct.mp3"></audio>
+<audio id="audioWrong" src="assets/wrong.mp3"></audio>
+<audio id="audioClap" src="assets/freesound_community-claps-44774.mp3"></audio>
 
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 <script>
 const rounds = [
-  {place:'airport', placeImg:'assets/airport.png', options:[{img:'assets/aeroplane.png', label:'aeroplane'}, {img:'assets/ship.png', label:'ship'}], voice:'assets/voice_airport.mp3'},
-  {place:'hospital', placeImg:'assets/hospital.png', options:[{img:'assets/ambulance.png', label:'ambulance'}, {img:'assets/train.png', label:'train'}], voice:'assets/voice_hospital.mp3'},
-  {place:'bank', placeImg:'assets/bank.png', options:[{img:'assets/basket.png', label:'basket'}, {img:'assets/rupee.png', label:'rupee'}], voice:'assets/voice_bank.mp3'},
-  {place:'school', placeImg:'assets/school.png', options:[{img:'assets/docto.png', label:'doctor'}, {img:'assets/teacher.png', label:'teacher'}], voice:'assets/voice_school.mp3'},
-  {place:'supermarket', placeImg:'assets/supermarket.png', options:[{img:'assets/cart.png', label:'cart'}, {img:'assets/board.png', label:'board'}], voice:'assets/voice_supermarket.mp3'},
-  {place:'gas station', placeImg:'assets/gasstation.png', options:[{img:'assets/gas.png', label:'petrol'}, {img:'assets/icecreamcart.png', label:'ice-cream cart'}], voice:'assets/voice_gas.mp3'},
-  {place:'fire station', placeImg:'assets/firestation.png', options:[{img:'assets/tractor.png', label:'tractor'}, {img:'assets/fireengine.png', label:'fire engine'}], voice:'assets/voice_fire.mp3'},
-  {place:'park', placeImg:'assets/park.png', options:[{img:'assets/bed.png', label:'bed'}, {img:'assets/slide.png', label:'slide'}], voice:'assets/voice_park.mp3'},
-  {place:'police station', placeImg:'assets/policestation.png', options:[{img:'assets/policeman.png', label:'policeman'}, {img:'assets/farmer.png', label:'farmer'}], voice:'assets/voice_police.mp3'}
+    {place:'airport', placeImg:'assets/airport.png', options:[{img:'assets/aeroplane.png', label:'aeroplane'}, {img:'assets/ship.png', label:'ship'}], correct:'assets/aeroplane.png'},
+    {place:'hospital', placeImg:'assets/hospital.png', options:[{img:'assets/ambulance.png', label:'ambulance'}, {img:'assets/train.png', label:'train'}], correct:'assets/ambulance.png'},
+    {place:'bank', placeImg:'assets/bank.png', options:[{img:'assets/basket.png', label:'basket'}, {img:'assets/rupee.png', label:'rupee'}], correct:'assets/rupee.png'},
+    {place:'school', placeImg:'assets/school.png', options:[{img:'assets/docto.png', label:'doctor'}, {img:'assets/teacher.png', label:'teacher'}], correct:'assets/teacher.png'},
+    {place:'supermarket', placeImg:'assets/supermarket.png', options:[{img:'assets/cart.png', label:'cart'}, {img:'assets/board.png', label:'board'}], correct:'assets/cart.png'},
+    {place:'gasstation', placeImg:'assets/gasstation.png', options:[{img:'assets/gas.png', label:'petrol'}, {img:'assets/icecreamcart.png', label:'ice-cream cart'}], correct:'assets/gas.png'},
+    {place:'firestation', placeImg:'assets/firestation.png', options:[{img:'assets/tractor.png', label:'tractor'}, {img:'assets/fireengine.png', label:'fire engine'}], correct:'assets/fireengine.png'},
+    {place:'park', placeImg:'assets/park.png', options:[{img:'assets/bed.png', label:'bed'}, {img:'assets/slide.png', label:'slide'}], correct:'assets/slide.png'},
+    {place:'policestation', placeImg:'assets/policestation.png', options:[{img:'assets/policeman.png', label:'policeman'}, {img:'assets/farmer.png', label:'farmer'}], correct:'assets/policeman.png'},
 ];
 
 let currentRound = 0;
-let wrongCount = 0;
+let wrongAttempts = 0;
 
 const splash = document.getElementById('splash');
-const header = document.getElementById('header');
+const titleScreen = document.getElementById('titleScreen');
 const game = document.getElementById('game');
 const endScreen = document.getElementById('endScreen');
+
+const questionText = document.getElementById('questionText');
+const hearAgainBtn = document.getElementById('hearAgain');
+
 const placeImg = document.getElementById('placeImg');
 const placeLabel = document.getElementById('placeLabel');
+
 const option1 = document.getElementById('option1');
 const option2 = document.getElementById('option2');
-const label1 = document.getElementById('label1');
-const label2 = document.getElementById('label2');
-const hearBtn = document.getElementById('hearBtn');
-const correctSound = document.getElementById('correctSound');
-const wrongSound = document.getElementById('wrongSound');
-const clapSound = document.getElementById('clapSound');
-const playAgain = document.getElementById('playAgain');
 
-function showSplash() {
-  splash.style.display = 'flex';
-  setTimeout(()=> { splash.style.display='none'; showHeader(); }, 5000);
+const audioCorrect = document.getElementById('audioCorrect');
+const audioWrong = document.getElementById('audioWrong');
+const audioClap = document.getElementById('audioClap');
+
+const playAgainBtn = document.getElementById('playAgain');
+
+function speakText(text){
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    speechSynthesis.speak(utterance);
 }
 
-function showHeader() {
-  header.style.display='flex';
-  setTimeout(()=> { header.style.display='none'; showGame(); }, 5000);
+function loadRound(){
+    wrongAttempts = 0;
+    const round = rounds[currentRound];
+    questionText.textContent = "Look at the place at the top. Tap on the vehicle or person or object that belongs there.";
+    speakText(questionText.textContent);
+    
+    placeImg.src = round.placeImg;
+    placeLabel.textContent = round.place;
+
+    option1.querySelector('img').src = round.options[0].img;
+    option1.querySelector('.option-label').textContent = round.options[0].label;
+    option2.querySelector('img').src = round.options[1].img;
+    option2.querySelector('.option-label').textContent = round.options[1].label;
+
+    option1.className = 'option-box';
+    option2.className = 'option-box';
 }
 
-function showGame() {
-  game.style.display='flex';
-  loadRound();
-}
-
-function loadRound() {
-  wrongCount = 0;
-  const round = rounds[currentRound];
-  placeImg.src = round.placeImg;
-  placeLabel.textContent = round.place;
-  
-  option1.querySelector('img').src = round.options[0].img;
-  label1.textContent = round.options[0].label;
-  option2.querySelector('img').src = round.options[1].img;
-  label2.textContent = round.options[1].label;
-  
-  option1.classList.remove('wiggle','correct-glow');
-  option2.classList.remove('wiggle','correct-glow');
-
-  playVoice(round.voice);
-}
-
-function playVoice(src) {
-  const voice = new Audio(src);
-  voice.play();
-  hearBtn.onclick = ()=> { voice.currentTime=0; voice.play(); };
-}
-
-option1.addEventListener('click', ()=> handleChoice(option1,0));
-option2.addEventListener('click', ()=> handleChoice(option2,1));
-
-function handleChoice(optionEl, index) {
-  const round = rounds[currentRound];
-  const correctIndex = 0;
-  if(index===correctIndex) {
-    optionEl.classList.add('correct-glow');
-    correctSound.play();
-    clapSound.play();
-    setTimeout(()=> nextRound(), 1500);
-  } else {
-    wrongCount++;
-    optionEl.classList.add('wiggle');
-    wrongSound.play();
-    setTimeout(()=> optionEl.classList.remove('wiggle'), 500);
-    if(wrongCount>=2) {
-      if(correctIndex===0) option1.classList.add('correct-glow'); else option2.classList.add('correct-glow');
+function handleOptionClick(e){
+    const selectedImg = e.currentTarget.querySelector('img').src;
+    const correctImg = rounds[currentRound].correct;
+    if(selectedImg.includes(correctImg)){
+        e.currentTarget.classList.add('correct');
+        audioCorrect.play();
+        audioClap.play();
+        setTimeout(()=> {
+            currentRound++;
+            if(currentRound < rounds.length){
+                loadRound();
+            }else{
+                game.style.display = 'none';
+                endScreen.style.display = 'flex';
+                confettiEffect();
+            }
+        },1000);
+    }else{
+        e.currentTarget.classList.add('wrong');
+        audioWrong.play();
+        wrongAttempts++;
+        if(wrongAttempts >=2){
+            // Glow correct option
+            if(option1.querySelector('img').src.includes(correctImg)){
+                option1.classList.add('correct');
+            } else {
+                option2.classList.add('correct');
+            }
+        }
     }
-  }
 }
 
-function nextRound() {
-  currentRound++;
-  if(currentRound>=rounds.length) { showEnd(); }
-  else { loadRound(); }
-}
-
-function showEnd() {
-  game.style.display='none';
-  endScreen.style.display='flex';
-  confetti({particleCount:150, spread:80, origin:{y:0.6}});
-}
-
-playAgain.addEventListener('click', ()=> {
-  endScreen.style.display='none';
-  currentRound=0;
-  showSplash();
+hearAgainBtn.addEventListener('click', ()=> {
+    speakText(questionText.textContent);
 });
 
-showSplash();
+option1.addEventListener('click', handleOptionClick);
+option2.addEventListener('click', handleOptionClick);
+
+playAgainBtn.addEventListener('click', ()=>{
+    currentRound = 0;
+    endScreen.style.display='none';
+    game.style.display='flex';
+    loadRound();
+});
+
+// Confetti effect (simple)
+function confettiEffect(){
+    const duration = 3 * 1000;
+    const end = Date.now() + duration;
+    const colors = ['#FFC107','#FF3D00','#4CAF50','#2196F3','#E91E63'];
+
+    (function frame(){
+        const timeLeft = end - Date.now();
+        if(timeLeft <= 0) return;
+        const conf = document.createElement('div');
+        conf.textContent = '🎊';
+        conf.style.position = 'fixed';
+        conf.style.fontSize = Math.floor(Math.random()*24+12)+'px';
+        conf.style.top = Math.random()*window.innerHeight+'px';
+        conf.style.left = Math.random()*window.innerWidth+'px';
+        conf.style.zIndex = 9999;
+        document.body.appendChild(conf);
+        setTimeout(()=>{ conf.remove(); }, 2000);
+        requestAnimationFrame(frame);
+    }());
+}
+
+// Start splash and title sequence
+splash.style.display='flex';
+setTimeout(()=>{
+    splash.style.display='none';
+    titleScreen.style.display='flex';
+    setTimeout(()=>{
+        titleScreen.style.display='none';
+        game.style.display='flex';
+        loadRound();
+    },5000);
+},5000);
+
 </script>
+
 </body>
 </html>
