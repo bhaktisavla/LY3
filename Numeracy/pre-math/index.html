@@ -356,7 +356,19 @@ const o2=document.getElementById("option2");
 
 o.classList.remove("glow");
 
+if(currentRound===0){
+
+if(arr[i].img.includes("small.png")){
+o.innerHTML=`<img src="${arr[i].img}" style="width:45%;height:45%;object-fit:contain;">`;
+}else{
+o.innerHTML=`<img src="${arr[i].img}" style="width:90%;height:90%;object-fit:contain;">`;
+}
+
+}else{
+
 o.innerHTML=`<img src="${arr[i].img}">`;
+
+}
 
 o.onclick=()=>checkAnswer(arr[i].correct,o);
 
