@@ -61,7 +61,7 @@ h1 { font-size:2em; margin:10px; text-align:center; color:#4b2e83; }
     margin-bottom:5px;
 }
 .option-box.horizontal img {
-    width: 200px; /* Horizontal adjustment for round 5 */
+    width: 200px; /* Round 5 horizontal board */
 }
 .correct { border-color: green; box-shadow:0 0 15px green; }
 .wrong { animation: wiggle 0.3s; }
@@ -75,27 +75,18 @@ h1 { font-size:2em; margin:10px; text-align:center; color:#4b2e83; }
 #hearAgain { margin-left:10px; cursor:pointer; color:#fff; background:#4b2e83; padding:5px 10px; border-radius:8px; }
 #endScreen h1 { color:#4b2e83; text-align:center; }
 #playAgain { margin-top:20px; padding:10px 20px; font-size:1.2em; border:none; border-radius:12px; background:#4b2e83; color:#fff; cursor:pointer; }
-
-@media(max-width:600px){
-    #questionBox { font-size:1.2em; }
-    .place-box, .option-box { flex:1 1 90%; max-width:90%; }
-    .option-box.horizontal img { width: 100%; }
-}
 </style>
 </head>
 <body>
 
-<!-- Splash Screen -->
 <div id="splash" style="display:flex;">
     <img src="assets/innovine-logo.png" alt="Innovine Logo">
 </div>
 
-<!-- Title Screen -->
 <div id="titleScreen">
     <h1>Neighbourhood Places</h1>
 </div>
 
-<!-- Game Screen -->
 <div id="game">
     <div id="questionBox">
         <span id="questionText"></span>
@@ -119,7 +110,6 @@ h1 { font-size:2em; margin:10px; text-align:center; color:#4b2e83; }
     </div>
 </div>
 
-<!-- End Screen -->
 <div id="endScreen">
     <h1>🎉 Good Job! You completed all rounds! 🎉</h1>
     <button id="playAgain">Play Again</button>
@@ -205,7 +195,6 @@ function handleOptionClick(e){
             }else{
                 game.style.display = 'none';
                 endScreen.style.display = 'flex';
-                // Minimal confetti effect for end only
                 confettiEffect();
             }
         },1000);
@@ -214,7 +203,6 @@ function handleOptionClick(e){
         audioWrong.play();
         wrongAttempts++;
         if(wrongAttempts >=2){
-            // Glow correct option
             const opts = [option1, option2];
             opts.forEach(opt=>{
                 if(opt.querySelector('img').src.includes(correctImg)){
@@ -238,7 +226,6 @@ playAgainBtn.addEventListener('click', ()=>{
 function confettiEffect(){
     const duration = 2 * 1000;
     const end = Date.now() + duration;
-    const colors = ['#FFC107','#FF3D00','#4CAF50','#2196F3','#E91E63'];
     (function frame(){
         const timeLeft = end - Date.now();
         if(timeLeft <= 0) return;
@@ -255,7 +242,6 @@ function confettiEffect(){
     }());
 }
 
-// Splash and Title
 splash.style.display='flex';
 setTimeout(()=>{
     splash.style.display='none';
