@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Above and Below – Jr.KG Pre-Math Game</title>
+<title>Above and Below – Jr.KG Game</title>
 <style>
     * { margin:0; padding:0; box-sizing:border-box; }
     body, html { width:100%; height:100%; font-family: 'Arbutus', cursive; }
-    body { background: linear-gradient(to bottom, #FFF8DC, #FFE4B5); display:flex; justify-content:center; align-items:center; flex-direction:column; }
+    body { background: linear-gradient(to bottom, #FFFBF0, #FFF8E1); display:flex; justify-content:center; align-items:center; flex-direction:column; }
     #splash, #header, #game, #endScreen { width:100%; height:100vh; display:none; flex-direction:column; align-items:center; justify-content:center; position:relative; }
     #splash img { width:250px; height:auto; }
-    #header h1 { font-size:3em; color:#FF7F50; text-align:center; animation: flash 1s infinite; margin-bottom:20px; }
+    #header h1 { font-size:3em; color:#FF4500; text-align:center; animation: flash 1s infinite; margin-bottom:20px; }
     @keyframes flash { 0%,50%,100% {opacity:1;} 25%,75% {opacity:0.3;} }
-    #questionBox { font-size:1.8em; color:#4B0082; margin-bottom:10px; text-align:center; max-width:95%; background:rgba(255,255,255,0.6); padding:10px 15px; border-radius:10px; }
-    #hearAgain { font-size:1.2em; color:#006400; cursor:pointer; text-decoration:underline; margin-bottom:15px; }
-    #imageContainer { position:relative; width:95%; max-height:65%; border-radius:20px; overflow:hidden; box-shadow:0 0 15px rgba(0,0,0,0.2); }
+    #questionBox { font-size:1.8em; color:#4B0082; margin-bottom:10px; text-align:center; max-width:95%; background:rgba(255,255,255,0.7); padding:10px 15px; border-radius:10px; }
+    #hearAgain { font-size:1.2em; color:#006400; cursor:pointer; text-decoration:underline; margin-bottom:10px; }
+    #imageContainer { position:relative; width:95%; max-height:60%; border-radius:20px; overflow:hidden; box-shadow:0 0 15px rgba(0,0,0,0.2); margin-bottom:20px; background:#87CEFA; }
     #imageContainer img { width:100%; height:auto; display:block; }
     canvas { position:absolute; top:0; left:0; width:100%; height:100%; }
     #endScreen { background: linear-gradient(to bottom, #FFEFD5, #FFDAB9); display:flex; flex-direction:column; align-items:center; justify-content:center; }
@@ -25,12 +25,12 @@
 <body>
 
 <!-- Splash Screen -->
-<div id="splash" style="display:flex;">
+<div id="splash">
     <img src="assets/innovine-logo.png" alt="Innovine Logo">
 </div>
 
 <!-- Header Screen -->
-<div id="header" style="display:flex;">
+<div id="header">
     <h1>Above-Below</h1>
 </div>
 
@@ -90,7 +90,6 @@ let attempts = 0;
 let drawing = false;
 let lastPos = {x:0,y:0};
 
-// Resize canvas to match image
 function resizeCanvas() {
     canvas.width = gameImage.clientWidth;
     canvas.height = gameImage.clientHeight;
@@ -117,8 +116,8 @@ function draw(e){
     if(!drawing) return;
     e.preventDefault();
     const pos = getMousePos(e);
-    ctx.strokeStyle = '#00FF00'; // bright green
-    ctx.lineWidth = 6; // thicker stroke
+    ctx.strokeStyle = '#00FF00';
+    ctx.lineWidth = 6;
     ctx.lineCap = 'round';
     ctx.beginPath();
     ctx.moveTo(lastPos.x,lastPos.y);
@@ -209,7 +208,6 @@ function startGame(){
     },5000);
 }
 
-// Start
 startGame();
 </script>
 </body>
