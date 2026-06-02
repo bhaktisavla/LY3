@@ -48,33 +48,27 @@ h1 { font-size:2em; margin:10px; text-align:center; color:#4b2e83; }
     border-radius:12px;
     padding:5px;
     background:#fff;
+    flex:1 1 45%;
+    max-width:250px;
     text-align:center;
     cursor:pointer;
     transition: transform 0.2s, box-shadow 0.2s;
 }
-.place-box {
-    max-width: 400px; /* keeps top image large */
-    flex: 1 1 100%;
-}
 .place-box img {
-    width: 100%;
-    height: auto;
-    display: block;
-    margin: auto;
-}
-.option-box {
-    flex: 1 1 40%; /* shrink on small screens */
-    max-width: 220px;
+    width:100%;
+    height:auto;
+    display:block;
+    margin-bottom:5px;
 }
 .option-box img {
-    width: 100%;
-    max-width: 150px; /* smaller option images */
-    height: auto;
-    display: block;
-    margin: auto;
+    width:100%;
+    height:auto;
+    display:block;
+    margin-bottom:5px;
 }
 .option-box.horizontal img {
-    max-width: 180px; /* wider images if needed */
+    width:100%;
+    max-width:180px;
 }
 .correct { border-color: green; box-shadow:0 0 15px green; }
 .wrong { animation: wiggle 0.3s; }
@@ -90,9 +84,9 @@ h1 { font-size:2em; margin:10px; text-align:center; color:#4b2e83; }
 #playAgain { margin-top:20px; padding:10px 20px; font-size:1.2em; border:none; border-radius:12px; background:#4b2e83; color:#fff; cursor:pointer; }
 @media(max-width:600px){
     #questionBox { font-size:1.2em; }
-    .option-box { flex: 1 1 80%; max-width: 80%; }
-    .option-box.horizontal img { max-width: 90%; }
-    .place-box img { max-width: 90%; }
+    .place-box { flex:1 1 90%; max-width:90%; }
+    .option-box { flex:1 1 45%; max-width:45%; }
+    .option-box.horizontal img { max-width:150px; }
 }
 </style>
 </head>
@@ -145,10 +139,10 @@ const rounds = [
     {place:'bank', placeImg:'assets/bank.png', options:[{img:'assets/basket.png', label:'basket'}, {img:'assets/rupee.png', label:'rupee'}], correct:'assets/rupee.png'},
     {place:'school', placeImg:'assets/school.png', options:[{img:'assets/docto.png', label:'doctor'}, {img:'assets/teacher.png', label:'teacher'}], correct:'assets/teacher.png'},
     {place:'supermarket', placeImg:'assets/supermarket.png', options:[{img:'assets/cart.png', label:'cart'}, {img:'assets/board.png', label:'board', horizontal:true}], correct:'assets/cart.png'},
-    {place:'gasstation', placeImg:'assets/gasstation.png', options:[{img:'assets/gas.png', label:'petrol'}, {img:'assets/icecreamcart.png', label:'ice-cream cart'}], correct:'assets/gas.png'},
+    {place:'gasstation', placeImg:'assets/gasstation.png', options:[{img:'assets/gas.png', label:'petrol'}, {img:'assets/icecreamcart.png', label:'ice-cream cart', horizontal:true}], correct:'assets/gas.png'},
     {place:'firestation', placeImg:'assets/firestation.png', options:[{img:'assets/tractor.png', label:'tractor'}, {img:'assets/fireengine.png', label:'fire engine'}], correct:'assets/fireengine.png'},
     {place:'park', placeImg:'assets/park.png', options:[{img:'assets/bed.png', label:'bed'}, {img:'assets/slide.png', label:'slide'}], correct:'assets/slide.png'},
-    {place:'policestation', placeImg:'assets/policestation.png', options:[{img:'assets/policeman.png', label:'policeman'}, {img:'assets/farmer.png', label:'farmer'}], correct:'assets/policeman.png'},
+    {place:'policestation', placeImg:'assets/policestation.png', options:[{img:'assets/policeman.png', label:'policeman'}, {img:'assets/farmer.png', label:'farmer', horizontal:true}], correct:'assets/policeman.png'},
 ];
 
 let currentRound = 0;
