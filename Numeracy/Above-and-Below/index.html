@@ -14,16 +14,16 @@
     @keyframes flash { 0%,50%,100% {opacity:1;} 25%,75% {opacity:0.3;} }
     #questionBox { font-size:clamp(18px,2.5vw,28px); color:#4B0082; text-align:center; max-width:95%; margin-bottom:5px; line-height:1.2; }
     #hearAgain { font-size:1em; color:#006400; cursor:pointer; text-decoration:underline; margin-bottom:15px; }
-    #imageContainer {
+   #imageContainer {
     position:relative;
-    width:98vw;
-    height:82vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    overflow:hidden;
+    display:inline-block;
 }
-    #imageContainer img { max-width:100%; max-height:100%; width:auto; height:auto; object-fit:contain; display:block; }
+   #imageContainer img {
+    width:95vw;
+    max-height:80vh;
+    object-fit:contain;
+    display:block;
+}
     canvas {
     position:absolute;
     top:0;
@@ -123,17 +123,15 @@ function speakQuestion(){
     speechSynthesis.speak(utterance);
 }
    // Resize canvas
-function resizeCanvas() {
+function resizeCanvas(){
 
-    canvas.width = gameImage.clientWidth;
-    canvas.height = gameImage.clientHeight;
+    canvas.width = gameImage.width;
+    canvas.height = gameImage.height;
 
-    canvas.style.width = gameImage.clientWidth + "px";
-    canvas.style.height = gameImage.clientHeight + "px";
-   ctx.strokeStyle = "red";
-   ctx.lineWidth = 5;
-   ctx.strokeRect(10,10,150,80);
+    canvas.style.width = gameImage.width + "px";
+    canvas.style.height = gameImage.height + "px";
 }
+
 window.addEventListener('resize', resizeCanvas);
 
 // Drawing handlers
@@ -155,7 +153,9 @@ canvas.addEventListener('touchend', endDrawing);
 
 function startDrawing(e){
 
-    if(!speechUnlocked){
+   console.log("Drawing started");
+   
+   if(!speechUnlocked){
         speechUnlocked = true;
         speakQuestion();
     }
