@@ -102,23 +102,33 @@ margin-bottom:10px;
 .options{
 display:grid;
 grid-template-columns:1fr 1fr;
-gap:20px;
-width:min(95vw,850px);
-height:60vh;
+gap:16px;
+width:min(96vw,900px);
+height:50vh;
 align-items:center;
 }
 
 .option{
 background:white;
 border-radius:25px;
-padding:10px;
+padding:6px;
 box-shadow:0 4px 12px rgba(0,0,0,0.15);
 cursor:pointer;
 display:flex;
 justify-content:center;
 align-items:center;
 height:100%;
+overflow:hidden;
 transition:.3s;
+}
+
+.option img{
+width:100%;
+height:100%;
+max-width:100%;
+max-height:100%;
+object-fit:contain;
+display:block;
 }
 
 .option img{
@@ -193,16 +203,17 @@ pointer-events:none;
 @media(max-width:700px){
 
 .options{
-height:55vh;
-gap:12px;
+height:45vh;
+gap:10px;
 }
 
 .question{
-font-size:1.05rem;
+font-size:1rem;
+min-height:42px;
 }
 
 .option{
-padding:6px;
+padding:3px;
 }
 
 }
