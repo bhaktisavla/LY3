@@ -3,37 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Above and Below – Jr.KG Pre-Math Game</title>
+<title>Above and Below – Jr.KG Game</title>
 <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body, html { width:100%; height:100%; font-family: 'Arbutus', cursive; }
-    body { background: #FFFBF0; display:flex; justify-content:center; align-items:center; flex-direction:column; }
-    #splash, #header, #game, #endScreen { width:100%; height:100vh; display:none; flex-direction:column; align-items:center; justify-content:center; position:relative; }
-    #splash img { width:200px; height:auto; }
-    #header h1 { font-size: 3em; color: #FF7F50; text-align:center; animation: flash 1s infinite; margin-bottom:20px; }
-    @keyframes flash { 0%,50%,100% {opacity:1;} 25%,75% {opacity:0.3;} }
-    #questionBox { font-size:1.5em; color:#4B0082; margin-bottom:10px; text-align:center; max-width:90%; }
-    #hearAgain { font-size:1em; color:#006400; cursor:pointer; text-decoration:underline; margin-bottom:15px; }
-    #imageContainer { position:relative; max-width:90%; max-height:60%; }
-    #imageContainer img { width:100%; height:auto; display:block; }
-    canvas { position:absolute; top:0; left:0; width:100%; height:100%; }
-    #endScreen h1 { font-size:2.5em; color:#FF4500; margin-bottom:20px; }
-    #playAgain { padding:10px 20px; font-size:1.5em; background:#32CD32; color:white; border:none; border-radius:10px; cursor:pointer; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body, html { width:100%; height:100%; font-family:'Arbutus', cursive; }
+body { background: linear-gradient(to bottom, #FFF8DC, #FFE4B5); display:flex; justify-content:center; align-items:center; flex-direction:column; }
+#splash, #header, #game, #endScreen { width:100%; height:100vh; display:none; flex-direction:column; align-items:center; justify-content:center; position:relative; }
+#splash img { width:250px; height:auto; }
+#header h1 { font-size:3em; color:#FF4500; text-align:center; animation: flash 1s infinite; margin-bottom:20px; }
+@keyframes flash {0%,50%,100%{opacity:1;} 25%,75%{opacity:0.3;}}
+#questionBox { font-size:1.8em; color:#4B0082; margin-bottom:10px; text-align:center; max-width:95%; background:rgba(255,255,255,0.7); padding:10px 15px; border-radius:10px; }
+#hearAgain { font-size:1.2em; color:#006400; cursor:pointer; text-decoration:underline; margin-bottom:10px; }
+#imageContainer { position:relative; width:95%; max-height:60vh; border-radius:20px; overflow:hidden; box-shadow:0 0 15px rgba(0,0,0,0.2); margin-bottom:20px; background:#87CEFA; }
+#imageContainer img { width:100%; height:auto; display:block; }
+canvas { position:absolute; top:0; left:0; width:100%; height:100%; }
+#endScreen { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100vh; background: linear-gradient(to bottom, #FFEFD5, #FFDAB9); }
+#endScreen h1 { font-size:3em; color:#FF4500; margin-bottom:20px; text-shadow:2px 2px #FFFACD; }
+#playAgain { padding:15px 25px; font-size:1.8em; background:#32CD32; color:white; border:none; border-radius:15px; cursor:pointer; box-shadow:0 4px 8px rgba(0,0,0,0.2); }
 </style>
 </head>
 <body>
 
-<!-- Splash Screen -->
-<div id="splash" style="display:flex;">
+<div id="splash">
     <img src="assets/innovine-logo.png" alt="Innovine Logo">
 </div>
 
-<!-- Header Screen -->
-<div id="header" style="display:flex;">
+<div id="header">
     <h1>Above-Below</h1>
 </div>
 
-<!-- Game Screen -->
 <div id="game">
     <div id="questionBox"></div>
     <div id="hearAgain">Hear Again 🔊</div>
@@ -43,13 +41,11 @@
     </div>
 </div>
 
-<!-- End Screen -->
 <div id="endScreen">
     <h1>Good Job! 🎉</h1>
     <button id="playAgain">Play Again</button>
 </div>
 
-<!-- Audio -->
 <audio id="correctSound" src="assets/correct.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 <audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
@@ -57,187 +53,93 @@
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 <script>
-const splash = document.getElementById('splash');
-const header = document.getElementById('header');
-const game = document.getElementById('game');
-const endScreen = document.getElementById('endScreen');
-const questionBox = document.getElementById('questionBox');
-const hearAgain = document.getElementById('hearAgain');
-const gameImage = document.getElementById('gameImage');
-const canvas = document.getElementById('drawCanvas');
-const ctx = canvas.getContext('2d');
+const splash=document.getElementById('splash');
+const header=document.getElementById('header');
+const game=document.getElementById('game');
+const endScreen=document.getElementById('endScreen');
+const questionBox=document.getElementById('questionBox');
+const hearAgain=document.getElementById('hearAgain');
+const gameImage=document.getElementById('gameImage');
+const canvas=document.getElementById('drawCanvas');
+const ctx=canvas.getContext('2d');
 
-const correctSound = document.getElementById('correctSound');
-const wrongSound = document.getElementById('wrongSound');
-const clapSound = document.getElementById('clapSound');
-const voiceAudio = document.getElementById('voiceAudio');
+const correctSound=document.getElementById('correctSound');
+const wrongSound=document.getElementById('wrongSound');
+const clapSound=document.getElementById('clapSound');
+const voiceAudio=document.getElementById('voiceAudio');
+const playAgainBtn=document.getElementById('playAgain');
 
-const playAgainBtn = document.getElementById('playAgain');
-
-// Game rounds configuration
-const rounds = [
-    { image:'assets/above.png', question:'Circle the object above the house.', correctObjects:[{x:0.5,y:0.15,r:0.1},{x:0.7,y:0.12,r:0.08},{x:0.3,y:0.12,r:0.08}], voice:'assets/voice_round1.mp3' }, // sun + clouds
-    { image:'assets/below.png', question:'Circle the object below the tree.', correctObjects:[{x:0.5,y:0.7,r:0.1}], voice:'assets/voice_round2.mp3' }, // boy
-    { image:'assets/aboveandbelow.png', question:'Circle the object below the flower.', correctObjects:[{x:0.5,y:0.65,r:0.08}], voice:'assets/voice_round3.mp3' }, // butterfly
-    { image:'assets/aboveandbelow1.png', question:'Circle the object above the lamp.', correctObjects:[{x:0.5,y:0.2,r:0.08}], voice:'assets/voice_round4.mp3' }, // photo frame
-    { image:'assets/above1.png', question:'Circle the object above the table.', correctObjects:[{x:0.5,y:0.25,r:0.08}], voice:'assets/voice_round5.mp3' }, // lamp
-    { image:'assets/below1.png', question:'Circle the object below the clouds.', correctObjects:[{x:0.5,y:0.5,r:0.08}], voice:'assets/voice_round6.mp3' }, // aeroplane
-    { image:'assets/aboveandbelow3.png', question:'Circle the object above the tree.', correctObjects:[{x:0.5,y:0.15,r:0.08},{x:0.3,y:0.12,r:0.08},{x:0.7,y:0.12,r:0.08}], voice:'assets/voice_round7.mp3' }, // bird + clouds
-    { image:'assets/aboveandbelow2.png', question:'Circle the object below the hot air balloon.', correctObjects:[{x:0.3,y:0.7,r:0.08},{x:0.5,y:0.7,r:0.08},{x:0.7,y:0.7,r:0.08}], voice:'assets/voice_round8.mp3' } // car + 2 trees
+const rounds=[
+{image:'assets/above.png',question:'Circle the object above the house.',correctObjects:[{x:0.5,y:0.15,r:0.1},{x:0.7,y:0.12,r:0.08},{x:0.3,y:0.12,r:0.08}],voice:'assets/voice_round1.mp3'},
+{image:'assets/below.png',question:'Circle the object below the tree.',correctObjects:[{x:0.5,y:0.7,r:0.1}],voice:'assets/voice_round2.mp3'},
+{image:'assets/aboveandbelow.png',question:'Circle the object below the flower.',correctObjects:[{x:0.5,y:0.65,r:0.08}],voice:'assets/voice_round3.mp3'},
+{image:'assets/aboveandbelow1.png',question:'Circle the object above the lamp.',correctObjects:[{x:0.5,y:0.2,r:0.08}],voice:'assets/voice_round4.mp3'},
+{image:'assets/above1.png',question:'Circle the object above the table.',correctObjects:[{x:0.5,y:0.25,r:0.08}],voice:'assets/voice_round5.mp3'},
+{image:'assets/below1.png',question:'Circle the object below the clouds.',correctObjects:[{x:0.5,y:0.5,r:0.08}],voice:'assets/voice_round6.mp3'},
+{image:'assets/aboveandbelow3.png',question:'Circle the object above the tree.',correctObjects:[{x:0.5,y:0.15,r:0.08},{x:0.3,y:0.12,r:0.08},{x:0.7,y:0.12,r:0.08}],voice:'assets/voice_round7.mp3'},
+{image:'assets/aboveandbelow2.png',question:'Circle the object below the hot air balloon.',correctObjects:[{x:0.3,y:0.7,r:0.08},{x:0.5,y:0.7,r:0.08},{x:0.7,y:0.7,r:0.08}],voice:'assets/voice_round8.mp3'}
 ];
 
-let currentRound = 0;
-let attempts = 0;
-let drawing = false;
-let lastPos = {x:0,y:0};
+let currentRound=0,attempts=0,drawing=false,lastPos={x:0,y:0};
 
-// Resize canvas
-function resizeCanvas() {
-    canvas.width = gameImage.clientWidth;
-    canvas.height = gameImage.clientHeight;
-}
-window.addEventListener('resize', resizeCanvas);
+function resizeCanvas(){ canvas.width=gameImage.clientWidth; canvas.height=gameImage.clientHeight; }
+window.addEventListener('resize',resizeCanvas);
 
-// Drawing handlers
-function getMousePos(e) {
-    const rect = canvas.getBoundingClientRect();
-    let clientX, clientY;
-    if (e.touches) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
-    else { clientX = e.clientX; clientY = e.clientY; }
-    return { x: clientX - rect.left, y: clientY - rect.top };
+function getMousePos(e){
+const rect=canvas.getBoundingClientRect();
+let clientX,clientY;
+if(e.touches){ clientX=e.touches[0].clientX; clientY=e.touches[0].clientY; }
+else{ clientX=e.clientX; clientY=e.clientY; }
+return {x:clientX-rect.left, y:clientY-rect.top};
 }
 
-canvas.addEventListener('mousedown', startDrawing);
-canvas.addEventListener('touchstart', startDrawing);
-canvas.addEventListener('mousemove', draw);
-canvas.addEventListener('touchmove', draw);
-canvas.addEventListener('mouseup', endDrawing);
-canvas.addEventListener('touchend', endDrawing);
+canvas.addEventListener('mousedown',startDrawing);
+canvas.addEventListener('touchstart',startDrawing);
+canvas.addEventListener('mousemove',draw);
+canvas.addEventListener('touchmove',draw);
+canvas.addEventListener('mouseup',endDrawing);
+canvas.addEventListener('touchend',endDrawing);
 
-function startDrawing(e){
-    drawing=true;
-    lastPos = getMousePos(e);
-}
-function draw(e){
-    if(!drawing) return;
-    e.preventDefault();
-    const pos = getMousePos(e);
-    ctx.strokeStyle = 'green';
-    ctx.lineWidth = 4;
-    ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.moveTo(lastPos.x,lastPos.y);
-    ctx.lineTo(pos.x,pos.y);
-    ctx.stroke();
-    lastPos = pos;
-}
-function endDrawing(e){
-    if(!drawing) return;
-    drawing=false;
-    checkCorrect();
-}
+function startDrawing(e){ drawing=true; lastPos=getMousePos(e); }
+function draw(e){ if(!drawing) return; e.preventDefault(); const pos=getMousePos(e); ctx.strokeStyle='#00FF00'; ctx.lineWidth=6; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(lastPos.x,lastPos.y); ctx.lineTo(pos.x,pos.y); ctx.stroke(); lastPos=pos; }
+function endDrawing(e){ if(!drawing) return; drawing=false; checkCorrect(); }
 
-// Check if any correct object is circled
 function checkCorrect(){
-    const round = rounds[currentRound];
-    const rect = canvas.getBoundingClientRect();
-    let hit = false;
-    for(const obj of round.correctObjects){
-        const cx = obj.x*rect.width;
-        const cy = obj.y*rect.height;
-        const r = obj.r*rect.width;
-        // Check if lastPos is inside
-        if(Math.hypot(lastPos.x-cx,lastPos.y-cy)<r){
-            hit=true; break;
-        }
-    }
-    if(hit){
-        correctSound.play();
-        clapSound.play();
-        setTimeout(nextRound,500);
-    } else {
-        attempts++;
-        wrongSound.play();
-        if(attempts>=2){
-            // highlight correct
-            highlightCorrect();
-        }
-    }
+const round=rounds[currentRound]; const rect=canvas.getBoundingClientRect();
+let hit=false;
+for(const obj of round.correctObjects){
+const cx=obj.x*rect.width,cy=obj.y*rect.height,r=obj.r*rect.width;
+if(Math.hypot(lastPos.x-cx,lastPos.y-cy)<r){ hit=true; break; }
+}
+if(hit){ correctSound.play(); clapSound.play(); setTimeout(nextRound,500); }
+else{ attempts++; wrongSound.play(); if(attempts>=2) highlightCorrect(); }
 }
 
-// Highlight correct object
 function highlightCorrect(){
-    const round = rounds[currentRound];
-    const rect = canvas.getBoundingClientRect();
-    ctx.strokeStyle = 'yellow';
-    ctx.lineWidth = 4;
-    for(const obj of round.correctObjects){
-        const cx = obj.x*rect.width;
-        const cy = obj.y*rect.height;
-        const r = obj.r*rect.width;
-        ctx.beginPath();
-        ctx.arc(cx,cy,r,0,2*Math.PI);
-        ctx.stroke();
-    }
+const round=rounds[currentRound]; const rect=canvas.getBoundingClientRect();
+ctx.strokeStyle='yellow'; ctx.lineWidth=4;
+for(const obj of round.correctObjects){ const cx=obj.x*rect.width,cy=obj.y*rect.height,r=obj.r*rect.width; ctx.beginPath(); ctx.arc(cx,cy,r,0,2*Math.PI); ctx.stroke(); }
 }
 
-// Next round
-function nextRound(){
-    attempts=0;
-    currentRound++;
-    if(currentRound>=rounds.length){ showEndScreen(); return; }
-    loadRound();
-}
+function nextRound(){ attempts=0; currentRound++; if(currentRound>=rounds.length){ showEndScreen(); return; } loadRound(); }
 
-// Load round
 function loadRound(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    const round = rounds[currentRound];
-    gameImage.src = round.image;
-    questionBox.textContent = round.question;
-    voiceAudio.src = round.voice;
-    voiceAudio.play();
+ctx.clearRect(0,0,canvas.width,canvas.height);
+const round=rounds[currentRound]; gameImage.src=round.image;
+questionBox.textContent=round.question; voiceAudio.src=round.voice; voiceAudio.play(); resizeCanvas();
 }
 
-// End screen
-function showEndScreen(){
-    game.style.display='none';
-    endScreen.style.display='flex';
-    confetti({
-        particleCount: 200,
-        spread: 70,
-        origin: { y: 0.6 }
-    });
-}
+function showEndScreen(){ game.style.display='none'; endScreen.style.display='flex'; confetti({particleCount:200,spread:70,origin:{y:0.6}}); }
 
-// Play Again
-playAgainBtn.addEventListener('click',()=>{
-    currentRound=0;
-    attempts=0;
-    endScreen.style.display='none';
-    game.style.display='flex';
-    loadRound();
-});
-
-// Hear Again
+playAgainBtn.addEventListener('click',()=>{ currentRound=0; attempts=0; endScreen.style.display='none'; game.style.display='flex'; loadRound(); });
 hearAgain.addEventListener('click',()=>{ voiceAudio.play(); });
 
-// Start game sequence
-function startGame(){
-    splash.style.display='flex';
-    setTimeout(()=>{
-        splash.style.display='none';
-        header.style.display='flex';
-        setTimeout(()=>{
-            header.style.display='none';
-            game.style.display='flex';
-            loadRound();
-            resizeCanvas();
-        },5000);
-    },5000);
+function startGame(){ splash.style.display='flex';
+setTimeout(()=>{ splash.style.display='none'; header.style.display='flex';
+setTimeout(()=>{ header.style.display='none'; game.style.display='flex'; loadRound(); },5000);
+},5000);
 }
 
-// Start
 startGame();
 </script>
 </body>
