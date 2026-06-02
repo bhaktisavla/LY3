@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neighbourhood Places - Jr KG Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Arbutus&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin:0; padding:0; }
+  body { font-family: 'Arbutus', cursive; background: linear-gradient(to bottom, #a0e3ff, #b8f2ff); display:flex; justify-content:center; align-items:center; min-height:100vh; }
+  #splash, #header, #game, #endScreen { width:100%; max-width:600px; display:none; flex-direction:column; align-items:center; justify-content:center; padding:10px; }
+  #splash img, #header h1 { max-width: 250px; width:50%; margin: 20px 0; }
+  #header h1 { font-size:2em; color:#ff6f61; }
+  #game img.place-img { width:60%; max-width:300px; margin:15px 0; border-radius:10px; border: 3px solid #fff; }
+  #game .options { display:flex; justify-content:space-around; width:100%; margin-top:15px; }
+  .option-box { width:45%; text-align:center; background:#fff; border-radius:10px; padding:5px; cursor:pointer; border:3px solid #ccc; transition: transform 0.2s, border 0.3s; }
+  .option-box img { width:100%; max-width:120px; border-radius:8px; }
+  .option-box.correct-glow { border:3px solid #2ecc71; box-shadow:0 0 10px #2ecc71; }
+  .wiggle { animation: wiggle 0.3s; }
+  @keyframes wiggle { 0%{transform:rotate(0deg);} 25%{transform:rotate(10deg);} 50%{transform:rotate(-10deg);} 75%{transform:rotate(10deg);} 100%{transform:rotate(0deg);} }
+  #game p { margin:10px 0; font-size:1.2em; color:#333; }
+  #hearBtn { margin:10px; padding:5px 10px; background:#ffcc5c; border:none; border-radius:5px; cursor:pointer; font-weight:bold; }
+  #endScreen { display:flex; flex-direction:column; align-items:center; }
+  #endScreen h1 { color:#2ecc71; font-size:2em; margin-bottom:10px; }
+  #playAgain { padding:10px 20px; font-size:1.2em; border:none; background:#ff6f61; color:#fff; border-radius:10px; cursor:pointer; }
+  .label { margin-top:5px; font-weight:bold; color:#333; }
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <img src="assets/innovine-logo.png" alt="Innovine Logo">
+</div>
+
+<div id="header">
+  <h1>Neighbourhood Places</h1>
+</div>
+
+<div id="game">
+  <p id="question">Look at the place at the top. Tap on the vehicle or people or object that belongs there.</p>
+  <button id="hearBtn">🔊 Hear Again</button>
+  <img id="placeImg" class="place-img" src="" alt="Place Image">
+  <div class="label" id="placeLabel"></div>
+  <p>Which one belongs here?</p>
+  <div class="options">
+    <div class="option-box" id="option1"><img src="" alt=""><div class="label" id="label1"></div></div>
+    <div class="option-box" id="option2"><img src="" alt=""><div class="label" id="label2"></div></div>
+  </div>
+</div>
+
+<div id="endScreen">
+  <h1>🎉 Good Job! 🎉</h1>
+  <button id="playAgain">Play Again</button>
+</div>
+
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+<script>
+const rounds = [
+  {place:'airport', placeImg:'assets/airport.png', options:[{img:'assets/aeroplane.png', label:'aeroplane'}, {img:'assets/ship.png', label:'ship'}], voice:'assets/voice_airport.mp3'},
+  {place:'hospital', placeImg:'assets/hospital.png', options:[{img:'assets/ambulance.png', label:'ambulance'}, {img:'assets/train.png', label:'train'}], voice:'assets/voice_hospital.mp3'},
+  {place:'bank', placeImg:'assets/bank.png', options:[{img:'assets/basket.png', label:'basket'}, {img:'assets/rupee.png', label:'rupee'}], voice:'assets/voice_bank.mp3'},
+  {place:'school', placeImg:'assets/school.png', options:[{img:'assets/docto.png', label:'doctor'}, {img:'assets/teacher.png', label:'teacher'}], voice:'assets/voice_school.mp3'},
+  {place:'supermarket', placeImg:'assets/supermarket.png', options:[{img:'assets/cart.png', label:'cart'}, {img:'assets/board.png', label:'board'}], voice:'assets/voice_supermarket.mp3'},
+  {place:'gas station', placeImg:'assets/gasstation.png', options:[{img:'assets/gas.png', label:'petrol'}, {img:'assets/icecreamcart.png', label:'ice-cream cart'}], voice:'assets/voice_gas.mp3'},
+  {place:'fire station', placeImg:'assets/firestation.png', options:[{img:'assets/tractor.png', label:'tractor'}, {img:'assets/fireengine.png', label:'fire engine'}], voice:'assets/voice_fire.mp3'},
+  {place:'park', placeImg:'assets/park.png', options:[{img:'assets/bed.png', label:'bed'}, {img:'assets/slide.png', label:'slide'}], voice:'assets/voice_park.mp3'},
+  {place:'police station', placeImg:'assets/policestation.png', options:[{img:'assets/policeman.png', label:'policeman'}, {img:'assets/farmer.png', label:'farmer'}], voice:'assets/voice_police.mp3'}
+];
+
+let currentRound = 0;
+let wrongCount = 0;
+
+const splash = document.getElementById('splash');
+const header = document.getElementById('header');
+const game = document.getElementById('game');
+const endScreen = document.getElementById('endScreen');
+const placeImg = document.getElementById('placeImg');
+const placeLabel = document.getElementById('placeLabel');
+const option1 = document.getElementById('option1');
+const option2 = document.getElementById('option2');
+const label1 = document.getElementById('label1');
+const label2 = document.getElementById('label2');
+const hearBtn = document.getElementById('hearBtn');
+const correctSound = document.getElementById('correctSound');
+const wrongSound = document.getElementById('wrongSound');
+const clapSound = document.getElementById('clapSound');
+const playAgain = document.getElementById('playAgain');
+
+function showSplash() {
+  splash.style.display = 'flex';
+  setTimeout(()=> { splash.style.display='none'; showHeader(); }, 5000);
+}
+
+function showHeader() {
+  header.style.display='flex';
+  setTimeout(()=> { header.style.display='none'; showGame(); }, 5000);
+}
+
+function showGame() {
+  game.style.display='flex';
+  loadRound();
+}
+
+function loadRound() {
+  wrongCount = 0;
+  const round = rounds[currentRound];
+  placeImg.src = round.placeImg;
+  placeLabel.textContent = round.place;
+  option1.querySelector('img').src = round.options[0].img;
+  label1.textContent = round.options[0].label;
+  option2.querySelector('img').src = round.options[1].img;
+  label2.textContent = round.options[1].label;
+  // Remove glow/wiggle classes
+  option1.classList.remove('wiggle','correct-glow');
+  option2.classList.remove('wiggle','correct-glow');
+  playVoice(round.voice);
+}
+
+function playVoice(src) {
+  const voice = new Audio(src);
+  voice.play();
+  hearBtn.onclick = ()=> { voice.currentTime=0; voice.play(); };
+}
+
+option1.addEventListener('click', ()=> handleChoice(option1,0));
+option2.addEventListener('click', ()=> handleChoice(option2,1));
+
+function handleChoice(optionEl, index) {
+  const round = rounds[currentRound];
+  const correctIndex = 0; // always first option in data is correct
+  if(index===correctIndex) {
+    optionEl.classList.add('correct-glow');
+    correctSound.play();
+    clapSound.play();
+    setTimeout(()=> nextRound(), 1500);
+  } else {
+    wrongCount++;
+    optionEl.classList.add('wiggle');
+    wrongSound.play();
+    setTimeout(()=> optionEl.classList.remove('wiggle'), 500);
+    if(wrongCount>=2) {
+      if(correctIndex===0) option1.classList.add('correct-glow'); else option2.classList.add('correct-glow');
+    }
+  }
+}
+
+function nextRound() {
+  currentRound++;
+  if(currentRound>=rounds.length) { showEnd(); }
+  else { loadRound(); }
+}
+
+function showEnd() {
+  game.style.display='none';
+  endScreen.style.display='flex';
+  confetti({particleCount:100, spread:70, origin:{y:0.6}});
+}
+
+playAgain.addEventListener('click', ()=> {
+  endScreen.style.display='none';
+  currentRound=0;
+  showSplash();
+});
+
+showSplash();
+</script>
+</body>
+</html>
