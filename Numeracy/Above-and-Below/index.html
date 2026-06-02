@@ -95,12 +95,12 @@ const playAgainBtn = document.getElementById('playAgain');
 // Game rounds configuration
 const rounds = [
     { image:'assets/above.png', question:'Circle the object above the house.', correctObjects:[{x:0.5,y:0.15,r:0.1},{x:0.7,y:0.12,r:0.08},{x:0.3,y:0.12,r:0.08}], voice:'assets/voice_round1.mp3' }, // sun + clouds
-    { image:'assets/below.png', question:'Circle the object below the tree.', correctObjects:[{x:0.5,y:0.7,r:0.1}], voice:'assets/voice_round2.mp3' }, // boy
+    { image:'assets/below.png', question:'Circle the object below the tree.', correctObjects:[{x:0.33,y:0.72,r:0.15}], voice:'assets/voice_round2.mp3' }, // boy
     { image:'assets/aboveandbelow.png', question:'Circle the object below the flower.', correctObjects:[{x:0.5,y:0.65,r:0.08}], voice:'assets/voice_round3.mp3' }, // butterfly
-    { image:'assets/aboveandbelow1.png', question:'Circle the object above the lamp.', correctObjects:[{x:0.5,y:0.2,r:0.08}], voice:'assets/voice_round4.mp3' }, // photo frame
-    { image:'assets/above1.png', question:'Circle the object above the table.', correctObjects:[{x:0.5,y:0.25,r:0.08}], voice:'assets/voice_round5.mp3' }, // lamp
-    { image:'assets/below1.png', question:'Circle the object below the clouds.', correctObjects:[{x:0.5,y:0.5,r:0.08}], voice:'assets/voice_round6.mp3' }, // aeroplane
-    { image:'assets/aboveandbelow3.png', question:'Circle the object above the tree.', correctObjects:[{x:0.5,y:0.15,r:0.08},{x:0.3,y:0.12,r:0.08},{x:0.7,y:0.12,r:0.08}], voice:'assets/voice_round7.mp3' }, // bird + clouds
+    { image:'assets/aboveandbelow1.png', question:'Circle the object above the lamp.', correctObjects:[{x:0.50,y:0.12,r:0.18}], voice:'assets/voice_round4.mp3' }, // photo frame
+    { image:'assets/above1.png', question:'Circle the object above the table.', correctObjects:[{x:0.50,y:0.18,r:0.18}], voice:'assets/voice_round5.mp3' }, // lamp
+    { image:'assets/below1.png', question:'Circle the object below the clouds.', correctObjects:[{x:0.50,y:0.52,r:0.18}], voice:'assets/voice_round6.mp3' }, // aeroplane
+    { image:'assets/aboveandbelow3.png', question:'Circle the object above the tree.', correctObjects:[{x:0.50,y:0.12,r:0.15},{x:0.30,y:0.10,r:0.15},{x:0.72,y:0.10,r:0.15}], voice:'assets/voice_round7.mp3' }, // bird + clouds
     { image:'assets/aboveandbelow2.png', question:'Circle the object below the hot air balloon.', correctObjects:[{x:0.3,y:0.7,r:0.08},{x:0.5,y:0.7,r:0.08},{x:0.7,y:0.7,r:0.08}], voice:'assets/voice_round8.mp3' } // car + 2 trees
 ];
 
@@ -108,6 +108,7 @@ let currentRound = 0;
 let attempts = 0;
 let drawing = false;
 let lastPos = {x:0,y:0};
+let drawPoints = [];
 let speechUnlocked = false;
 
 function speakQuestion(){
@@ -154,6 +155,8 @@ canvas.addEventListener('touchend', endDrawing);
 
 function startDrawing(e){
 
+   drawPoints = [];
+   
    console.log("Drawing started");
    
    if(!speechUnlocked){
@@ -183,6 +186,10 @@ function draw(e){
     ctx.stroke();
 
     lastPos = pos;
+   drawPoints.push({
+    x:pos.x,
+    y:pos.y
+});
 }
    
 function endDrawing(e){
@@ -193,27 +200,46 @@ function endDrawing(e){
 
 // Check if any correct object is circled
 function checkCorrect(){
+
     const round = rounds[currentRound];
     const rect = canvas.getBoundingClientRect();
+
     let hit = false;
+
     for(const obj of round.correctObjects){
-        const cx = obj.x*rect.width;
-        const cy = obj.y*rect.height;
-        const r = obj.r*rect.width;
-        // Check if lastPos is inside
-        if(Math.hypot(lastPos.x-cx,lastPos.y-cy)<r){
-            hit=true; break;
+
+        const cx = obj.x * rect.width;
+        const cy = obj.y * rect.height;
+        const r = obj.r * rect.width;
+
+        for(const p of drawPoints){
+
+            if(Math.hypot(p.x-cx,p.y-cy) < r){
+                hit = true;
+                break;
+            }
         }
+
+        if(hit) break;
     }
+
     if(hit){
+
         correctSound.play();
         clapSound.play();
-        setTimeout(nextRound,500);
-    } else {
+
+        setTimeout(nextRound,800);
+
+    }else{
+
         attempts++;
         wrongSound.play();
+
+        setTimeout(()=>{
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+        },300);
+
         if(attempts>=2){
-            // highlight correct
             highlightCorrect();
         }
     }
