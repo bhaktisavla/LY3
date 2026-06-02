@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pre-Math</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Arial',sans-serif;
+}
+
+body{
+width:100vw;
+height:100vh;
+overflow:hidden;
+background:linear-gradient(135deg,#fff8cc,#d9f7ff,#ffe0f0);
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.screen{
+position:absolute;
+width:100%;
+height:100%;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+}
+
+.hidden{
+display:none;
+}
+
+#logoScreen img{
+width:min(65vw,320px);
+}
+
+#titleScreen{
+background:linear-gradient(135deg,#ffe8a3,#ffd6e7,#d6f5ff);
+}
+
+#titleScreen h1{
+font-size:clamp(2rem,6vw,4rem);
+color:#ff6b6b;
+animation:pulse 1.5s infinite;
+}
+
+#titleScreen h2{
+font-size:clamp(1.2rem,3vw,2rem);
+margin-top:10px;
+color:#5b4b8a;
+}
+
+@keyframes pulse{
+50%{transform:scale(1.08);}
+}
+
+#gameScreen{
+padding:10px;
+background:linear-gradient(135deg,#fef9c3,#d9f99d,#bfdbfe);
+}
+
+.header{
+font-size:clamp(1.4rem,3vw,2rem);
+font-weight:bold;
+color:#8e44ad;
+margin-bottom:5px;
+}
+
+.round{
+font-size:clamp(0.9rem,2vw,1.1rem);
+color:#444;
+margin-bottom:5px;
+}
+
+.question{
+font-size:clamp(1.1rem,2.5vw,1.6rem);
+font-weight:bold;
+text-align:center;
+color:#d35400;
+margin-bottom:10px;
+min-height:50px;
+}
+
+.hear-btn{
+background:#4dabf7;
+color:white;
+border:none;
+padding:10px 20px;
+border-radius:25px;
+font-size:1rem;
+cursor:pointer;
+margin-bottom:10px;
+}
+
+.options{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+width:min(95vw,850px);
+height:60vh;
+align-items:center;
+}
+
+.option{
+background:white;
+border-radius:25px;
+padding:10px;
+box-shadow:0 4px 12px rgba(0,0,0,0.15);
+cursor:pointer;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100%;
+transition:.3s;
+}
+
+.option img{
+max-width:100%;
+max-height:100%;
+object-fit:contain;
+}
+
+.option:hover{
+transform:scale(1.02);
+}
+
+.wiggle{
+animation:wiggle .4s;
+}
+
+@keyframes wiggle{
+0%,100%{transform:translateX(0);}
+25%{transform:translateX(-8px);}
+75%{transform:translateX(8px);}
+}
+
+.glow{
+animation:glow 1s infinite;
+}
+
+@keyframes glow{
+50%{
+box-shadow:0 0 25px #00ff66;
+}
+}
+
+.tick{
+position:absolute;
+font-size:100px;
+color:green;
+animation:pop .7s;
+}
+
+@keyframes pop{
+0%{transform:scale(0);}
+100%{transform:scale(1);}
+}
+
+#endScreen{
+background:linear-gradient(135deg,#ffeaa7,#81ecec,#fab1a0);
+}
+
+#endScreen h1{
+font-size:clamp(2rem,5vw,4rem);
+color:#27ae60;
+margin-bottom:20px;
+}
+
+.playAgain{
+padding:15px 30px;
+font-size:1.2rem;
+border:none;
+border-radius:30px;
+background:#ff7675;
+color:white;
+cursor:pointer;
+}
+
+canvas{
+position:absolute;
+top:0;
+left:0;
+pointer-events:none;
+}
+
+@media(max-width:700px){
+
+.options{
+height:55vh;
+gap:12px;
+}
+
+.question{
+font-size:1.05rem;
+}
+
+.option{
+padding:6px;
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<!-- Logo Screen -->
+<div id="logoScreen" class="screen">
+<img src="assets/innovine-logo.png" alt="logo">
+</div>
+
+<!-- Title Screen -->
+<div id="titleScreen" class="screen hidden">
+<h1>🌟 PRE-MATH 🌟</h1>
+<h2>Let's Learn!</h2>
+</div>
+
+<!-- Game Screen -->
+<div id="gameScreen" class="screen hidden">
+
+<div class="header">Pre-Math</div>
+<div class="round" id="roundText"></div>
+
+<div class="question" id="question"></div>
+
+<button class="hear-btn" onclick="speakQuestion()">
+🔊 Hear Again
+</button>
+
+<div class="options">
+<div class="option" id="option1"></div>
+<div class="option" id="option2"></div>
+</div>
+
+</div>
+
+<!-- End Screen -->
+<div id="endScreen" class="screen hidden">
+<h1>🎉 Great Job! 🎉</h1>
+<button class="playAgain" onclick="location.reload()">
+Play Again
+</button>
+</div>
+
+<canvas id="confetti"></canvas>
+
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<script>
+
+const rounds = [
+
+{
+question:"Tap on the big object.",
+correct:"assets/big.png",
+wrong:"assets/small.png"
+},
+
+{
+question:"Tap on the basket full of objects.",
+correct:"assets/full.png",
+wrong:"assets/empty.png"
+},
+
+{
+question:"Tap on the box with many balls.",
+correct:"assets/many.png",
+wrong:"assets/few.png"
+},
+
+{
+question:"Tap on the cat who is sitting outside a basket.",
+correct:"assets/out.png",
+wrong:"assets/in.png"
+},
+
+{
+question:"Tap on the long pencil.",
+correct:"assets/long.png",
+wrong:"assets/short.png"
+},
+
+{
+question:"Tap on the object that is on the table.",
+correct:"assets/on.png",
+wrong:"assets/under.png"
+}
+
+];
+
+let currentRound=0;
+let wrongAttempts=0;
+let currentQuestion="";
+
+rounds.sort(()=>Math.random()-0.5);
+
+const questionEl=document.getElementById("question");
+const roundEl=document.getElementById("roundText");
+
+function speak(text){
+
+speechSynthesis.cancel();
+
+const msg=new SpeechSynthesisUtterance(text);
+msg.rate=0.9;
+msg.pitch=1;
+speechSynthesis.speak(msg);
+
+}
+
+function speakQuestion(){
+speak(currentQuestion);
+}
+
+function loadRound(){
+
+wrongAttempts=0;
+
+if(currentRound>=rounds.length){
+showEnd();
+return;
+}
+
+const r=rounds[currentRound];
+
+currentQuestion=r.question;
+
+roundEl.textContent=`Round ${currentRound+1} of ${rounds.length}`;
+questionEl.textContent=r.question;
+
+let arr=[
+{img:r.correct,correct:true},
+{img:r.wrong,correct:false}
+];
+
+arr.sort(()=>Math.random()-0.5);
+
+const o1=document.getElementById("option1");
+const o2=document.getElementById("option2");
+
+[o1,o2].forEach((o,i)=>{
+
+o.classList.remove("glow");
+
+o.innerHTML=`<img src="${arr[i].img}">`;
+
+o.onclick=()=>checkAnswer(arr[i].correct,o);
+
+});
+
+setTimeout(()=>{
+speakQuestion();
+},500);
+
+}
+
+function checkAnswer(correct,element){
+
+if(correct){
+
+document.getElementById("correctSound").play();
+
+showTick();
+
+setTimeout(()=>{
+document.getElementById("clapSound").play();
+},400);
+
+setTimeout(()=>{
+currentRound++;
+loadRound();
+},1400);
+
+}else{
+
+document.getElementById("wrongSound").play();
+
+wrongAttempts++;
+
+element.classList.add("wiggle");
+
+setTimeout(()=>{
+element.classList.remove("wiggle");
+},400);
+
+if(wrongAttempts>=2){
+
+const r=rounds[currentRound];
+
+document.querySelectorAll(".option").forEach(op=>{
+
+if(op.querySelector("img").src.includes(
+r.correct.split("/").pop()
+)){
+op.classList.add("glow");
+}
+
+});
+
+}
+
+}
+
+}
+
+function showTick(){
+
+const tick=document.createElement("div");
+
+tick.className="tick";
+tick.innerHTML="✓";
+
+document.body.appendChild(tick);
+
+setTimeout(()=>{
+tick.remove();
+},800);
+
+}
+
+function showEnd(){
+
+document.getElementById("gameScreen").classList.add("hidden");
+document.getElementById("endScreen").classList.remove("hidden");
+
+startConfetti();
+
+}
+
+function startGame(){
+
+document.getElementById("logoScreen").classList.add("hidden");
+document.getElementById("titleScreen").classList.remove("hidden");
+
+setTimeout(()=>{
+
+document.getElementById("titleScreen").classList.add("hidden");
+document.getElementById("gameScreen").classList.remove("hidden");
+
+loadRound();
+
+},5000);
+
+}
+
+setTimeout(startGame,5000);
+
+/* Confetti */
+
+const canvas=document.getElementById("confetti");
+const ctx=canvas.getContext("2d");
+
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let pieces=[];
+
+function startConfetti(){
+
+for(let i=0;i<150;i++){
+
+pieces.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height-canvas.height,
+r:Math.random()*8+4,
+d:Math.random()*150
+});
+
+}
+
+animateConfetti();
+
+}
+
+function animateConfetti(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+for(let i=0;i<pieces.length;i++){
+
+let p=pieces[i];
+
+ctx.beginPath();
+
+ctx.fillStyle=
+`hsl(${Math.random()*360},80%,60%)`;
+
+ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+
+ctx.fill();
+
+p.y+=3;
+
+if(p.y>canvas.height){
+p.y=-20;
+}
+
+}
+
+requestAnimationFrame(animateConfetti);
+
+}
+
+window.addEventListener("resize",()=>{
+
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+});
+
+</script>
+
+</body>
+</html>
