@@ -49,7 +49,7 @@ h1 { font-size:2em; margin:10px; text-align:center; color:#4b2e83; }
     padding:5px;
     background:#fff;
     flex:1 1 45%;
-    max-width:300px;
+    max-width:250px;
     text-align:center;
     cursor:pointer;
     transition: transform 0.2s, box-shadow 0.2s;
@@ -61,7 +61,8 @@ h1 { font-size:2em; margin:10px; text-align:center; color:#4b2e83; }
     margin-bottom:5px;
 }
 .option-box.horizontal img {
-    width: 200px; /* Round 5 horizontal board */
+    width: 100%;
+    max-width:200px;
 }
 .correct { border-color: green; box-shadow:0 0 15px green; }
 .wrong { animation: wiggle 0.3s; }
@@ -75,6 +76,10 @@ h1 { font-size:2em; margin:10px; text-align:center; color:#4b2e83; }
 #hearAgain { margin-left:10px; cursor:pointer; color:#fff; background:#4b2e83; padding:5px 10px; border-radius:8px; }
 #endScreen h1 { color:#4b2e83; text-align:center; }
 #playAgain { margin-top:20px; padding:10px 20px; font-size:1.2em; border:none; border-radius:12px; background:#4b2e83; color:#fff; cursor:pointer; }
+@media(max-width:600px){
+    #questionBox { font-size:1.2em; }
+    .place-box, .option-box { flex:1 1 90%; max-width:90%; }
+}
 </style>
 </head>
 <body>
@@ -223,21 +228,33 @@ playAgainBtn.addEventListener('click', ()=>{
     loadRound();
 });
 
+// Colored circles falling confetti effect
 function confettiEffect(){
-    const duration = 2 * 1000;
+    const duration = 3000;
     const end = Date.now() + duration;
+    const colors = ['#FFC107','#FF3D00','#4CAF50','#2196F3','#E91E63','#9C27B0','#00BCD4'];
     (function frame(){
         const timeLeft = end - Date.now();
         if(timeLeft <= 0) return;
-        const conf = document.createElement('div');
-        conf.textContent = '🎊';
-        conf.style.position = 'fixed';
-        conf.style.fontSize = Math.floor(Math.random()*24+12)+'px';
-        conf.style.top = Math.random()*window.innerHeight+'px';
-        conf.style.left = Math.random()*window.innerWidth+'px';
-        conf.style.zIndex = 9999;
-        document.body.appendChild(conf);
-        setTimeout(()=>{ conf.remove(); }, 2000);
+        const circle = document.createElement('div');
+        circle.style.width = circle.style.height = (Math.random()*15+10)+'px';
+        circle.style.background = colors[Math.floor(Math.random()*colors.length)];
+        circle.style.position = 'fixed';
+        circle.style.borderRadius = '50%';
+        circle.style.top = '0px';
+        circle.style.left = Math.random()*window.innerWidth+'px';
+        circle.style.zIndex = 9999;
+        circle.style.opacity = 0.8;
+        document.body.appendChild(circle);
+        let fall = 0;
+        const fallAnim = setInterval(()=>{
+            fall += Math.random()*5+2;
+            circle.style.top = fall+'px';
+            if(fall > window.innerHeight){
+                clearInterval(fallAnim);
+                circle.remove();
+            }
+        },16);
         requestAnimationFrame(frame);
     }());
 }
