@@ -193,8 +193,17 @@ function draw(e){
 }
    
 function endDrawing(e){
+
     if(!drawing) return;
-    drawing=false;
+
+    drawing = false;
+
+    console.log(
+        "Round " + (currentRound + 1),
+        "X=" + (lastPos.x / canvas.width).toFixed(2),
+        "Y=" + (lastPos.y / canvas.height).toFixed(2)
+    );
+
     checkCorrect();
 }
 
