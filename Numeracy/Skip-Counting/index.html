@@ -87,75 +87,13 @@ opacity:.95;
 z-index:0;
 }
 
-/* ========================= */
-/* CLOUDS */
-/* ========================= */
-
-body::before,
-body::after{
-content:"";
-position:absolute;
-background:white;
-border-radius:50%;
-opacity:.95;
-}
-
-body::before{
-width:160px;
-height:80px;
-top:70px;
-left:40px;
-box-shadow:
-50px 0 white,
-100px 10px white;
-}
-
-body::after{
-width:140px;
-height:70px;
-top:120px;
-right:40px;
-box-shadow:
-40px 0 white,
-80px 10px white;
-}
-
-/* ========================= */
-/* STARS */
-/* ========================= */
-
-.star{
-position:absolute;
-font-size:70px;
-z-index:2;
-animation:twinkle 2s infinite;
-}
-
-.leftStar{
-top:100px;
-left:110px;
-}
-
-.rightStar{
-top:100px;
-right:110px;
-}
-
-@keyframes twinkle{
-0%,100%{
-transform:scale(1);
-}
-50%{
-transform:scale(1.15);
-}
-}
 
 /* ========================= */
 /* TITLE */
 /* ========================= */
 
 .mainTitle{
-margin-top:100px;
+margin-top:70px;
 font-size:clamp(3rem,8vw,6rem);
 font-weight:900;
 text-align:center;
@@ -279,20 +217,6 @@ font-weight:900;
 color:black;
 }
 
-.boardStar{
-position:absolute;
-font-size:50px;
-}
-
-.starTL{
-top:-35px;
-left:-15px;
-}
-
-.starBR{
-bottom:-35px;
-right:-15px;
-}
 
 /* ========================= */
 /* OPTIONS */
@@ -432,22 +356,11 @@ background:#ff67b3;
 @media(max-width:768px){
 
 .mainTitle{
-margin-top:130px;
+margin-top:100px;
 font-size:3.5rem;
 -webkit-text-stroke:4px white;
 }
 
-.leftStar{
-left:25px;
-top:130px;
-font-size:50px;
-}
-
-.rightStar{
-right:25px;
-top:130px;
-font-size:50px;
-}
 
 .questionBoard{
 height:120px;
@@ -653,7 +566,6 @@ PLAY AGAIN
 
 <script>
 
-javascript
 /* ========================= */
 /* GAME DATA */
 /* ========================= */
@@ -1015,8 +927,7 @@ finishScreen.classList.add(
 );
 
 }
-```
-```javascript
+
 /* ========================= */
 /* PLAY AGAIN */
 /* ========================= */
