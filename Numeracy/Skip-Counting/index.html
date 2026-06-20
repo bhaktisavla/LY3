@@ -276,9 +276,11 @@ text-align:center;
 .finishTitle{
 margin-top:180px;
 font-size:clamp(2.5rem,7vw,5rem);
-color:#ff8c00;
+color:#1675ff;
 -webkit-text-stroke:4px white;
 text-align:center;
+text-shadow:
+0 6px 15px rgba(0,0,0,.2);
 z-index:2;
 }
 
@@ -340,10 +342,10 @@ font-size:3.5rem;
 }
 
 #hearAgainBtn{
-top:70px;
+top:110px;
 right:10px;
 padding:8px 14px;
-font-size:0.9rem;
+font-size:0.85rem;
 }
  
 .questionBoard{
@@ -374,7 +376,7 @@ margin-top:15px;
 }
 
 .roundTitle{
-font-size:2rem;
+font-size:1.8rem;
 margin-top:100px;
 }
 
@@ -919,20 +921,23 @@ document
 .getElementById("playAgainBtn")
 .addEventListener("click",()=>{
 
-finishScreen.classList.remove(
-"active"
-);
+finishScreen.classList.remove("active");
 
 currentRound = 0;
 wrongAttempts = 0;
 
 stopConfetti();
 
-gameScreen.classList.add(
-"active"
-);
+/* Show logo again */
 
-loadRound();
+logoScreen.classList.add("active");
+
+setTimeout(()=>{
+
+logoScreen.classList.remove("active");
+titleScreen.classList.add("active");
+
+},5000);
 
 });
 
