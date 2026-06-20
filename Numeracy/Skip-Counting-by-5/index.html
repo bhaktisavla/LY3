@@ -197,25 +197,24 @@ line-height:1.4;
 }
 
 #boardWrap{
-position:relative;
-width:min(92vw,900px);
-margin-top:15px;
+display:flex;
+justify-content:center;
+margin-top:20px;
 }
 
-#board{
-width:100%;
-display:block;
-}
-
-#boardNumbers{
-position:absolute;
-inset:0;
+#customBoard{
+width:min(85vw,900px);
+height:160px;
+background:#ffffff;
+border:10px solid #ff4d94;
+border-radius:35px;
 display:flex;
 justify-content:space-evenly;
 align-items:center;
-font-size:clamp(34px,6vw,80px);
+font-size:clamp(40px,7vw,90px);
 font-weight:900;
 color:black;
+box-shadow:0 8px 25px rgba(0,0,0,.15);
 }
 
 #options{
@@ -388,8 +387,7 @@ font-size:34px;
 <div id="questionBox"></div>
 
 <div id="boardWrap">
-<img id="board" src="assets/questionboard.png">
-<div id="boardNumbers">
+<div id="customBoard">
 <span id="n1"></span>
 <span id="n2"></span>
 <span>?</span>
