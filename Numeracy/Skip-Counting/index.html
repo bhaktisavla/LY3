@@ -59,31 +59,6 @@ linear-gradient(
 position:relative;
 }
 
-/* ========================= */
-/* RAINBOW */
-/* ========================= */
-
-.rainbow{
-position:absolute;
-top:-90px;
-left:-120px;
-width:420px;
-height:420px;
-border-radius:50%;
-background:
-conic-gradient(
-red 0deg 40deg,
-orange 40deg 80deg,
-yellow 80deg 120deg,
-green 120deg 160deg,
-deepskyblue 160deg 200deg,
-blue 200deg 240deg,
-violet 240deg 280deg,
-transparent 280deg);
-opacity:.95;
-z-index:0;
-}
-
 
 /* ========================= */
 /* TITLE */
@@ -194,25 +169,25 @@ z-index:2;
 
 .questionBoard{
 margin-top:15px;
-width:min(700px,82vw);
-height:170px;
+width:min(700px,85vw);
+height:120px;
 background:white;
-border:10px solid #ff2d87;
+border:8px solid #ff2d87;
 border-radius:25px;
 display:flex;
 justify-content:space-evenly;
 align-items:center;
-position:relative;
-box-shadow:
-0 8px 20px rgba(0,0,0,.15);
-z-index:2;
+box-shadow:0 8px 20px rgba(0,0,0,.15);
+z-index:5;
 }
 
 .boardNumber{
-font-size:clamp(3rem,7vw,5rem);
+font-size:clamp(2.5rem,5vw,4rem);
 font-weight:900;
-color:black;
+color:#000;
+line-height:1;
 }
+
 
 
 /* ========================= */
@@ -230,8 +205,8 @@ z-index:2;
 
 .option{
 position:relative;
-width:150px;
-height:150px;
+width:130px;
+height:130px;
 cursor:pointer;
 transition:.2s;
 }
@@ -320,7 +295,7 @@ z-index:2;
 
 .hill{
 position:absolute;
-bottom:-50px;
+bottom:-90px;
 border-radius:50%;
 z-index:1;
 }
@@ -358,11 +333,14 @@ font-size:3.5rem;
 -webkit-text-stroke:4px white;
 }
 
-
 .questionBoard{
-height:120px;
+height:90px;
 }
 
+ .boardNumber{
+font-size:2.2rem;
+} 
+  
 .optionsContainer{
 gap:10px;
 }
@@ -458,8 +436,6 @@ class="logo">
 
 <div id="titleScreen" class="screen">
 
-<div class="rainbow"></div>
-
 
 <h1 class="mainTitle">
 Skip Counting
@@ -481,7 +457,6 @@ Skip Counting
 
 <div id="gameScreen" class="screen">
 
-<div class="rainbow"></div>
 
 <button id="hearAgainBtn">
 🔊 Hear Again
@@ -502,8 +477,9 @@ Read the numbers and tap the number that comes next in the sequence.
 
 <div class="questionBoard">
 
-<div class="boardStar starTL">⭐</div>
-<div class="boardStar starBR">⭐</div>
+<div id="num1" class="boardNumber">2</div>
+
+<div id="num2" class="boardNumber">4</div>
 
 <div class="boardNumber">?</div>
 
@@ -541,7 +517,6 @@ Read the numbers and tap the number that comes next in the sequence.
 
 <div id="finishScreen" class="screen">
 
-<div class="rainbow"></div>
 
 <h1 class="finishTitle">
 🎉 GREAT JOB! 🎉
