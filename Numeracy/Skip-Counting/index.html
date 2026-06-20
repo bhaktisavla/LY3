@@ -477,7 +477,42 @@ font-size:2rem;
 }
 
 }
-```
+#confettiCanvas{
+position:fixed;
+inset:0;
+pointer-events:none;
+z-index:999;
+}
+
+.option{
+transition:
+transform .2s,
+box-shadow .3s;
+}
+
+.option:active{
+transform:scale(.95);
+}
+
+.option.glow{
+animation:
+glowPulse
+1s infinite;
+}
+
+@keyframes glowPulse{
+0%{box-shadow:0 0 10px gold;}
+50%{box-shadow:0 0 35px gold;}
+100%{box-shadow:0 0 10px gold;}
+}
+
+@keyframes shake{
+0%{transform:translateX(0);}
+25%{transform:translateX(-10px);}
+50%{transform:translateX(10px);}
+75%{transform:translateX(-10px);}
+100%{transform:translateX(0);}
+}
 
 </style>
 
@@ -925,11 +960,7 @@ if(
 value === round.correct
 ){
 
-option.style.boxShadow =
-"0 0 30px gold";
-
-option.style.borderRadius =
-"50%";
+option.classList.add("glow");
 
 }
 
