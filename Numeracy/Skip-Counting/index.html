@@ -1,0 +1,1261 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+
+<title>Skip Counting</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<style>
+```css
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+width:100%;
+height:100%;
+overflow:hidden;
+font-family:
+"Trebuchet MS",
+"Arial Rounded MT Bold",
+sans-serif;
+}
+
+/* ========================= */
+/* SCREENS */
+/* ========================= */
+
+.screen{
+position:absolute;
+inset:0;
+display:none;
+flex-direction:column;
+align-items:center;
+justify-content:flex-start;
+overflow:hidden;
+}
+
+.screen.active{
+display:flex;
+}
+
+/* ========================= */
+/* BACKGROUND */
+/* ========================= */
+
+body{
+background:
+linear-gradient(
+180deg,
+#87d8ff 0%,
+#b8f2ff 40%,
+#fff8bf 70%,
+#d9ffd1 100%);
+position:relative;
+}
+
+/* ========================= */
+/* RAINBOW */
+/* ========================= */
+
+.rainbow{
+position:absolute;
+top:-90px;
+left:-120px;
+width:420px;
+height:420px;
+border-radius:50%;
+background:
+conic-gradient(
+red 0deg 40deg,
+orange 40deg 80deg,
+yellow 80deg 120deg,
+green 120deg 160deg,
+deepskyblue 160deg 200deg,
+blue 200deg 240deg,
+violet 240deg 280deg,
+transparent 280deg);
+opacity:.95;
+z-index:0;
+}
+
+/* ========================= */
+/* CLOUDS */
+/* ========================= */
+
+body::before,
+body::after{
+content:"";
+position:absolute;
+background:white;
+border-radius:50%;
+opacity:.95;
+}
+
+body::before{
+width:160px;
+height:80px;
+top:70px;
+left:40px;
+box-shadow:
+50px 0 white,
+100px 10px white;
+}
+
+body::after{
+width:140px;
+height:70px;
+top:120px;
+right:40px;
+box-shadow:
+40px 0 white,
+80px 10px white;
+}
+
+/* ========================= */
+/* STARS */
+/* ========================= */
+
+.star{
+position:absolute;
+font-size:70px;
+z-index:2;
+animation:twinkle 2s infinite;
+}
+
+.leftStar{
+top:100px;
+left:110px;
+}
+
+.rightStar{
+top:100px;
+right:110px;
+}
+
+@keyframes twinkle{
+0%,100%{
+transform:scale(1);
+}
+50%{
+transform:scale(1.15);
+}
+}
+
+/* ========================= */
+/* TITLE */
+/* ========================= */
+
+.mainTitle{
+margin-top:100px;
+font-size:clamp(3rem,8vw,6rem);
+font-weight:900;
+text-align:center;
+color:#1675ff;
+-webkit-text-stroke:8px white;
+paint-order:stroke fill;
+text-shadow:
+0 6px 0 rgba(0,0,0,.08);
+z-index:2;
+}
+
+/* ========================= */
+/* START BUTTON */
+/* ========================= */
+
+#startBtn{
+margin-top:40px;
+padding:18px 40px;
+border:none;
+border-radius:50px;
+background:#32c95f;
+color:white;
+font-size:1.4rem;
+font-weight:900;
+cursor:pointer;
+box-shadow:0 5px 15px rgba(0,0,0,.2);
+z-index:2;
+}
+
+/* ========================= */
+/* LOGO */
+/* ========================= */
+
+.logoBox{
+display:flex;
+justify-content:center;
+align-items:center;
+width:100%;
+height:100%;
+}
+
+.logo{
+width:min(320px,70vw);
+}
+
+/* ========================= */
+/* ROUND TITLE */
+/* ========================= */
+
+.roundTitle{
+margin-top:20px;
+font-size:clamp(2rem,5vw,3.5rem);
+font-weight:900;
+color:#1675ff;
+-webkit-text-stroke:5px white;
+paint-order:stroke fill;
+z-index:2;
+}
+
+/* ========================= */
+/* HEAR AGAIN */
+/* ========================= */
+
+#hearAgainBtn{
+position:absolute;
+top:15px;
+right:15px;
+border:none;
+background:#32c95f;
+color:white;
+padding:12px 24px;
+font-size:1rem;
+font-weight:900;
+border-radius:30px;
+cursor:pointer;
+z-index:10;
+}
+
+/* ========================= */
+/* INSTRUCTION BOX */
+/* ========================= */
+
+.instructionBox{
+margin-top:10px;
+width:min(900px,88vw);
+background:#fff3c8;
+border:4px dashed #ff4f9a;
+border-radius:30px;
+padding:16px;
+text-align:center;
+font-size:clamp(1rem,2vw,1.5rem);
+font-weight:900;
+color:#222caa;
+line-height:1.4;
+z-index:2;
+}
+
+/* ========================= */
+/* QUESTION BOARD */
+/* ========================= */
+
+.questionBoard{
+margin-top:15px;
+width:min(700px,82vw);
+height:170px;
+background:white;
+border:10px solid #ff2d87;
+border-radius:25px;
+display:flex;
+justify-content:space-evenly;
+align-items:center;
+position:relative;
+box-shadow:
+0 8px 20px rgba(0,0,0,.15);
+z-index:2;
+}
+
+.boardNumber{
+font-size:clamp(3rem,7vw,5rem);
+font-weight:900;
+color:black;
+}
+
+.boardStar{
+position:absolute;
+font-size:50px;
+}
+
+.starTL{
+top:-35px;
+left:-15px;
+}
+
+.starBR{
+bottom:-35px;
+right:-15px;
+}
+
+/* ========================= */
+/* OPTIONS */
+/* ========================= */
+
+.optionsContainer{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:30px;
+margin-top:18px;
+z-index:2;
+}
+
+.option{
+position:relative;
+width:150px;
+height:150px;
+cursor:pointer;
+transition:.2s;
+}
+
+.option img{
+width:100%;
+height:100%;
+object-fit:contain;
+}
+
+.option span{
+position:absolute;
+inset:0;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:4rem;
+font-weight:900;
+color:white;
+text-shadow:
+0 4px 0 rgba(0,0,0,.15);
+}
+
+.option:hover{
+transform:scale(1.05);
+}
+
+/* ========================= */
+/* CORRECT */
+/* ========================= */
+
+.correct{
+outline:8px solid #31d354;
+border-radius:50%;
+}
+
+/* ========================= */
+/* GOOD JOB */
+/* ========================= */
+
+#goodJobScreen{
+position:absolute;
+inset:0;
+display:none;
+justify-content:center;
+align-items:center;
+background:rgba(255,255,255,.75);
+z-index:100;
+}
+
+.goodJobText{
+font-size:clamp(2rem,8vw,5rem);
+font-weight:900;
+color:#ff8c00;
+}
+
+/* ========================= */
+/* FINISH */
+/* ========================= */
+
+.finishTitle{
+margin-top:180px;
+font-size:clamp(2.5rem,7vw,5rem);
+color:#ff8c00;
+-webkit-text-stroke:4px white;
+text-align:center;
+z-index:2;
+}
+
+#playAgainBtn{
+margin-top:30px;
+padding:18px 40px;
+border:none;
+border-radius:50px;
+background:#32c95f;
+color:white;
+font-size:1.3rem;
+font-weight:900;
+cursor:pointer;
+z-index:2;
+}
+
+/* ========================= */
+/* HILLS */
+/* ========================= */
+
+.hill{
+position:absolute;
+bottom:-50px;
+border-radius:50%;
+z-index:1;
+}
+
+.hill1{
+left:-10%;
+width:50%;
+height:180px;
+background:#ffdf3e;
+}
+
+.hill2{
+left:25%;
+width:50%;
+height:160px;
+background:#8e5cff;
+}
+
+.hill3{
+right:-10%;
+width:50%;
+height:190px;
+background:#ff67b3;
+}
+
+/* ========================= */
+/* MOBILE */
+/* ========================= */
+
+@media(max-width:768px){
+
+.mainTitle{
+margin-top:130px;
+font-size:3.5rem;
+-webkit-text-stroke:4px white;
+}
+
+.leftStar{
+left:25px;
+top:130px;
+font-size:50px;
+}
+
+.rightStar{
+right:25px;
+top:130px;
+font-size:50px;
+}
+
+.questionBoard{
+height:120px;
+}
+
+.optionsContainer{
+gap:10px;
+}
+
+.option{
+width:95px;
+height:95px;
+}
+
+.option span{
+font-size:2.6rem;
+}
+
+.instructionBox{
+font-size:.95rem;
+padding:12px;
+}
+
+.roundTitle{
+font-size:2rem;
+}
+
+}
+```
+
+</style>
+
+</head>
+<body>
+
+<!-- AUDIO -->
+
+<audio id="clapSound" src="assets/clap.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+
+<!-- CONFETTI -->
+
+<canvas id="confettiCanvas"></canvas>
+
+<!-- ========================= -->
+<!-- LOGO SCREEN -->
+<!-- ========================= -->
+
+<div id="logoScreen" class="screen active">
+
+<div class="logoBox">
+<img
+src="assets/innovine-logo.png"
+alt="Innovine Logo"
+class="logo">
+</div>
+
+</div>
+
+<!-- ========================= -->
+<!-- TITLE SCREEN -->
+<!-- ========================= -->
+
+<div id="titleScreen" class="screen">
+
+<div class="rainbow"></div>
+
+<div class="star leftStar">⭐</div>
+<div class="star rightStar">⭐</div>
+
+<h1 class="mainTitle">
+Skip Counting
+</h1>
+
+<button id="startBtn">
+👆 TAP TO START
+</button>
+
+<div class="hill hill1"></div>
+<div class="hill hill2"></div>
+<div class="hill hill3"></div>
+
+</div>
+
+<!-- ========================= -->
+<!-- GAME SCREEN -->
+<!-- ========================= -->
+
+<div id="gameScreen" class="screen">
+
+<div class="rainbow"></div>
+
+<button id="hearAgainBtn">
+🔊 Hear Again
+</button>
+
+<h2 class="roundTitle">
+Skip Count by 2
+</h2>
+
+<div class="instructionBox">
+
+Skip count by 2.
+Read the numbers and tap the number that comes next in the sequence.
+
+</div>
+
+<!-- QUESTION BOARD -->
+
+<div class="questionBoard">
+
+<div class="boardStar starTL">⭐</div>
+<div class="boardStar starBR">⭐</div>
+
+<div id="num1" class="boardNumber">2</div>
+<div id="num2" class="boardNumber">4</div>
+<div class="boardNumber">?</div>
+
+</div>
+
+<!-- OPTIONS -->
+
+<div id="optionsContainer" class="optionsContainer">
+
+<!-- Generated by JS -->
+
+</div>
+
+<div class="hill hill1"></div>
+<div class="hill hill2"></div>
+<div class="hill hill3"></div>
+
+</div>
+
+<!-- ========================= -->
+<!-- GOOD JOB SCREEN -->
+<!-- ========================= -->
+
+<div id="goodJobScreen">
+
+<div class="goodJobText">
+🌟 GOOD JOB! 🌟
+</div>
+
+</div>
+
+<!-- ========================= -->
+<!-- FINISH SCREEN -->
+<!-- ========================= -->
+
+<div id="finishScreen" class="screen">
+
+<div class="rainbow"></div>
+
+<h1 class="finishTitle">
+🎉 GREAT JOB! 🎉
+</h1>
+
+<button id="playAgainBtn">
+PLAY AGAIN
+</button>
+
+<div class="hill hill1"></div>
+<div class="hill hill2"></div>
+<div class="hill hill3"></div>
+
+</div>
+
+<script>
+
+```javascript
+/* ========================= */
+/* GAME DATA */
+/* ========================= */
+
+const rounds = [
+
+{
+numbers:[2,4],
+options:[
+{value:8,image:"assets/blue.png"},
+{value:6,image:"assets/orange.png"},
+{value:10,image:"assets/pink.png"}
+],
+correct:6
+},
+
+{
+numbers:[4,6],
+options:[
+{value:8,image:"assets/blue.png"},
+{value:2,image:"assets/orange.png"},
+{value:10,image:"assets/pink.png"}
+],
+correct:8
+},
+
+{
+numbers:[10,12],
+options:[
+{value:8,image:"assets/blue.png"},
+{value:14,image:"assets/orange.png"},
+{value:16,image:"assets/pink.png"}
+],
+correct:14
+},
+
+{
+numbers:[16,18],
+options:[
+{value:14,image:"assets/blue.png"},
+{value:19,image:"assets/orange.png"},
+{value:20,image:"assets/pink.png"}
+],
+correct:20
+}
+
+];
+
+/* ========================= */
+/* ELEMENTS */
+/* ========================= */
+
+const logoScreen =
+document.getElementById("logoScreen");
+
+const titleScreen =
+document.getElementById("titleScreen");
+
+const gameScreen =
+document.getElementById("gameScreen");
+
+const finishScreen =
+document.getElementById("finishScreen");
+
+const goodJobScreen =
+document.getElementById("goodJobScreen");
+
+const num1 =
+document.getElementById("num1");
+
+const num2 =
+document.getElementById("num2");
+
+const optionsContainer =
+document.getElementById("optionsContainer");
+
+const clapSound =
+document.getElementById("clapSound");
+
+const wrongSound =
+document.getElementById("wrongSound");
+
+/* ========================= */
+/* VARIABLES */
+/* ========================= */
+
+let currentRound = 0;
+let wrongAttempts = 0;
+
+/* ========================= */
+/* SCREEN FLOW */
+/* ========================= */
+
+setTimeout(()=>{
+
+logoScreen.classList.remove("active");
+titleScreen.classList.add("active");
+
+},5000);
+
+/* ========================= */
+/* START BUTTON */
+/* ========================= */
+
+document
+.getElementById("startBtn")
+.addEventListener("click",()=>{
+
+titleScreen.classList.remove("active");
+
+gameScreen.classList.add("active");
+
+loadRound();
+
+});
+
+/* ========================= */
+/* VOICE */
+/* ========================= */
+
+const narration =
+
+"Skip count by 2. Read the numbers and tap the number that comes next in the sequence.";
+
+function speakQuestion(){
+
+speechSynthesis.cancel();
+
+const speech =
+new SpeechSynthesisUtterance(
+narration
+);
+
+speech.rate = 0.9;
+speech.pitch = 1.0;
+speech.volume = 1;
+
+speechSynthesis.speak(speech);
+
+}
+
+document
+.getElementById("hearAgainBtn")
+.addEventListener("click",()=>{
+
+speakQuestion();
+
+});
+
+/* ========================= */
+/* LOAD ROUND */
+/* ========================= */
+
+function loadRound(){
+
+wrongAttempts = 0;
+
+const round =
+rounds[currentRound];
+
+num1.textContent =
+round.numbers[0];
+
+num2.textContent =
+round.numbers[1];
+
+optionsContainer.innerHTML = "";
+
+round.options.forEach(option=>{
+
+const div =
+document.createElement("div");
+
+div.className = "option";
+
+div.innerHTML =
+
+`
+<img src="${option.image}">
+<span>${option.value}</span>
+`;
+
+div.addEventListener(
+"click",
+()=>checkAnswer(
+div,
+option.value
+)
+);
+
+optionsContainer.appendChild(div);
+
+});
+
+setTimeout(()=>{
+
+speakQuestion();
+
+},500);
+
+}
+
+/* ========================= */
+/* ANSWERS */
+/* ========================= */
+
+function checkAnswer(
+element,
+selected
+){
+
+const round =
+rounds[currentRound];
+
+if(
+selected === round.correct
+){
+
+handleCorrect(
+element
+);
+
+}
+else{
+
+handleWrong(
+element
+);
+
+}
+
+}
+
+/* ========================= */
+/* CORRECT */
+/* ========================= */
+
+function handleCorrect(
+element
+){
+
+element.classList.add(
+"correct"
+);
+
+clapSound.currentTime = 0;
+clapSound.play();
+
+showGoodJob();
+
+}
+
+/* ========================= */
+/* WRONG */
+/* ========================= */
+
+function handleWrong(
+element
+){
+
+wrongSound.currentTime = 0;
+wrongSound.play();
+
+element.style.animation =
+"none";
+
+void element.offsetWidth;
+
+element.style.animation =
+"shake .4s";
+
+wrongAttempts++;
+
+if(
+wrongAttempts >= 2
+){
+
+showCorrectGlow();
+
+}
+
+}
+
+/* ========================= */
+/* SHOW CORRECT */
+/* ========================= */
+
+function showCorrectGlow(){
+
+const round =
+rounds[currentRound];
+
+document
+.querySelectorAll(".option")
+.forEach(option=>{
+
+const value = Number(
+option.querySelector("span")
+.textContent
+);
+
+if(
+value === round.correct
+){
+
+option.style.boxShadow =
+"0 0 30px gold";
+
+option.style.borderRadius =
+"50%";
+
+}
+
+});
+
+}
+
+/* ========================= */
+/* GOOD JOB */
+/* ========================= */
+
+function showGoodJob(){
+
+goodJobScreen.style.display =
+"flex";
+
+setTimeout(()=>{
+
+goodJobScreen.style.display =
+"none";
+
+currentRound++;
+
+if(
+currentRound >= rounds.length
+){
+
+showFinish();
+
+}
+else{
+
+loadRound();
+
+}
+
+},1800);
+
+}
+
+/* ========================= */
+/* FINISH */
+/* ========================= */
+
+function showFinish(){
+
+gameScreen.classList.remove(
+"active"
+);
+
+finishScreen.classList.add(
+"active"
+);
+
+}
+```
+```javascript
+/* ========================= */
+/* PLAY AGAIN */
+/* ========================= */
+
+document
+.getElementById("playAgainBtn")
+.addEventListener("click",()=>{
+
+finishScreen.classList.remove(
+"active"
+);
+
+currentRound = 0;
+wrongAttempts = 0;
+
+stopConfetti();
+
+gameScreen.classList.add(
+"active"
+);
+
+loadRound();
+
+});
+
+/* ========================= */
+/* CONFETTI */
+/* ========================= */
+
+const canvas =
+document.getElementById(
+"confettiCanvas"
+);
+
+const ctx =
+canvas.getContext("2d");
+
+let confettiPieces = [];
+let confettiAnimation;
+
+function resizeCanvas(){
+
+canvas.width =
+window.innerWidth;
+
+canvas.height =
+window.innerHeight;
+
+}
+
+resizeCanvas();
+
+window.addEventListener(
+"resize",
+resizeCanvas
+);
+
+function createConfetti(){
+
+confettiPieces = [];
+
+for(let i=0;i<180;i++){
+
+confettiPieces.push({
+
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height-canvas.height,
+
+size:Math.random()*10+4,
+
+speedY:Math.random()*4+2,
+
+speedX:(Math.random()-0.5)*4,
+
+rotation:
+Math.random()*360,
+
+color:[
+"#ff6b6b",
+"#ffd43b",
+"#51cf66",
+"#4dabf7",
+"#cc5de8",
+"#ff922b"
+][Math.floor(Math.random()*6)]
+
+});
+
+}
+
+}
+
+function animateConfetti(){
+
+ctx.clearRect(
+0,
+0,
+canvas.width,
+canvas.height
+);
+
+confettiPieces.forEach(p=>{
+
+p.y += p.speedY;
+p.x += p.speedX;
+p.rotation += 4;
+
+ctx.save();
+
+ctx.translate(
+p.x,
+p.y
+);
+
+ctx.rotate(
+p.rotation *
+Math.PI/180
+);
+
+ctx.fillStyle =
+p.color;
+
+ctx.fillRect(
+-p.size/2,
+-p.size/2,
+p.size,
+p.size
+);
+
+ctx.restore();
+
+if(
+p.y >
+canvas.height + 20
+){
+
+p.y = -20;
+
+}
+
+});
+
+confettiAnimation =
+requestAnimationFrame(
+animateConfetti
+);
+
+}
+
+function startConfetti(){
+
+createConfetti();
+
+animateConfetti();
+
+}
+
+function stopConfetti(){
+
+cancelAnimationFrame(
+confettiAnimation
+);
+
+ctx.clearRect(
+0,
+0,
+canvas.width,
+canvas.height
+);
+
+}
+
+/* ========================= */
+/* UPGRADE FINISH SCREEN */
+/* ========================= */
+
+const originalShowFinish =
+showFinish;
+
+showFinish = function(){
+
+gameScreen.classList.remove(
+"active"
+);
+
+finishScreen.classList.add(
+"active"
+);
+
+clapSound.currentTime = 0;
+clapSound.play();
+
+startConfetti();
+
+};
+
+/* ========================= */
+/* PRELOAD IMAGES */
+/* ========================= */
+
+[
+"assets/blue.png",
+"assets/orange.png",
+"assets/pink.png",
+"assets/innovine-logo.png"
+].forEach(src=>{
+
+const img =
+new Image();
+
+img.src = src;
+
+});
+
+/* ========================= */
+/* PREVENT DOUBLE TAPS */
+/* ========================= */
+
+let locked = false;
+
+const originalCheckAnswer =
+checkAnswer;
+
+checkAnswer = function(
+element,
+selected
+){
+
+if(locked) return;
+
+locked = true;
+
+originalCheckAnswer(
+element,
+selected
+);
+
+setTimeout(()=>{
+
+locked = false;
+
+},500);
+
+};
+
+/* ========================= */
+/* IOS AUDIO WAKEUP */
+/* ========================= */
+
+document.body.addEventListener(
+"touchstart",
+()=>{
+
+speechSynthesis.cancel();
+
+},
+{
+once:true
+}
+);
+
+/* ========================= */
+/* END */
+/* ========================= */
+```
+
+
+</script>
+
+</body>
+</html>
+```
