@@ -65,7 +65,6 @@ transform:rotate(4deg) scale(1.05);
 }
   
 
-
 *{
 box-sizing:border-box;
 }
@@ -135,21 +134,7 @@ box-shadow:0 4px 12px rgba(0,0,0,0.15);
 
 }
 
-.answerCard{
 
-background:white;
-
-border-radius:25px;
-
-padding:25px;
-
-margin:20px auto;
-
-max-width:350px;
-
-box-shadow:0 4px 12px rgba(0,0,0,0.15);
-
-}
   
 h1{
 color:#F26B38;
@@ -212,10 +197,6 @@ font-weight:bold;
 margin:10px 0;
 }
 
-.progress{
-font-size:18px;
-margin-bottom:10px;
-}
 
 .objects{
 
@@ -245,6 +226,10 @@ flex-wrap:wrap;
 
 input{
 
+display:block;
+
+margin:25px auto;
+
 width:180px;
 
 height:80px;
@@ -258,6 +243,8 @@ border-radius:20px;
 border:4px solid #39C56B;
 
 outline:none;
+
+background:white;
 
 }
 
@@ -280,7 +267,7 @@ background:#6A8DFF;
 height:35px;
 font-size:24px;
 font-weight:bold;
-margin-top:10px;
+margin-top:20px;
 }
 
 #finishScreen{
@@ -346,7 +333,6 @@ padding:12px 18px;
 
 <h1 class="mainTitle">Number Counting</h1>
 
-<div class="progress" id="progress"></div>
 
 <div class="questionBox">
 
@@ -367,8 +353,6 @@ onclick="speakQuestion()">
 
 </div>
 
-<div class="answerCard">
-
 <input
 id="answer"
 type="number"
@@ -377,8 +361,6 @@ pattern="[0-9]*"
 min="1"
 max="30"
 oninput="autoCheck()">
-
-</div>
 
 <div class="feedback" id="feedback"></div>
 
@@ -546,8 +528,6 @@ function showQuestion(){
 
 let q=questions[currentQuestion];
 
-document.getElementById("progress").innerHTML=
-"Question "+(currentQuestion+1)+" of 10";
 
 document.getElementById("question").innerHTML=
 "Count the " + q.item.name + " and type the correct number.";
