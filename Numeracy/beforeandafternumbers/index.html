@@ -154,7 +154,7 @@ h1{
   margin:4px 0;
 }
 
-  .questionArea{
+.questionArea{
 display:flex;
 align-items:center;
 justify-content:center;
@@ -242,15 +242,6 @@ justify-content:center;
 .wrongGlow{
   border-color:#d93025!important;
   box-shadow:0 0 16px #d93025;
-}
-
-.feedback{
-  min-height:32px;
-  font-size:clamp(18px,5vw,28px);
-  font-weight:bold;
-  color:#444;
-  text-align:center;
-  margin:6px 0;
 }
 
 .buttons{
@@ -345,7 +336,7 @@ button:active{transform:scale(.96)}
 </div>
 
   <div class="planeBox" id="planeBox">
-    <img id="planeImg" src="assets/aeroplane.jpg" alt="Aeroplane">
+    <img id="planeImg" src="assets/aeroplane.png" alt="Aeroplane">
 
     <div class="numberRow">
       <div class="numBox" id="box1"></div>
@@ -354,11 +345,7 @@ button:active{transform:scale(.96)}
     </div>
   </div>
 
-  <div class="feedback" id="feedback"></div>
-
-  <div class="buttons" id="buttons">
-  <button id="checkBtn" onclick="checkAnswer()">Check</button>
-</div>
+<div class="buttons" id="buttons"></div>  
 </div>
 
 <audio id="rightSound" src="assets/correct.mp3"></audio>
@@ -413,8 +400,7 @@ function loadQuestion(){
 
   var q=questions[current];
 
-  document.getElementById("feedback").innerHTML="";
-  document.getElementById("planeImg").src=planes[current%planes.length];
+   document.getElementById("planeImg").src=planes[current%planes.length];
 
   var boxes=[
     document.getElementById("box1"),
@@ -428,7 +414,7 @@ function loadQuestion(){
   }
 
   if(q.type==="before"){
-    boxes[0].innerHTML='<input id="answerInput" type="number" inputmode="numeric" min="1" max="20">';
+    boxes[0].innerHTML='<input id="answerInput" type="number" inputmode="numeric" min="1" max="20" oninput="autoCheck()">';
     boxes[1].innerHTML=q.number;
     boxes[2].innerHTML=q.number+1;
     document.getElementById("questionText").innerHTML="Write the number that comes before "+q.number+"?";
@@ -437,13 +423,23 @@ function loadQuestion(){
   if(q.type==="after"){
     boxes[0].innerHTML=q.number-1;
     boxes[1].innerHTML=q.number;
-    boxes[2].innerHTML='<input id="answerInput" type="number" inputmode="numeric" min="1" max="20">';
+    boxes[2].innerHTML='<input id="answerInput" type="number" inputmode="numeric" min="1" max="20" oninput="autoCheck()">';
     document.getElementById("questionText").innerHTML="Write the number that comes after "+q.number+"?";
   }
 
   setTimeout(function(){
-    speakQuestion();
-  },400);
+
+  var input=document.getElementById("answerInput");
+
+  if(input){
+    input.focus();
+  }
+
+},100);
+
+setTimeout(function(){
+  speakQuestion();
+},400);
 }
 
 function speakQuestion(){
@@ -461,67 +457,81 @@ function speakQuestion(){
   }
 }
 
-function speakFeedback(text){
-  if("speechSynthesis" in window){
-    window.speechSynthesis.cancel();
 
-    var speech=new SpeechSynthesisUtterance(text);
-    speech.lang="en-IN";
-    speech.rate=0.8;
-    speech.pitch=1.1;
+function autoCheck(){
 
-    window.speechSynthesis.speak(speech);
-  }
+  var input=document.getElementById("answerInput");
+
+  if(!input)return;
+
+  if(input.value.length===0)return;
+
+  checkAnswer();
 }
-
+  
 function checkAnswer(){
+
   if(movingNext)return;
 
   var q=questions[current];
+
   var input=document.getElementById("answerInput");
 
   if(!input)return;
 
   var answerBox=input.parentElement;
+
   var value=parseInt(input.value,10);
 
   answerBox.className="numBox";
 
   if(value===q.answer){
+
     movingNext=true;
+
     answerBox.classList.add("correctGlow");
-    document.getElementById("feedback").innerHTML="Good Job! 🎉";
 
     playSound("rightSound");
-    speakFeedback("Good job");
 
     setTimeout(function(){
+
       current++;
 
       if(current>=questions.length){
+
         finishGame();
+
       }else{
+
         loadQuestion();
+
       }
-    },1500);
+
+    },1200);
 
   }else{
+
     answerBox.classList.add("wrongGlow");
-    document.getElementById("feedback").innerHTML="Try Again 😊";
 
     playSound("wrongSound");
-    speakFeedback("Try again");
 
-    input.value="";
-    input.focus();
+    setTimeout(function(){
+
+      answerBox.classList.remove("wrongGlow");
+
+      input.value="";
+
+      input.focus();
+
+    },700);
   }
 }
 
 function finishGame(){
 
-  document.getElementById("questionText").innerHTML="Finished!";
-
-  document.getElementById("planeBox").innerHTML=
+document.getElementById("questionText").innerHTML="";
+document.getElementById("hearBtn").style.display="none";
+document.getElementById("planeBox").innerHTML=
   `
   <div style="
       text-align:center;
@@ -546,8 +556,6 @@ function finishGame(){
   </div>
   `;
 
-  document.getElementById("feedback").innerHTML=
-  "You completed all 10 questions.";
 
   document.getElementById("buttons").style.display="none";
 
@@ -564,6 +572,8 @@ function restartGame(){
   current=0;
   movingNext=false;
 
+  document.getElementById("hearBtn").style.display="flex";
+  
   document.getElementById("buttons").style.display="flex";
 
   document.getElementById("planeBox").innerHTML=
