@@ -266,7 +266,6 @@ button{
 }
 
 #hearBtn{background:#2b9fd9}
-#checkBtn{background:#80b918}
 
 button:active{transform:scale(.96)}
 
@@ -386,6 +385,7 @@ var planes=[
 
 var current=0;
 var movingNext=false;
+var typingTimer;
 
 window.onload=function(){
   setTimeout(function(){
@@ -457,10 +457,7 @@ function speakQuestion(){
   }
 }
 
-
 function autoCheck(){
-
-  var q=questions[current];
 
   var input=document.getElementById("answerInput");
 
@@ -468,15 +465,13 @@ function autoCheck(){
 
   clearTimeout(typingTimer);
 
-  var requiredLength=q.answer.toString().length;
+  typingTimer=setTimeout(function(){
 
-  if(input.value.length>=requiredLength){
-
-    typingTimer=setTimeout(function(){
+    if(input.value.length>0){
       checkAnswer();
-    },500);
+    }
 
-  }
+  },800);
 
 }
   
