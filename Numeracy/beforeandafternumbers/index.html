@@ -482,6 +482,7 @@ window.onload=function(){
       <div class="numBox" id="box3"></div>
     </div>
     `;
+document.querySelector(".game h1").style.display="";
 
     loadQuestion();
   }
@@ -632,6 +633,7 @@ function finishGame(){
 
 document.getElementById("questionText").innerHTML="";
 document.getElementById("hearBtn").style.display="none";
+document.querySelector(".game h1").style.display="none";
 document.getElementById("planeBox").innerHTML=
   `
   <div style="
