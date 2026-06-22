@@ -130,6 +130,48 @@ transform:translateX(calc(100vw + 250px));
   max-height:60%;
 }
 
+ #titleScreen{
+position:fixed;
+inset:0;
+display:none;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+gap:30px;
+
+background:linear-gradient(
+to bottom,
+#87ceff,
+#b8ecff,
+#dff8ff,
+#ffffff
+);
+
+z-index:90;
+}
+
+.titleHeading{
+font-size:clamp(36px,7vw,70px);
+font-weight:bold;
+text-align:center;
+
+color:#ff6b35;
+
+text-shadow:
+2px 2px 0 #ffffff,
+4px 4px 0 rgba(0,0,0,.15);
+}
+
+#startBtn{
+background:#ff7b00;
+padding:15px 35px;
+font-size:clamp(20px,4vw,30px);
+border:none;
+border-radius:20px;
+color:white;
+cursor:pointer;
+}
+  
 .game{
   width:100vw;
   height:calc(var(--vh,1vh)*100);
@@ -141,10 +183,16 @@ transform:translateX(calc(100vw + 250px));
 }
 
 h1{
-  margin:4px 0;
-  font-size:clamp(22px,5vw,34px);
-  color:#178bd3;
-  text-align:center;
+margin:4px 0;
+font-size:clamp(22px,5vw,34px);
+
+color:#ff6b35;
+
+text-shadow:
+1px 1px 0 white,
+2px 2px 0 rgba(0,0,0,.15);
+
+text-align:center;
 }
 
 .instruction{
@@ -319,6 +367,18 @@ button:active{transform:scale(.96)}
   <img src="assets/innovine-logo.png" alt="Innovine Logo">
 </div>
 
+ <div id="titleScreen">
+
+  <h1 class="titleHeading">
+    Before and After Numbers
+  </h1>
+
+  <button id="startBtn">
+    ▶ Tap to Start
+  </button>
+
+</div>
+  
 <div class="game" id="game">
   <h1>Before and After Numbers</h1>
 
@@ -388,12 +448,45 @@ var movingNext=false;
 var typingTimer;
 
 window.onload=function(){
+
   setTimeout(function(){
+
     document.getElementById("logoScreen").style.display="none";
-    document.getElementById("game").style.display="flex";
-    loadQuestion();
+
+    document.getElementById("titleScreen").style.display="flex";
+
   },5000);
+
 };
+
+  document.addEventListener("click",function(e){
+
+  if(e.target.id==="startBtn"){
+
+    current=0;
+    movingNext=false;
+
+    document.getElementById("titleScreen").style.display="none";
+
+    document.getElementById("game").style.display="flex";
+
+    document.getElementById("hearBtn").style.display="flex";
+
+    document.getElementById("planeBox").innerHTML=
+    `
+    <img id="planeImg" src="assets/aeroplane.png" alt="Aeroplane">
+
+    <div class="numberRow">
+      <div class="numBox" id="box1"></div>
+      <div class="numBox" id="box2"></div>
+      <div class="numBox" id="box3"></div>
+    </div>
+    `;
+
+    loadQuestion();
+  }
+
+});
 
 function loadQuestion(){
   movingNext=false;
@@ -417,14 +510,16 @@ function loadQuestion(){
     boxes[0].innerHTML='<input id="answerInput" type="number" inputmode="numeric" min="1" max="20" oninput="autoCheck()">';
     boxes[1].innerHTML=q.number;
     boxes[2].innerHTML=q.number+1;
-    document.getElementById("questionText").innerHTML="Write the number that comes before "+q.number+"?";
+  document.getElementById("questionText").innerHTML=
+"Type the number that comes before "+q.number+".";
   }
 
   if(q.type==="after"){
     boxes[0].innerHTML=q.number-1;
     boxes[1].innerHTML=q.number;
     boxes[2].innerHTML='<input id="answerInput" type="number" inputmode="numeric" min="1" max="20" oninput="autoCheck()">';
-    document.getElementById("questionText").innerHTML="Write the number that comes after "+q.number+"?";
+   document.getElementById("questionText").innerHTML=
+"Type the number that comes after "+q.number+".";
   }
 
   setTimeout(function(){
@@ -578,22 +673,18 @@ function restartGame(){
   current=0;
   movingNext=false;
 
-  document.getElementById("hearBtn").style.display="flex";
-  
-  document.getElementById("buttons").style.display="flex";
+  document.getElementById("game").style.display="none";
 
-  document.getElementById("planeBox").innerHTML=
-  `
-  <img id="planeImg" src="assets/aeroplane.png" alt="Aeroplane">
+  document.getElementById("logoScreen").style.display="flex";
 
-  <div class="numberRow">
-      <div class="numBox" id="box1"></div>
-      <div class="numBox" id="box2"></div>
-      <div class="numBox" id="box3"></div>
-  </div>
-  `;
+  setTimeout(function(){
 
-  loadQuestion();
+    document.getElementById("logoScreen").style.display="none";
+
+    document.getElementById("titleScreen").style.display="flex";
+
+  },5000);
+
 }  
 
 function playSound(id){
