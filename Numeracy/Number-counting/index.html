@@ -119,6 +119,38 @@ border-radius:20px;
 box-shadow:0 4px 10px rgba(0,0,0,0.15);
 }
 
+.objectsCard{
+
+background:white;
+
+border-radius:30px;
+
+padding:25px;
+
+margin:20px auto;
+
+max-width:900px;
+
+box-shadow:0 4px 12px rgba(0,0,0,0.15);
+
+}
+
+.answerCard{
+
+background:white;
+
+border-radius:25px;
+
+padding:25px;
+
+margin:20px auto;
+
+max-width:350px;
+
+box-shadow:0 4px 12px rgba(0,0,0,0.15);
+
+}
+  
 h1{
 color:#F26B38;
 font-size:24px;
@@ -127,8 +159,11 @@ margin-top:5px;
 
 .mainTitle{
 
-font-size:40px;
+font-size:60px;
+
 font-weight:bold;
+
+text-align:center;
 
 background:linear-gradient(
 90deg,
@@ -144,22 +179,30 @@ background:linear-gradient(
 -webkit-text-fill-color:transparent;
 
 margin-bottom:10px;
+
 }
 
 .questionBox{
 
 display:flex;
+
 justify-content:center;
+
 align-items:center;
-gap:10px;
+
+gap:15px;
+
 flex-wrap:wrap;
-background:#FFF9C4;
 
-padding:12px;
+background:#FFF4B3;
 
-border-radius:15px;
+padding:18px;
 
-margin-bottom:15px;
+border-radius:25px;
+
+margin:20px auto;
+
+max-width:1200px;
 
 }
   
@@ -201,12 +244,21 @@ flex-wrap:wrap;
 }
 
 input{
-width:140px;
-height:65px;
-font-size:34px;
+
+width:180px;
+
+height:80px;
+
+font-size:40px;
+
 text-align:center;
-border-radius:18px;
-border:4px solid #444;
+
+border-radius:20px;
+
+border:4px solid #39C56B;
+
+outline:none;
+
 }
 
 button{
@@ -290,7 +342,7 @@ padding:12px 18px;
 
 <div class="container" id="game" style="display:none;">
 
-<div class="card" id="gameCard">
+<div id="gameCard">
 
 <h1 class="mainTitle">Number Counting</h1>
 
@@ -304,16 +356,18 @@ Count the objects and type the correct number.
 
 <button class="hearBtn"
 onclick="speakQuestion()">
-
 🔊
-
 </button>
 
 </div>
 
+<div class="objectsCard">
+
 <div class="objects" id="objects"></div>
 
-<div class="controls">
+</div>
+
+<div class="answerCard">
 
 <input
 id="answer"
@@ -322,9 +376,8 @@ inputmode="numeric"
 pattern="[0-9]*"
 min="1"
 max="30"
-oninput="autoCheck()"  
->
-  
+oninput="autoCheck()">
+
 </div>
 
 <div class="feedback" id="feedback"></div>
@@ -333,7 +386,22 @@ oninput="autoCheck()"
 
 <div class="card" id="finishScreen">
 
-<h2>🎉 Well Done! 🎉</h2>
+<h2 style="
+font-size:48px;
+background:linear-gradient(
+90deg,
+#ff4d4d,
+#ff9900,
+#ffee00,
+#33cc33,
+#3399ff,
+#9933ff
+);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+">
+🌟 WELL DONE! 🌟
+</h2>
 
 <p>You finished all 10 questions.</p>
 
@@ -489,7 +557,7 @@ document.getElementById("answer").value="";
 let box=
 document.getElementById("answer");
 
-box.style.borderColor="#444";
+box.style.borderColor="#39C56B";
 
 box.style.boxShadow="none";  
 
@@ -500,8 +568,8 @@ let objects=document.getElementById("objects");
 objects.innerHTML="";
 
 let columns=Math.ceil(Math.sqrt(q.count));
-
-objects.style.gridTemplateColumns=
+  
+objects.style.gridTemplateColumns =
 `repeat(${columns},minmax(35px,45px))`;
 
 for(let i=0;i<q.count;i++){
@@ -519,7 +587,12 @@ objects.appendChild(img);
 setTimeout(function(){
 
 speakQuestion();
+let answerBox=document.getElementById("answer");
 
+answerBox.focus();
+
+answerBox.select();
+  
 },500);
 
 }
