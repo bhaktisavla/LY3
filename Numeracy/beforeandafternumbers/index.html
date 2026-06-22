@@ -154,6 +154,31 @@ h1{
   margin:4px 0;
 }
 
+  .questionArea{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:10px;
+margin:4px 0;
+width:100%;
+}
+
+.questionArea .instruction{
+margin:0;
+}
+
+.questionArea #hearBtn{
+width:50px;
+height:50px;
+min-width:50px;
+padding:0;
+border-radius:50%;
+background:#2b9fd9;
+font-size:24px;
+display:flex;
+align-items:center;
+justify-content:center;
+}
 .planeBox{
   position:relative;
   width:100%;
@@ -307,9 +332,17 @@ button:active{transform:scale(.96)}
 <div class="game" id="game">
   <h1>Before and After Numbers</h1>
 
+  <div class="questionArea">
+
   <div class="instruction" id="questionText">
     Listen and type the missing number.
   </div>
+
+  <button id="hearBtn" onclick="speakQuestion()">
+    🔊
+  </button>
+
+</div>
 
   <div class="planeBox" id="planeBox">
     <img id="planeImg" src="assets/aeroplane.jpg" alt="Aeroplane">
@@ -324,9 +357,8 @@ button:active{transform:scale(.96)}
   <div class="feedback" id="feedback"></div>
 
   <div class="buttons" id="buttons">
-    <button id="hearBtn" onclick="speakQuestion()">🔊 Hear Again</button>
-    <button id="checkBtn" onclick="checkAnswer()">Check</button>
-  </div>
+  <button id="checkBtn" onclick="checkAnswer()">Check</button>
+</div>
 </div>
 
 <audio id="rightSound" src="assets/correct.mp3"></audio>
@@ -399,14 +431,14 @@ function loadQuestion(){
     boxes[0].innerHTML='<input id="answerInput" type="number" inputmode="numeric" min="1" max="20">';
     boxes[1].innerHTML=q.number;
     boxes[2].innerHTML=q.number+1;
-    document.getElementById("questionText").innerHTML="What number comes before "+q.number+"?";
+    document.getElementById("questionText").innerHTML="Write the number that comes before "+q.number+"?";
   }
 
   if(q.type==="after"){
     boxes[0].innerHTML=q.number-1;
     boxes[1].innerHTML=q.number;
     boxes[2].innerHTML='<input id="answerInput" type="number" inputmode="numeric" min="1" max="20">';
-    document.getElementById("questionText").innerHTML="What number comes after "+q.number+"?";
+    document.getElementById("questionText").innerHTML="Write the number that comes after "+q.number+"?";
   }
 
   setTimeout(function(){
