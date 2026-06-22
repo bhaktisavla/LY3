@@ -460,13 +460,24 @@ function speakQuestion(){
 
 function autoCheck(){
 
+  var q=questions[current];
+
   var input=document.getElementById("answerInput");
 
   if(!input)return;
 
-  if(input.value.length===0)return;
+  clearTimeout(typingTimer);
 
-  checkAnswer();
+  var requiredLength=q.answer.toString().length;
+
+  if(input.value.length>=requiredLength){
+
+    typingTimer=setTimeout(function(){
+      checkAnswer();
+    },500);
+
+  }
+
 }
   
 function checkAnswer(){
