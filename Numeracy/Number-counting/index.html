@@ -453,31 +453,22 @@ document.getElementById("startScreen").style.display="flex";
 
 function startGame(){
 
-questions=[];
+questions = [
+
+{count:5,item:items[0]},
+{count:8,item:items[1]},
+{count:10,item:items[2]},
+{count:12,item:items[3]},
+{count:15,item:items[4]},
+{count:18,item:items[5]},
+{count:20,item:items[6]},
+{count:22,item:items[7]},
+{count:25,item:items[8]},
+{count:30,item:items[9]}
+
+];
 
 currentQuestion=0;
-
-let used={};
-
-while(questions.length<10){
-
-let randomNumber=Math.floor(Math.random()*30)+1;
-
-if(!used[randomNumber]){
-
-used[randomNumber]=true;
-
-questions.push({
-
-count:randomNumber,
-
-item:items[questions.length]
-
-});
-
-}
-
-}
 
 showQuestion();
 
@@ -491,7 +482,7 @@ document.getElementById("progress").innerHTML=
 "Question "+(currentQuestion+1)+" of 10";
 
 document.getElementById("question").innerHTML=
-"Count the objects and type the correct number.";
+"Count the " + q.item.name + " and type the correct number.";
 
 document.getElementById("answer").value="";
 
