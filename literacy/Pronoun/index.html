@@ -329,7 +329,11 @@ display:flex;
 
 flex-direction:column;
 
-gap:18px;
+justify-content:center;
+
+height:100%;
+
+gap:24px;
 
 }
 
@@ -497,9 +501,9 @@ z-index:5;
 
 position:absolute;
 
-width:12px;
+width:10px;
 
-height:18px;
+height:22px;
 
 border-radius:3px;
 
@@ -675,11 +679,10 @@ const rounds=[
 picture:"assets/he.png",
 question:"Look at the picture and tap on the correct pronoun.",
 options:[
-"assets/I-tag.png",
 "assets/he-tag.png",
 "assets/you-tag.png"
 ],
-correct:1
+correct:0
 },
 
 {
@@ -688,7 +691,6 @@ question:"Look at the picture and tap on the correct pronoun.",
 options:[
 "assets/it-tag.png",
 "assets/I-tag.png",
-"assets/you-tag.png"
 ],
 correct:1
 },
@@ -699,7 +701,6 @@ question:"Look at the picture and tap on the correct pronoun.",
 options:[
 "assets/it-tag.png",
 "assets/she-tag.png",
-"assets/he-tag.png"
 ],
 correct:0
 },
@@ -710,9 +711,8 @@ question:"Look at the picture and tap on the correct pronoun.",
 options:[
 "assets/I-tag.png",
 "assets/she-tag.png",
-"assets/it-tag.png"
 ],
-correct:1
+correct:0
 },
 
 {
@@ -721,7 +721,6 @@ question:"Look at the picture and tap on the correct pronoun.",
 options:[
 "assets/he-tag.png",
 "assets/you-tag.png",
-"assets/it-tag.png"
 ],
 correct:1
 }
@@ -786,9 +785,19 @@ picture.src=r.picture;
 
 question.innerText=r.question;
 
-for(let i=0;i<3;i++){
+for(let i=0;i<optionEls.length;i++){
+
+if(r.options[i]){
+
+optionEls[i].style.display="block";
 
 optionEls[i].src=r.options[i];
+
+}else{
+
+optionEls[i].style.display="none";
+
+}
 
 optionEls[i].style.pointerEvents="auto";
 
@@ -973,7 +982,7 @@ loadRound();
 
 function createConfetti(){
 
-for(let i=0;i<140;i++){
+for(let i=0;i<260;i++){
 
 let c=document.createElement("div");
 
@@ -987,7 +996,7 @@ c.style.background=
 
 c.style.animationDuration=
 
-(3+Math.random()*3)+"s";
+(4+Math.random()*4)+"s";
 
 c.style.animationDelay=
 
@@ -997,7 +1006,7 @@ endScreen.appendChild(c);
 
 }
 
-};
+}
 
 </script>
 
