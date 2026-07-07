@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,
+initial-scale=1.0,
+maximum-scale=1.0,
+user-scalable=no">
+
+<title>Birds</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+width:100%;
+height:100%;
+overflow:hidden;
+font-family:'Baloo 2',cursive;
+background:url("assets/backdrop.jpg") center center/cover no-repeat;
+}
+
+body{
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.screen{
+position:absolute;
+inset:0;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+background:url("assets/backdrop.jpg") center center/cover no-repeat;
+}
+
+.hidden{
+display:none;
+}
+
+#logo{
+width:min(70vw,320px);
+animation:pop 1s infinite alternate;
+}
+
+@keyframes pop{
+from{transform:scale(.96);}
+to{transform:scale(1.03);}
+}
+
+.title{
+font-size:clamp(40px,6vw,72px);
+font-weight:800;
+background:linear-gradient(90deg,#ff5a5a,#ffb703,#4caf50,#2196f3,#8e44ad);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+text-shadow:2px 2px 5px rgba(255,255,255,.6);
+}
+
+.flash{
+animation:flashTitle .8s infinite;
+}
+
+@keyframes flashTitle{
+50%{
+opacity:.55;
+}
+}
+
+.startBtn{
+
+margin-top:35px;
+
+padding:18px 40px;
+
+font-size:clamp(22px,3vw,34px);
+
+border:none;
+
+border-radius:50px;
+
+background:#ff9800;
+
+color:white;
+
+font-weight:700;
+
+box-shadow:0 8px 18px rgba(0,0,0,.25);
+
+cursor:pointer;
+
+animation:pulse 1.2s infinite;
+
+}
+
+@keyframes pulse{
+
+0%{transform:scale(1);}
+
+50%{transform:scale(1.08);}
+
+100%{transform:scale(1);}
+
+}
+
+#game{
+
+padding:1vh;
+
+justify-content:flex-start;
+
+}
+
+header{
+
+width:min(95vw,900px);
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+position:relative;
+
+margin-top:.5vh;
+
+}
+
+header h1{
+
+font-size:clamp(32px,4vw,56px);
+
+font-weight:800;
+
+background:linear-gradient(90deg,#ff5252,#ffca28,#43a047,#2196f3,#ab47bc);
+
+-webkit-background-clip:text;
+
+-webkit-text-fill-color:transparent;
+
+}
+
+#speaker{
+
+position:absolute;
+
+right:0;
+
+font-size:clamp(26px,3vw,42px);
+
+background:white;
+
+border:none;
+
+border-radius:50%;
+
+width:60px;
+
+height:60px;
+
+cursor:pointer;
+
+box-shadow:0 4px 10px rgba(0,0,0,.25);
+
+}
+
+#question{
+
+margin-top:.5vh;
+
+font-size:clamp(22px,3vw,38px);
+
+color:#d50000;
+
+font-weight:700;
+
+text-align:center;
+
+min-height:60px;
+
+}
+
+#bird{
+
+max-width:min(55vw,360px);
+
+max-height:38vh;
+
+object-fit:contain;
+
+margin-top:1vh;
+
+}
+
+.options{
+
+width:min(95vw,700px);
+
+display:flex;
+
+justify-content:space-evenly;
+
+align-items:center;
+
+margin-top:2vh;
+
+gap:20px;
+
+}
+
+.option{
+
+width:min(34vw,220px);
+
+height:min(25vw,180px);
+
+background:white;
+
+border:6px solid white;
+
+border-radius:25px;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+box-shadow:0 8px 18px rgba(0,0,0,.25);
+
+transition:.25s;
+
+cursor:pointer;
+
+}
+
+.option:hover{
+
+transform:scale(1.03);
+
+}
+
+.option img{
+
+max-width:90%;
+
+max-height:90%;
+
+object-fit:contain;
+
+pointer-events:none;
+
+}
+
+.correct{
+
+border:8px solid #2ecc71;
+
+box-shadow:0 0 20px #2ecc71;
+
+}
+
+.wrong{
+
+animation:shake .35s;
+
+}
+
+@keyframes shake{
+
+20%{transform:translateX(-8px);}
+
+40%{transform:translateX(8px);}
+
+60%{transform:translateX(-8px);}
+
+80%{transform:translateX(8px);}
+
+}
+
+#goodJob{
+
+position:absolute;
+
+top:48%;
+
+left:50%;
+
+transform:translate(-50%,-50%);
+
+font-size:clamp(38px,6vw,80px);
+
+font-weight:800;
+
+background:linear-gradient(90deg,#ff4081,#ff9800,#4caf50,#2196f3);
+
+-webkit-background-clip:text;
+
+-webkit-text-fill-color:transparent;
+
+display:none;
+
+z-index:20;
+
+animation:zoom .8s;
+
+}
+
+@keyframes zoom{
+
+0%{transform:translate(-50%,-50%) scale(.2);}
+
+100%{transform:translate(-50%,-50%) scale(1);}
+
+}
+
+#endScreen{
+
+text-align:center;
+
+}
+
+#endScreen h2{
+
+font-size:clamp(40px,5vw,70px);
+
+color:#ff4081;
+
+}
+
+#playAgain{
+
+margin-top:25px;
+
+padding:18px 45px;
+
+border:none;
+
+border-radius:50px;
+
+background:#4caf50;
+
+color:white;
+
+font-size:clamp(22px,3vw,34px);
+
+cursor:pointer;
+
+font-weight:700;
+
+animation:pulse 1.2s infinite;
+
+}
+
+canvas{
+
+position:absolute;
+
+inset:0;
+
+pointer-events:none;
+
+}
+
+@media(max-height:700px){
+
+#bird{
+
+max-height:30vh;
+
+}
+
+.option{
+
+height:150px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<canvas id="confetti"></canvas>
+
+<div id="logoScreen" class="screen">
+
+<img id="logo" src="assets/innovine-logo.png">
+
+</div>
+
+<div id="titleScreen" class="screen hidden">
+
+<h1 class="title flash">Birds</h1>
+
+<button class="startBtn">Tap to Start</button>
+
+</div>
+
+<div id="game" class="screen hidden">
+
+<header>
+
+<h1>Birds</h1>
+
+<button id="speaker">🔊</button>
+
+</header>
+
+<div id="question">
+
+Look at the bird. Tap its beak.
+
+</div>
+
+<img id="bird">
+
+<div class="options">
+
+<div class="option">
+
+<img id="opt1">
+
+</div>
+
+<div class="option">
+
+<img id="opt2">
+
+</div>
+
+</div>
+
+<div id="goodJob">
+
+🌟 Good Job! 🌟
+
+</div>
+
+<audio id="clap" src="assets/clap.mp3"></audio>
+
+<audio id="wrong" src="assets/wrong.mp3"></audio>
+
+</div>
+
+<div id="endScreen" class="screen hidden">
+
+<h2>🎉 Excellent! 🎉</h2>
+
+<div class="title">
+
+You Finished!
+
+</div>
+
+<button id="playAgain">
+
+🔄 Play Again
+
+</button>
+
+</div>
+
+<script>
+
+const rounds=[
+
+{
+bird:"duck.png",
+question:"Look at the bird. Tap its beak.",
+options:["duckbeak.png","kingfisherbeak.png"],
+answer:0
+},
+
+{
+bird:"kingfisher.png",
+question:"Look at the bird. Tap its beak.",
+options:["kingfisherbeak.png","ostrichbeak.png"],
+answer:0
+},
+
+{
+bird:"ostrich.png",
+question:"Look at the bird. Tap its beak.",
+options:["owlbeak.png","ostrichbeak.png"],
+answer:1
+},
+
+{
+bird:"owl.png",
+question:"Look at the bird. Tap its beak.",
+options:["owlbeak.png","pelicanbeak.png"],
+answer:0
+},
+
+{
+bird:"pelican.png",
+question:"Look at the bird. Tap its beak.",
+options:["pelicanbeak.png","penguinbeak.png"],
+answer:0
+},
+
+{
+bird:"penguin.png",
+question:"Look at the bird. Tap its beak.",
+options:["sparrowbeak.png","penguinbeak.png"],
+answer:1
+},
+
+{
+bird:"sparrow.png",
+question:"Look at the bird. Tap its beak.",
+options:["sparrowbeak.png","vulturebeak.png"],
+answer:0
+},
+
+{
+bird:"vulture.png",
+question:"Look at the bird. Tap its beak.",
+options:["vulturebeak.png","woodpeckerbeak.png"],
+answer:0
+},
+
+{
+bird:"woodpecker.png",
+question:"Look at the bird. Tap its beak.",
+options:["woodpeckerbeak.png","duckbeak.png"],
+answer:0
+}
+
+];
+
+let currentRound=0;
+
+const logoScreen=document.getElementById("logoScreen");
+const titleScreen=document.getElementById("titleScreen");
+const game=document.getElementById("game");
+const endScreen=document.getElementById("endScreen");
+
+const bird=document.getElementById("bird");
+
+const question=document.getElementById("question");
+
+const optionDivs=document.querySelectorAll(".option");
+
+const opt1=document.getElementById("opt1");
+
+const opt2=document.getElementById("opt2");
+
+const clap=document.getElementById("clap");
+
+const wrong=document.getElementById("wrong");
+
+const goodJob=document.getElementById("goodJob");
+
+const speaker=document.getElementById("speaker");
+
+const startBtn=document.querySelector(".startBtn");
+
+const playAgain=document.getElementById("playAgain");
+
+let speaking=false;
+
+function speak(text){
+
+if('speechSynthesis' in window){
+
+window.speechSynthesis.cancel();
+
+const msg=new SpeechSynthesisUtterance(text);
+
+msg.rate=.9;
+
+msg.pitch=1;
+
+msg.volume=1;
+
+window.speechSynthesis.speak(msg);
+
+}
+
+}
+
+setTimeout(()=>{
+
+logoScreen.classList.add("hidden");
+
+titleScreen.classList.remove("hidden");
+
+},5000);
+
+startBtn.onclick=function(){
+
+currentRound=0;
+
+titleScreen.classList.add("hidden");
+
+game.classList.remove("hidden");
+
+loadRound();
+
+};
+
+speaker.onclick=function(){
+
+speak(rounds[currentRound].question);
+
+};
+
+function loadRound(){
+
+const r=rounds[currentRound];
+
+question.innerHTML=r.question;
+
+bird.src="assets/"+r.bird;
+
+opt1.src="assets/"+r.options[0];
+
+opt2.src="assets/"+r.options[1];
+
+optionDivs.forEach(o=>{
+
+o.classList.remove("correct","wrong");
+
+});
+
+setTimeout(()=>{
+
+speak(r.question);
+
+},500);
+
+optionDivs[0].onclick=function(){
+
+checkAnswer(0);
+
+};
+
+optionDivs[1].onclick=function(){
+
+checkAnswer(1);
+
+};
+
+}
+
+function checkAnswer(index){
+const r = rounds[currentRound];
+
+if(index===r.answer){
+
+optionDivs[index].classList.add("correct");
+
+goodJob.style.display="block";
+
+clap.currentTime=0;
+clap.play();
+
+setTimeout(()=>{
+
+goodJob.style.display="none";
+
+currentRound++;
+
+if(currentRound>=rounds.length){
+
+finishGame();
+
+}else{
+
+loadRound();
+
+}
+
+},1800);
+
+}else{
+
+optionDivs[index].classList.add("wrong");
+
+wrong.currentTime=0;
+wrong.play();
+
+setTimeout(()=>{
+
+optionDivs[index].classList.remove("wrong");
+
+},400);
+
+}
+
+}
+
+function finishGame(){
+
+game.classList.add("hidden");
+
+endScreen.classList.remove("hidden");
+
+launchConfetti();
+
+}
+
+playAgain.onclick=function(){
+
+window.speechSynthesis.cancel();
+
+stopConfetti();
+
+currentRound=0;
+
+endScreen.classList.add("hidden");
+
+logoScreen.classList.remove("hidden");
+
+setTimeout(()=>{
+
+logoScreen.classList.add("hidden");
+
+titleScreen.classList.remove("hidden");
+
+},5000);
+
+};
+
+
+
+
+
+/* ---------------- CONFETTI ---------------- */
+
+const canvas=document.getElementById("confetti");
+
+const ctx=canvas.getContext("2d");
+
+let pieces=[];
+
+let animationId;
+
+function resizeCanvas(){
+
+canvas.width=window.innerWidth;
+
+canvas.height=window.innerHeight;
+
+}
+
+window.addEventListener("resize",resizeCanvas);
+
+resizeCanvas();
+
+function launchConfetti(){
+
+pieces=[];
+
+for(let i=0;i<180;i++){
+
+pieces.push({
+
+x:Math.random()*canvas.width,
+
+y:Math.random()*canvas.height-canvas.height,
+
+r:4+Math.random()*8,
+
+dx:-2+Math.random()*4,
+
+dy:2+Math.random()*5,
+
+rot:Math.random()*360,
+
+dr:-6+Math.random()*12,
+
+color:[
+"#ff595e",
+"#ffca3a",
+"#8ac926",
+"#1982c4",
+"#6a4c93",
+"#ff924c",
+"#43aa8b"
+][Math.floor(Math.random()*7)]
+
+});
+
+}
+
+animateConfetti();
+
+}
+
+function animateConfetti(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+pieces.forEach(p=>{
+
+ctx.save();
+
+ctx.translate(p.x,p.y);
+
+ctx.rotate(p.rot*Math.PI/180);
+
+ctx.fillStyle=p.color;
+
+ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r);
+
+ctx.restore();
+
+p.x+=p.dx;
+
+p.y+=p.dy;
+
+p.rot+=p.dr;
+
+if(p.y>canvas.height){
+
+p.y=-20;
+
+}
+
+});
+
+animationId=requestAnimationFrame(animateConfetti);
+
+}
+
+function stopConfetti(){
+
+cancelAnimationFrame(animationId);
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+}
+
+
+
+
+
+/* -------- Prevent double tap zoom -------- */
+
+document.addEventListener("gesturestart",function(e){
+
+e.preventDefault();
+
+});
+
+document.addEventListener("dblclick",function(e){
+
+e.preventDefault();
+
+},{passive:false});
+
+
+
+
+
+/* ---------- Preload Images ---------- */
+
+const preload=[];
+
+rounds.forEach(r=>{
+
+const b=new Image();
+
+b.src="assets/"+r.bird;
+
+preload.push(b);
+
+r.options.forEach(o=>{
+
+const img=new Image();
+
+img.src="assets/"+o;
+
+preload.push(img);
+
+});
+
+});
+
+</script>
+
+</body>
+
+</html>
