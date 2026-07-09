@@ -397,9 +397,7 @@ justify-content:center;
 
 align-items:center;
 
-background:rgba(255,255,255,.45);
-
-backdrop-filter:blur(4px);
+background:white;
 
 z-index:50;
 
@@ -421,11 +419,25 @@ background:linear-gradient(to right,#ff006e,#ffbe0b,#3a86ff,#38b000);
 
 margin-top:30px;
 
-font-size:60px;
+padding:16px 40px;
+
+font-size:28px;
+
+font-weight:800;
+
+color:white;
+
+background:#FF9800;
+
+border:none;
+
+border-radius:50px;
 
 cursor:pointer;
 
-animation:pulse 1.3s infinite;
+box-shadow:0 6px 12px rgba(0,0,0,.25);
+
+animation:pulse 1.2s infinite;
 
 }
 
@@ -646,11 +658,11 @@ Good Job!
 
 <h2>Awesome!</h2>
 
-<div id="playAgain">
+<button id="playAgain">
 
-🔄
+🔄 Play Again
 
-</div>
+</button>
 
 </div>
 
@@ -864,9 +876,11 @@ line.setAttribute("y2",y2);
 
 line.setAttribute("stroke","#3CB043");
 
-line.setAttribute("stroke-width","8");
+line.setAttribute("stroke-width","5");
 
 line.setAttribute("stroke-linecap","round");
+
+line.setAttribute("opacity","0.85");    
 
 svg.appendChild(line);
 
@@ -883,13 +897,13 @@ clap.currentTime=0;
 
 clap.play();
 
-launchConfetti();
-
 setTimeout(()=>{
 
 document.getElementById("message").style.display="none";
 
 document.getElementById("finish").style.display="flex";
+
+launchConfetti();
 
 },1800);
 
