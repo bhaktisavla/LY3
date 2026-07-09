@@ -597,7 +597,31 @@ Good Job!
 
 <script>
 
-// JavaScript will be added in Part 2
+const logoScreen = document.getElementById("logoScreen");
+const titleScreen = document.getElementById("titleScreen");
+const startScreen = document.getElementById("startScreen");
+const game = document.getElementById("game");
+
+setTimeout(() => {
+
+    logoScreen.classList.add("hidden");
+    titleScreen.classList.remove("hidden");
+
+    setTimeout(() => {
+
+        titleScreen.classList.add("hidden");
+        startScreen.classList.remove("hidden");
+
+    },5000);
+
+},5000);
+
+document.getElementById("startBtn").onclick = function(){
+
+    startScreen.style.display="none";
+    game.style.display="flex";
+
+}
 
 </script>
 
