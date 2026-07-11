@@ -229,13 +229,23 @@ height:100vh;
 
 padding:2vh 2vw;
 
+display:flex;
+
 flex-direction:column;
 
 align-items:center;
 
+justify-content:flex-start;
+
 }
 
 .heading{
+
+width:100%;
+
+text-align:center;
+
+margin-bottom:1vh;
 
 font-size:clamp(30px,5vw,48px);
 
@@ -359,9 +369,9 @@ transition:.25s;
 
 display:block;
 
-max-width:100%;
+width:100%;
 
-max-height:100%;
+height:100%;
 
 object-fit:contain;
 
@@ -985,6 +995,7 @@ roundArea.innerHTML="";
 roundArea.style.display="flex";
 roundArea.style.justifyContent="space-evenly";
 roundArea.style.alignItems="center";
+roundArea.style.height="72vh";    
 roundArea.style.gap="2vw";
 roundArea.style.flexWrap="nowrap";
 
@@ -1080,7 +1091,7 @@ roundArea.innerHTML="";
 roundArea.style.display="flex";
 roundArea.style.justifyContent="space-evenly";
 roundArea.style.alignItems="center";
-roundArea.style.gap="4vw";
+roundArea.style.gap="8vw";
 
 const leftColumn=document.createElement("div");
 const rightColumn=document.createElement("div");
@@ -1091,8 +1102,8 @@ rightColumn.style.display="flex";
 leftColumn.style.flexDirection="column";
 rightColumn.style.flexDirection="column";
 
-leftColumn.style.gap="2vh";
-rightColumn.style.gap="2vh";
+leftColumn.style.gap="1.2vh";
+rightColumn.style.gap="1.2vh";
 
 roundArea.appendChild(leftColumn);
 roundArea.appendChild(rightColumn);
@@ -1110,9 +1121,10 @@ card.dataset.id=item.id;
 
 card.dataset.side="left";
 
-card.style.width="22vw";
-card.style.maxWidth="170px";
-card.style.height="18vh";
+card.style.width="18vw";
+card.style.maxWidth="130px";
+card.style.height="14vh";
+card.style.maxHeight="90px";
 
 card.onclick=()=>selectLeft(card);
 
@@ -1133,9 +1145,10 @@ card.dataset.id=item.id;
 
 card.dataset.side="right";
 
-card.style.width="22vw";
-card.style.maxWidth="170px";
-card.style.height="18vh";
+card.style.width="18vw";
+card.style.maxWidth="130px";
+card.style.height="14vh";
+card.style.maxHeight="90px";
 
 card.onclick=()=>selectRight(card);
 
@@ -1366,9 +1379,13 @@ function finishGame(){
 
 game.style.display="none";
 
+startConfetti();
+
+setTimeout(()=>{
+
 finishScreen.style.display="flex";
 
-startConfetti();
+},300);
 
 }
 
@@ -1444,7 +1461,7 @@ const colours=[
 "#EC407A"
 ];
 
-for(let i=0;i<180;i++){
+for(let i=0;i<350;i++){
 
 confetti.push({
 
@@ -1452,11 +1469,11 @@ x:Math.random()*canvas.width,
 
 y:Math.random()*canvas.height-canvas.height,
 
-w:6+Math.random()*8,
+w:12+Math.random()*14,
 
-h:8+Math.random()*10,
+h:16+Math.random()*18,
 
-vy:2+Math.random()*3,
+vy:4+Math.random()*5,
 
 vx:-1+Math.random()*2,
 
@@ -1480,7 +1497,7 @@ cancelAnimationFrame(confettiAnimation);
 
 ctx.clearRect(0,0,canvas.width,canvas.height);
 
-},5000);
+},7000);
 
 }
 
@@ -1515,24 +1532,6 @@ confettiAnimation=requestAnimationFrame(animateConfetti);
 
 }
 
-
-/*=========================================================
-AUTO SPEAK AFTER PLAY AGAIN
-=========================================================*/
-
-const oldLoadRound=loadRound;
-
-loadRound=function(){
-
-oldLoadRound();
-
-setTimeout(()=>{
-
-speak(questions[round-1]);
-
-},300);
-
-};
 
 
 /*=========================================================
