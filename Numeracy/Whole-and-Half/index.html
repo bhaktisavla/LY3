@@ -227,7 +227,7 @@ width:100vw;
 
 height:100vh;
 
-padding:2vh 2vw;
+padding:calc(env(safe-area-inset-top) + 3vh) 2vw 2vh;
 
 display:flex;
 
@@ -502,7 +502,7 @@ position:fixed;
 
 inset:0;
 
-background:rgba(255,255,255,.95);
+background:transparent;
 
 flex-direction:column;
 
@@ -1091,7 +1091,15 @@ roundArea.innerHTML="";
 roundArea.style.display="flex";
 roundArea.style.justifyContent="space-evenly";
 roundArea.style.alignItems="center";
-roundArea.style.gap="8vw";
+if(window.innerWidth<700){
+
+    roundArea.style.gap="16vw";
+
+}else{
+
+    roundArea.style.gap="8vw";
+
+}
 
 const leftColumn=document.createElement("div");
 const rightColumn=document.createElement("div");
@@ -1397,6 +1405,12 @@ PLAY AGAIN
 playAgain.onclick=()=>{
 
 window.speechSynthesis.cancel();
+
+cancelAnimationFrame(confettiAnimation);
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+confetti=[];     
 
 finishScreen.style.display="none";
 
