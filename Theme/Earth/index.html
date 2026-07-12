@@ -94,7 +94,7 @@ flex-direction:column;
 }
 
 .show{
-display:flex;
+display:flex !important;
 }
 
 /* logo */
@@ -210,7 +210,6 @@ transform:scale(1.05);
 
 #game{
 
-display:flex;
 flex-direction:column;
 align-items:center;
 justify-content:flex-start;
@@ -835,7 +834,7 @@ startBtn.onclick=()=>{
 startScreen.classList.remove("show");
 game.classList.add("show");
 
-setTimeout(speakQuestion,500);
+speakQuestion();
 
 };
 
@@ -1041,6 +1040,9 @@ card.style.left="";
 card.style.top="";
 card.style.zIndex="";
 
+resetCard();
+
+dragged=null;  
 }
 
 });
