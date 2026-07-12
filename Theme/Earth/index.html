@@ -1179,14 +1179,19 @@ drops.forEach(drop=>{
 drop.classList.remove("correct");
 drop.classList.remove("hover");
 
-while(drop.firstChild){
-
-document.getElementById("options").appendChild(drop.firstChild);
-
-}
 
 });
 
+const options=document.getElementById("options");
+
+options.innerHTML="";
+
+options.appendChild(cards[0]);
+options.appendChild(cards[1]);
+options.appendChild(cards[2]);
+options.appendChild(cards[3]);
+options.appendChild(cards[4]);
+options.appendChild(cards[5]);  
 cards.forEach(card=>{
 
 card.classList.remove("correct");
