@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,
+initial-scale=1.0,
+maximum-scale=1.0,
+user-scalable=no">
+
+<title>Earth</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+
+width:100%;
+height:100%;
+overflow:hidden;
+font-family:'Baloo 2',cursive;
+
+background:
+linear-gradient(#bde9ff,#ffffff 45%,#c8f6c1);
+
+}
+
+/* colourful background */
+
+body::before{
+
+content:"";
+position:fixed;
+inset:0;
+pointer-events:none;
+
+background:
+
+radial-gradient(circle at 10% 15%,#FFD54F 0 6%,transparent 7%),
+
+radial-gradient(circle at 88% 12%,#81D4FA 0 6%,transparent 7%),
+
+radial-gradient(circle at 20% 85%,#CE93D8 0 6%,transparent 7%),
+
+radial-gradient(circle at 85% 82%,#FFCCBC 0 6%,transparent 7%),
+
+radial-gradient(circle at 50% 50%,rgba(255,255,255,.35),transparent 60%);
+
+z-index:-3;
+
+}
+
+body::after{
+
+content:"";
+position:fixed;
+left:0;
+right:0;
+bottom:0;
+height:22vh;
+
+background:
+
+linear-gradient(#7fd56a,#53b84d);
+
+clip-path:polygon(0 100%,0 42%,10% 50%,20% 35%,30% 50%,40% 32%,50% 50%,60% 38%,70% 52%,80% 35%,90% 48%,100% 35%,100% 100%);
+
+z-index:-2;
+
+}
+
+.screen{
+
+position:absolute;
+inset:0;
+
+display:none;
+
+justify-content:center;
+align-items:center;
+flex-direction:column;
+
+}
+
+.show{
+display:flex;
+}
+
+/* logo */
+
+#logo{
+
+width:min(60vw,320px);
+
+animation:pop 1s infinite alternate;
+
+}
+
+/* title */
+
+#title{
+
+font-size:clamp(38px,6vw,64px);
+
+font-weight:800;
+
+background:
+linear-gradient(90deg,
+#e53935,
+#fb8c00,
+#43a047,
+#1e88e5,
+#8e24aa);
+
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+animation:flash .8s infinite;
+
+}
+
+@keyframes flash{
+
+50%{
+
+opacity:.4;
+
+}
+
+}
+
+/* button */
+
+#startBtn,#playAgain{
+
+margin-top:25px;
+
+font-size:clamp(22px,3vw,34px);
+
+padding:14px 40px;
+
+border:none;
+
+border-radius:50px;
+
+background:#ff9800;
+
+color:white;
+
+font-weight:800;
+
+cursor:pointer;
+
+box-shadow:0 8px 18px rgba(0,0,0,.25);
+
+animation:pulse 1.5s infinite;
+
+}
+
+@keyframes pulse{
+
+0%{
+
+transform:scale(1);
+
+}
+
+50%{
+
+transform:scale(1.08);
+
+}
+
+100%{
+
+transform:scale(1);
+
+}
+
+}
+
+@keyframes pop{
+
+from{
+
+transform:scale(.95);
+
+}
+
+to{
+
+transform:scale(1.05);
+
+}
+
+}
+
+/* game */
+
+#game{
+
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:flex-start;
+
+padding:1vh 2vw;
+
+}
+
+h1{
+
+font-size:clamp(28px,5vw,48px);
+
+font-weight:800;
+
+background:
+linear-gradient(90deg,#ff5252,#ffb300,#43a047,#1e88e5,#8e24aa);
+
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+}
+
+#questionRow{
+
+display:flex;
+align-items:center;
+justify-content:center;
+gap:10px;
+
+margin-top:.3vh;
+
+}
+
+#question{
+
+font-size:clamp(14px,2vw,22px);
+
+text-align:center;
+
+font-weight:700;
+
+}
+
+#speak{
+
+width:42px;
+height:42px;
+
+border:none;
+
+border-radius:50%;
+
+background:#42a5f5;
+
+color:white;
+
+font-size:22px;
+
+cursor:pointer;
+
+}
+
+/* top area */
+
+#earthArea{
+
+width:100%;
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:flex-start;
+
+margin-top:1vh;
+
+padding:0 3vw;
+
+}
+
+.earthColumn{
+
+display:flex;
+flex-direction:column;
+align-items:center;
+
+width:44%;
+
+}
+
+.earthImg{
+
+width:min(18vw,110px);
+
+max-height:16vh;
+
+object-fit:contain;
+
+border:3px solid #ff5252;
+
+border-radius:18px;
+
+background:white;
+
+padding:6px;
+
+}
+
+/* drop zones */
+
+.dropGrid{
+
+margin-top:1vh;
+
+display:grid;
+
+grid-template-columns:repeat(2,1fr);
+
+gap:10px;
+
+justify-items:center;
+
+}
+
+.dropGrid .drop:last-child{
+
+grid-column:1/3;
+
+}
+
+.drop{
+
+width:min(18vw,110px);
+
+height:min(18vw,110px);
+
+background:white;
+
+border:3px dashed #ff7043;
+
+border-radius:18px;
+
+transition:.25s;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+}
+
+.drop.hover{
+
+background:#fff7d8;
+
+transform:scale(1.03);
+
+}
+
+.drop.correct{
+
+border:4px solid #4CAF50;
+
+box-shadow:0 0 20px #4CAF50;
+
+}
+
+/* options */
+
+#options{
+
+margin-top:auto;
+
+width:100%;
+
+display:flex;
+
+justify-content:center;
+
+gap:12px;
+
+flex-wrap:wrap;
+
+padding-bottom:1vh;
+
+}
+
+.card{
+
+width:min(15vw,95px);
+
+height:min(15vw,95px);
+
+background:white;
+
+border:3px dotted #b39ddb;
+
+border-radius:14px;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+touch-action:none;
+
+cursor:pointer;
+
+transition:.25s;
+
+}
+
+.card img{
+
+width:90%;
+
+height:90%;
+
+object-fit:contain;
+
+pointer-events:none;
+
+}
+
+.card.correct{
+
+border:3px solid #4CAF50;
+
+box-shadow:0 0 18px #4CAF50;
+
+}
+
+.shake{
+
+animation:shake .35s;
+
+}
+
+@keyframes shake{
+
+20%{
+
+transform:translateX(-6px);
+
+}
+
+40%{
+
+transform:translateX(6px);
+
+}
+
+60%{
+
+transform:translateX(-6px);
+
+}
+
+80%{
+
+transform:translateX(6px);
+
+}
+
+}
+
+/* finish */
+
+#finish{
+
+text-align:center;
+
+}
+
+#good{
+
+font-size:clamp(42px,7vw,72px);
+
+font-weight:800;
+
+background:
+linear-gradient(90deg,
+#ff5252,
+#ffb300,
+#43a047,
+#1e88e5,
+#8e24aa);
+
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+animation:pulse 1s infinite;
+
+}
+
+/* confetti */
+
+canvas{
+
+position:fixed;
+
+left:0;
+top:0;
+
+width:100%;
+height:100%;
+
+pointer-events:none;
+
+}
+
+/* mobile */
+
+@media(max-width:700px){
+
+.earthImg{
+
+width:82px;
+
+}
+
+.drop{
+
+width:80px;
+height:80px;
+
+}
+
+.card{
+
+width:72px;
+height:72px;
+
+}
+
+#options{
+
+gap:8px;
+
+}
+
+#question{
+
+font-size:13px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- audio -->
+
+<audio id="clap" src="assets/clap.mp3"></audio>
+
+<audio id="wrong" src="assets/wrong.mp3"></audio>
+
+<!-- confetti -->
+
+<canvas id="confetti"></canvas>
+
+<!-- logo -->
+
+<div id="logoScreen" class="screen show">
+
+<img
+id="logo"
+src="assets/innovine-logo.png">
+
+</div>
+
+<!-- title -->
+
+<div id="titleScreen" class="screen">
+
+<h1 id="title">
+
+Earth
+
+</h1>
+
+</div>
+
+<!-- start -->
+
+<div id="startScreen" class="screen">
+
+<h1>
+
+Earth
+
+</h1>
+
+<button id="startBtn">
+
+Tap to Start
+
+</button>
+
+</div>
+
+<!-- game -->
+
+<div id="game" class="screen">
+
+<h1>
+
+Earth
+
+</h1>
+
+<div id="questionRow">
+
+<div id="question">
+
+Drag and drop the helpful actions below the happy earth and the harmful actions below the sad earth.
+
+</div>
+
+<button id="speak">
+
+🔊
+
+</button>
+
+</div>
+
+<div id="earthArea">
+
+<div class="earthColumn">
+
+<img
+class="earthImg"
+src="assets/happyearth.png">
+
+<div class="dropGrid">
+
+<div
+class="drop"
+data-group="happy"></div>
+
+<div
+class="drop"
+data-group="happy"></div>
+
+<div
+class="drop"
+data-group="happy"></div>
+
+</div>
+
+</div>
+
+<div class="earthColumn">
+
+<img
+class="earthImg"
+src="assets/sadearth.png">
+
+<div class="dropGrid">
+
+<div
+class="drop"
+data-group="sad"></div>
+
+<div
+class="drop"
+data-group="sad"></div>
+
+<div
+class="drop"
+data-group="sad"></div>
+
+</div>
+
+</div>
+
+</div>
+
+<div id="options">
+
+<div
+class="card"
+draggable="true"
+data-answer="happy">
+
+<img src="assets/happy1.png">
+
+</div>
+
+<div
+class="card"
+draggable="true"
+data-answer="sad">
+
+<img src="assets/sad1.png">
+
+</div>
+
+<div
+class="card"
+draggable="true"
+data-answer="happy">
+
+<img src="assets/happy2.png">
+
+</div>
+
+<div
+class="card"
+draggable="true"
+data-answer="sad">
+
+<img src="assets/sad2.png">
+
+</div>
+
+<div
+class="card"
+draggable="true"
+data-answer="happy">
+
+<img src="assets/happy3.png">
+
+</div>
+
+<div
+class="card"
+draggable="true"
+data-answer="sad">
+
+<img src="assets/sad3.png">
+
+</div>
+
+</div>
+
+</div>
+
+<!-- finish -->
+
+<div
+id="finish"
+class="screen">
+
+<div id="good">
+
+Good Job!
+
+</div>
+
+<button id="playAgain">
+
+Play Again
+
+</button>
+
+</div>
+<script>
+
+const logoScreen=document.getElementById("logoScreen");
+const titleScreen=document.getElementById("titleScreen");
+const startScreen=document.getElementById("startScreen");
+const game=document.getElementById("game");
+const finish=document.getElementById("finish");
+
+const clap=document.getElementById("clap");
+const wrong=document.getElementById("wrong");
+
+const speakBtn=document.getElementById("speak");
+const startBtn=document.getElementById("startBtn");
+const playAgain=document.getElementById("playAgain");
+
+const cards=[...document.querySelectorAll(".card")];
+const drops=[...document.querySelectorAll(".drop")];
+
+const questionText=
+"Drag and drop the helpful actions below the happy earth and the harmful actions below the sad earth.";
+
+let completed=0;
+
+function speakQuestion(){
+
+if('speechSynthesis' in window){
+
+speechSynthesis.cancel();
+
+let msg=new SpeechSynthesisUtterance(questionText);
+
+msg.rate=.9;
+msg.pitch=1;
+msg.volume=1;
+
+speechSynthesis.speak(msg);
+
+}
+
+}
+
+window.onload=()=>{
+
+setTimeout(()=>{
+
+logoScreen.classList.remove("show");
+titleScreen.classList.add("show");
+
+setTimeout(()=>{
+
+titleScreen.classList.remove("show");
+startScreen.classList.add("show");
+
+},5000);
+
+},5000);
+
+};
+
+startBtn.onclick=()=>{
+
+startScreen.classList.remove("show");
+game.classList.add("show");
+
+setTimeout(speakQuestion,500);
+
+};
+
+speakBtn.onclick=speakQuestion;
+
+let dragged=null;
+let startParent=null;
+let startNext=null;
+
+/* Desktop Drag */
+
+cards.forEach(card=>{
+
+card.addEventListener("dragstart",e=>{
+
+dragged=card;
+
+startParent=card.parentNode;
+startNext=card.nextSibling;
+
+});
+
+});
+
+/* Drop zones */
+
+drops.forEach(drop=>{
+
+drop.addEventListener("dragover",e=>{
+
+e.preventDefault();
+
+drop.classList.add("hover");
+
+});
+
+drop.addEventListener("dragleave",()=>{
+
+drop.classList.remove("hover");
+
+});
+
+drop.addEventListener("drop",e=>{
+
+e.preventDefault();
+
+drop.classList.remove("hover");
+
+checkDrop(drop);
+
+});
+
+});
+
+function checkDrop(drop){
+
+if(!dragged)return;
+
+if(drop.children.length>0){
+
+resetCard();
+
+return;
+
+}
+
+const answer=dragged.dataset.answer;
+const target=drop.dataset.group;
+
+if(answer===target){
+
+drop.appendChild(dragged);
+
+dragged.draggable=false;
+
+dragged.classList.add("correct");
+drop.classList.add("correct");
+
+completed++;
+
+if(completed===6){
+
+setTimeout(endGame,700);
+
+}
+
+}else{
+
+wrong.currentTime=0;
+wrong.play();
+
+dragged.classList.add("shake");
+
+setTimeout(()=>{
+
+dragged.classList.remove("shake");
+
+},350);
+
+resetCard();
+
+}
+
+dragged=null;
+
+}
+
+function resetCard(){
+
+if(startNext){
+
+startParent.insertBefore(dragged,startNext);
+
+}else{
+
+startParent.appendChild(dragged);
+
+}
+
+}
+
+/* Touch support */
+
+cards.forEach(card=>{
+
+let offsetX=0;
+let offsetY=0;
+
+card.addEventListener("touchstart",e=>{
+
+if(card.classList.contains("correct"))return;
+
+dragged=card;
+
+startParent=card.parentNode;
+startNext=card.nextSibling;
+
+const t=e.touches[0];
+
+const rect=card.getBoundingClientRect();
+
+offsetX=t.clientX-rect.left;
+offsetY=t.clientY-rect.top;
+
+card.style.position="fixed";
+card.style.zIndex=9999;
+card.style.left=rect.left+"px";
+card.style.top=rect.top+"px";
+
+});
+
+card.addEventListener("touchmove",e=>{
+
+if(dragged!==card)return;
+
+e.preventDefault();
+
+const t=e.touches[0];
+
+card.style.left=(t.clientX-offsetX)+"px";
+card.style.top=(t.clientY-offsetY)+"px";
+
+},{passive:false});
+
+card.addEventListener("touchend",e=>{
+
+if(dragged!==card)return;
+
+const rect=card.getBoundingClientRect();
+
+let placed=false;
+
+drops.forEach(drop=>{
+
+const r=drop.getBoundingClientRect();
+
+if(
+
+rect.left<r.right &&
+rect.right>r.left &&
+rect.top<r.bottom &&
+rect.bottom>r.top
+
+){
+
+card.style.position="";
+card.style.left="";
+card.style.top="";
+card.style.zIndex="";
+
+checkDrop(drop);
+
+placed=true;
+
+}
+
+});
+
+if(!placed){
+
+card.style.position="";
+card.style.left="";
+card.style.top="";
+card.style.zIndex="";
+
+}
+
+});
+
+});
+
+function endGame(){
+
+game.classList.remove("show");
+
+finish.classList.add("show");
+
+clap.currentTime=0;
+clap.play();
+
+startConfetti();
+
+}
+/* ---------------- CONFETTI ---------------- */
+
+const canvas=document.getElementById("confetti");
+const ctx=canvas.getContext("2d");
+
+let pieces=[];
+let confettiAnimation;
+
+function resizeCanvas(){
+
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+}
+
+resizeCanvas();
+
+window.addEventListener("resize",resizeCanvas);
+
+function randomColor(){
+
+const colours=[
+"#ff5252",
+"#ffca28",
+"#66bb6a",
+"#42a5f5",
+"#ab47bc",
+"#ff8a65",
+"#26c6da",
+"#ec407a"
+];
+
+return colours[Math.floor(Math.random()*colours.length)];
+
+}
+
+function startConfetti(){
+
+pieces=[];
+
+for(let i=0;i<180;i++){
+
+pieces.push({
+
+x:Math.random()*canvas.width,
+
+y:-Math.random()*canvas.height,
+
+w:6+Math.random()*8,
+
+h:8+Math.random()*10,
+
+dx:(Math.random()-.5)*3,
+
+dy:2+Math.random()*4,
+
+r:Math.random()*360,
+
+dr:(Math.random()-.5)*8,
+
+c:randomColor()
+
+});
+
+}
+
+cancelAnimationFrame(confettiAnimation);
+
+animateConfetti();
+
+setTimeout(()=>{
+
+cancelAnimationFrame(confettiAnimation);
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+},5000);
+
+}
+
+function animateConfetti(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+pieces.forEach(p=>{
+
+ctx.save();
+
+ctx.translate(p.x,p.y);
+
+ctx.rotate(p.r*Math.PI/180);
+
+ctx.fillStyle=p.c;
+
+ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+
+ctx.restore();
+
+p.x+=p.dx;
+p.y+=p.dy;
+p.r+=p.dr;
+
+if(p.y>canvas.height+20){
+
+p.y=-20;
+
+}
+
+});
+
+confettiAnimation=requestAnimationFrame(animateConfetti);
+
+}
+
+/* ---------------- RESET GAME ---------------- */
+
+function resetGame(){
+
+speechSynthesis.cancel();
+
+completed=0;
+
+/* remove glow */
+
+drops.forEach(drop=>{
+
+drop.classList.remove("correct");
+drop.classList.remove("hover");
+
+while(drop.firstChild){
+
+document.getElementById("options").appendChild(drop.firstChild);
+
+}
+
+});
+
+cards.forEach(card=>{
+
+card.classList.remove("correct");
+card.classList.remove("shake");
+card.draggable=true;
+
+card.style.position="";
+card.style.left="";
+card.style.top="";
+card.style.zIndex="";
+
+});
+
+finish.classList.remove("show");
+logoScreen.classList.add("show");
+
+/* restart intro */
+
+setTimeout(()=>{
+
+logoScreen.classList.remove("show");
+titleScreen.classList.add("show");
+
+setTimeout(()=>{
+
+titleScreen.classList.remove("show");
+startScreen.classList.add("show");
+
+},5000);
+
+},5000);
+
+}
+
+/* ---------------- PLAY AGAIN ---------------- */
+
+playAgain.onclick=()=>{
+
+resetGame();
+
+};
+
+</script>
+
+</body>
+
+</html>
