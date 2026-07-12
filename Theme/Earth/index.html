@@ -32,7 +32,11 @@ overflow:hidden;
 font-family:'Baloo 2',cursive;
 
 background:
-linear-gradient(#bde9ff,#ffffff 45%,#c8f6c1);
+linear-gradient(
+#7ED9FF 0%,
+#BEEFFF 38%,
+#E8FFF1 60%,
+#B8F59A 100%);
 
 }
 
@@ -47,15 +51,13 @@ pointer-events:none;
 
 background:
 
-radial-gradient(circle at 10% 15%,#FFD54F 0 6%,transparent 7%),
+radial-gradient(circle at 10% 15%,#FFE45C 0 6%,transparent 7%),
 
-radial-gradient(circle at 88% 12%,#81D4FA 0 6%,transparent 7%),
+radial-gradient(circle at 88% 12%,#7ED9FF 0 6%,transparent 7%),
 
-radial-gradient(circle at 20% 85%,#CE93D8 0 6%,transparent 7%),
+radial-gradient(circle at 20% 85%,#FFB6E6 0 6%,transparent 7%),
 
-radial-gradient(circle at 85% 82%,#FFCCBC 0 6%,transparent 7%),
-
-radial-gradient(circle at 50% 50%,rgba(255,255,255,.35),transparent 60%);
+radial-gradient(circle at 85% 82%,#FFD180 0 6%,transparent 7%);
 
 z-index:-3;
 
@@ -72,7 +74,9 @@ height:22vh;
 
 background:
 
-linear-gradient(#7fd56a,#53b84d);
+linear-gradient(
+#6FD65A,
+#43B64A);
 
 clip-path:polygon(0 100%,0 42%,10% 50%,20% 35%,30% 50%,40% 32%,50% 50%,60% 38%,70% 52%,80% 35%,90% 48%,100% 35%,100% 100%);
 
@@ -583,18 +587,6 @@ src="assets/innovine-logo.png">
 
 </div>
 
-<!-- title -->
-
-<div id="titleScreen" class="screen">
-
-<h1 id="title">
-
-Earth
-
-</h1>
-
-</div>
-
 <!-- start -->
 
 <div id="startScreen" class="screen">
@@ -773,7 +765,6 @@ Play Again
 <script>
 
 const logoScreen=document.getElementById("logoScreen");
-const titleScreen=document.getElementById("titleScreen");
 const startScreen=document.getElementById("startScreen");
 const game=document.getElementById("game");
 const finish=document.getElementById("finish");
@@ -816,14 +807,7 @@ window.onload=()=>{
 setTimeout(()=>{
 
 logoScreen.classList.remove("show");
-titleScreen.classList.add("show");
-
-setTimeout(()=>{
-
-titleScreen.classList.remove("show");
 startScreen.classList.add("show");
-
-},5000);
 
 },5000);
 
@@ -844,20 +828,6 @@ let dragged=null;
 let startParent=null;
 let startNext=null;
 
-/* Desktop Drag */
-
-cards.forEach(card=>{
-
-card.addEventListener("dragstart",e=>{
-
-dragged=card;
-
-startParent=card.parentNode;
-startNext=card.nextSibling;
-
-});
-
-});
 
 /* Drop zones */
 
@@ -956,56 +926,61 @@ startParent.appendChild(dragged);
 
 }
 
-/* Touch support */
+ /* ---------- Smooth Pointer Drag (Mouse + Touch) ---------- */
 
 cards.forEach(card=>{
 
-let offsetX=0;
-let offsetY=0;
+let startX=0;
+let startY=0;
+let dragging=false;
 
-card.addEventListener("touchstart",e=>{
+card.addEventListener("pointerdown",e=>{
 
-if(card.classList.contains("correct"))return;
+if(card.classList.contains("correct")) return;
 
 dragged=card;
 
 startParent=card.parentNode;
 startNext=card.nextSibling;
 
-const t=e.touches[0];
+dragging=true;
 
 const rect=card.getBoundingClientRect();
 
-offsetX=t.clientX-rect.left;
-offsetY=t.clientY-rect.top;
+startX=e.clientX-rect.left;
+startY=e.clientY-rect.top;
 
 card.style.position="fixed";
-card.style.zIndex=9999;
 card.style.left=rect.left+"px";
 card.style.top=rect.top+"px";
+card.style.width=rect.width+"px";
+card.style.height=rect.height+"px";
+card.style.zIndex="9999";
+
+card.setPointerCapture(e.pointerId);
 
 });
 
-card.addEventListener("touchmove",e=>{
+card.addEventListener("pointermove",e=>{
 
-if(dragged!==card)return;
+if(!dragging) return;
 
-e.preventDefault();
+card.style.left=(e.clientX-startX)+"px";
+card.style.top=(e.clientY-startY)+"px";
 
-const t=e.touches[0];
+});
 
-card.style.left=(t.clientX-offsetX)+"px";
-card.style.top=(t.clientY-offsetY)+"px";
+card.addEventListener("pointerup",e=>{
 
-},{passive:false});
+if(!dragging) return;
 
-card.addEventListener("touchend",e=>{
+dragging=false;
 
-if(dragged!==card)return;
-
-const rect=card.getBoundingClientRect();
+card.releasePointerCapture(e.pointerId);
 
 let placed=false;
+
+const rect=card.getBoundingClientRect();
 
 drops.forEach(drop=>{
 
@@ -1023,6 +998,8 @@ rect.bottom>r.top
 card.style.position="";
 card.style.left="";
 card.style.top="";
+card.style.width="";
+card.style.height="";
 card.style.zIndex="";
 
 checkDrop(drop);
@@ -1038,16 +1015,19 @@ if(!placed){
 card.style.position="";
 card.style.left="";
 card.style.top="";
+card.style.width="";
+card.style.height="";
 card.style.zIndex="";
 
 resetCard();
 
-dragged=null;  
+dragged=null;
+
 }
 
 });
 
-});
+}); 
 
 function endGame(){
 
@@ -1219,18 +1199,9 @@ logoScreen.classList.add("show");
 setTimeout(()=>{
 
 logoScreen.classList.remove("show");
-titleScreen.classList.add("show");
-
-setTimeout(()=>{
-
-titleScreen.classList.remove("show");
 startScreen.classList.add("show");
 
 },5000);
-
-},5000);
-
-}
 
 /* ---------------- PLAY AGAIN ---------------- */
 
