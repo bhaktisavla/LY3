@@ -828,8 +828,19 @@ let dragged=null;
 let startParent=null;
 let startNext=null;
 
+/* ---------- DRAG & DROP ---------- */
 
-/* Drop zones */
+cards.forEach(card=>{
+
+card.addEventListener("dragstart",e=>{
+
+dragged=card;
+
+});
+
+});
+
+/* Allow dropping */
 
 drops.forEach(drop=>{
 
@@ -853,19 +864,11 @@ e.preventDefault();
 
 drop.classList.remove("hover");
 
-checkDrop(drop);
-
-});
-
-});
-
-function checkDrop(drop){
-
 if(!dragged)return;
 
-if(drop.children.length>0){
+/* box already full */
 
-resetCard();
+if(drop.children.length>0){
 
 return;
 
@@ -878,16 +881,16 @@ if(answer===target){
 
 drop.appendChild(dragged);
 
-dragged.draggable=false;
-
 dragged.classList.add("correct");
 drop.classList.add("correct");
+
+dragged.draggable=false;
 
 completed++;
 
 if(completed===6){
 
-setTimeout(endGame,700);
+setTimeout(endGame,600);
 
 }
 
@@ -904,83 +907,68 @@ dragged.classList.remove("shake");
 
 },350);
 
-resetCard();
-
 }
 
 dragged=null;
 
-}
+});
 
-function resetCard(){
+});
 
-if(startNext){
+/* -------- TOUCH DRAG -------- */
 
-startParent.insertBefore(dragged,startNext);
-
-}else{
-
-startParent.appendChild(dragged);
-
-}
-
-}
-
- /* ---------- Smooth Pointer Drag (Mouse + Touch) ---------- */
+let touchCard=null;
+let clone=null;
 
 cards.forEach(card=>{
 
-let startX=0;
-let startY=0;
-let dragging=false;
-
-card.addEventListener("pointerdown",e=>{
+card.addEventListener("touchstart",function(e){
 
 if(card.classList.contains("correct")) return;
 
-dragged=card;
+touchCard=card;
 
-startParent=card.parentNode;
-startNext=card.nextSibling;
-
-dragging=true;
+const touch=e.touches[0];
 
 const rect=card.getBoundingClientRect();
 
-startX=e.clientX-rect.left;
-startY=e.clientY-rect.top;
+clone=card.cloneNode(true);
 
-card.style.position="fixed";
-card.style.left=rect.left+"px";
-card.style.top=rect.top+"px";
-card.style.width=rect.width+"px";
-card.style.height=rect.height+"px";
-card.style.zIndex="9999";
+clone.style.position="fixed";
+clone.style.left=rect.left+"px";
+clone.style.top=rect.top+"px";
+clone.style.width=rect.width+"px";
+clone.style.height=rect.height+"px";
+clone.style.pointerEvents="none";
+clone.style.zIndex="9999";
+clone.style.opacity=".9";
 
-card.setPointerCapture(e.pointerId);
+document.body.appendChild(clone);
 
-});
-
-card.addEventListener("pointermove",e=>{
-
-if(!dragging) return;
-
-card.style.left=(e.clientX-startX)+"px";
-card.style.top=(e.clientY-startY)+"px";
+card.style.opacity=".25";
 
 });
 
-card.addEventListener("pointerup",e=>{
+card.addEventListener("touchmove",function(e){
 
-if(!dragging) return;
+if(!clone) return;
 
-dragging=false;
+e.preventDefault();
 
-card.releasePointerCapture(e.pointerId);
+const touch=e.touches[0];
 
-let placed=false;
+clone.style.left=(touch.clientX-clone.offsetWidth/2)+"px";
+clone.style.top=(touch.clientY-clone.offsetHeight/2)+"px";
 
-const rect=card.getBoundingClientRect();
+},{passive:false});
+
+card.addEventListener("touchend",function(){
+
+if(!clone)return;
+
+let dropped=false;
+
+const rect=clone.getBoundingClientRect();
 
 drops.forEach(drop=>{
 
@@ -995,39 +983,60 @@ rect.bottom>r.top
 
 ){
 
-card.style.position="";
-card.style.left="";
-card.style.top="";
-card.style.width="";
-card.style.height="";
-card.style.zIndex="";
+if(drop.children.length>0) return;
 
-checkDrop(drop);
+const answer=touchCard.dataset.answer;
+const target=drop.dataset.group;
 
-placed=true;
+if(answer===target){
+
+drop.appendChild(touchCard);
+
+touchCard.classList.add("correct");
+drop.classList.add("correct");
+
+touchCard.draggable=false;
+
+completed++;
+
+if(completed===6){
+
+setTimeout(endGame,600);
+
+}
+
+}else{
+
+wrong.currentTime=0;
+wrong.play();
+
+touchCard.classList.add("shake");
+
+setTimeout(()=>{
+
+touchCard.classList.remove("shake");
+
+},350);
+
+}
+
+dropped=true;
 
 }
 
 });
 
-if(!placed){
+touchCard.style.opacity="1";
 
-card.style.position="";
-card.style.left="";
-card.style.top="";
-card.style.width="";
-card.style.height="";
-card.style.zIndex="";
+clone.remove();
 
-resetCard();
-
-dragged=null;
-
-}
+clone=null;
+touchCard=null;
 
 });
 
-}); 
+});
+
 
 function endGame(){
 
