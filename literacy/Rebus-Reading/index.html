@@ -102,41 +102,7 @@ to{transform:scale(1.05);}
 
 }
 
-#titleScreen{
 
-display:none;
-z-index:9;
-
-}
-
-#gameTitle{
-
-font-size:clamp(38px,6vw,70px);
-
-font-weight:800;
-
-background:
-linear-gradient(90deg,
-#E53935,
-#FB8C00,
-#43A047,
-#1E88E5,
-#8E24AA);
-
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-
-animation:flash 1s infinite;
-
-}
-
-@keyframes flash{
-
-50%{
-opacity:.4;
-}
-
-}
 
 #startScreen{
 
@@ -443,17 +409,6 @@ src="assets/innovine-logo.png">
 
 </div>
 
-<!-- Flash Title -->
-
-<div id="titleScreen">
-
-<div id="gameTitle">
-
-Rebus Reading
-
-</div>
-
-</div>
 
 <!-- Start -->
 
@@ -581,7 +536,7 @@ parts:[
 {text:"The"},
 {img:"sun.png"},
 {text:"is"},
-{text:"hot"}
+{text:"hot."}
 ]
 
 },
@@ -627,7 +582,7 @@ parts:[
 {text:"The"},
 {img:"fan.png"},
 {text:"is"},
-{text:"on"}
+{text:"on."}
 ]
 
 },
@@ -690,14 +645,7 @@ let current=0;
 setTimeout(()=>{
 
 logoScreen.style.display="none";
-titleScreen.style.display="flex";
-
-setTimeout(()=>{
-
-titleScreen.style.display="none";
 startScreen.style.display="flex";
-
-},5000);
 
 },5000);
 
@@ -816,16 +764,7 @@ current=0;
 setTimeout(()=>{
 
 logoScreen.style.display="none";
-
-titleScreen.style.display="flex";
-
-setTimeout(()=>{
-
-titleScreen.style.display="none";
-
 startScreen.style.display="flex";
-
-},5000);
 
 },5000);
 
