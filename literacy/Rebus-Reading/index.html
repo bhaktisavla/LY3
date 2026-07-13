@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,
+initial-scale=1.0,
+maximum-scale=1.0,
+user-scalable=no">
+
+<title>Rebus Reading</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+width:100%;
+height:100%;
+overflow:hidden;
+font-family:'Baloo 2',cursive;
+background:
+linear-gradient(180deg,#FFF8E7,#D9F8FF,#FFF5D6);
+}
+
+body{
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+#game{
+
+position:relative;
+width:100vw;
+height:100vh;
+overflow:hidden;
+
+background:
+
+radial-gradient(circle at 15% 20%,#FFE082 0 6%,transparent 7%),
+
+radial-gradient(circle at 82% 15%,#F8BBD0 0 6%,transparent 7%),
+
+radial-gradient(circle at 20% 80%,#B2EBF2 0 6%,transparent 7%),
+
+radial-gradient(circle at 80% 82%,#C5E1A5 0 6%,transparent 7%),
+
+linear-gradient(180deg,#FFFDE7,#E1F5FE,#FFF9C4);
+
+}
+
+/* ---------------- Splash ---------------- */
+
+#logoScreen,
+#titleScreen,
+#startScreen,
+#playArea,
+#finishScreen{
+
+position:absolute;
+inset:0;
+
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+
+}
+
+#logoScreen{
+
+background:white;
+z-index:10;
+
+}
+
+#logo{
+
+width:min(65vw,320px);
+max-height:45vh;
+object-fit:contain;
+
+animation:pop 1.4s infinite alternate;
+
+}
+
+@keyframes pop{
+
+from{transform:scale(.95);}
+to{transform:scale(1.05);}
+
+}
+
+#titleScreen{
+
+display:none;
+z-index:9;
+
+}
+
+#gameTitle{
+
+font-size:clamp(38px,6vw,70px);
+
+font-weight:800;
+
+background:
+linear-gradient(90deg,
+#E53935,
+#FB8C00,
+#43A047,
+#1E88E5,
+#8E24AA);
+
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+animation:flash 1s infinite;
+
+}
+
+@keyframes flash{
+
+50%{
+opacity:.4;
+}
+
+}
+
+#startScreen{
+
+display:none;
+padding:3vh;
+text-align:center;
+
+}
+
+#startTitle{
+
+font-size:clamp(34px,5vw,62px);
+
+font-weight:800;
+
+background:
+linear-gradient(90deg,
+#E53935,
+#FB8C00,
+#43A047,
+#1E88E5,
+#8E24AA);
+
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+margin-bottom:4vh;
+
+}
+
+#tapBtn{
+
+padding:18px 40px;
+
+font-size:clamp(28px,4vw,44px);
+
+border:none;
+
+border-radius:50px;
+
+background:#FFB300;
+
+color:white;
+
+font-weight:bold;
+
+box-shadow:0 8px 18px rgba(0,0,0,.25);
+
+cursor:pointer;
+
+animation:pulse 1.4s infinite;
+
+}
+
+@keyframes pulse{
+
+0%{transform:scale(1);}
+50%{transform:scale(1.08);}
+100%{transform:scale(1);}
+
+}
+
+/* ---------------- Game ---------------- */
+
+#playArea{
+
+display:none;
+
+padding:2vh;
+
+justify-content:flex-start;
+
+}
+
+.title{
+
+font-size:clamp(26px,4vw,46px);
+
+font-weight:800;
+
+margin-top:1vh;
+
+background:
+linear-gradient(90deg,
+#E53935,
+#FB8C00,
+#43A047,
+#1E88E5,
+#8E24AA);
+
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+}
+
+#question{
+
+margin-top:1vh;
+
+font-size:clamp(17px,2.2vw,30px);
+
+text-align:center;
+
+padding:0 3vw;
+
+}
+
+#speakAgain{
+
+margin-top:1vh;
+
+padding:8px 18px;
+
+font-size:18px;
+
+border:none;
+
+border-radius:30px;
+
+background:#4FC3F7;
+
+color:white;
+
+cursor:pointer;
+
+}
+
+#sentence{
+
+flex:1;
+
+width:100%;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+gap:1vw;
+
+flex-wrap:wrap;
+
+padding:2vh;
+
+text-align:center;
+
+}
+
+.word{
+
+font-family:"Comic Sans MS",cursive;
+
+font-size:clamp(26px,4vw,54px);
+
+font-weight:bold;
+
+color:#111;
+
+}
+
+.rebus{
+
+width:min(18vw,150px);
+
+height:min(18vw,150px);
+
+object-fit:contain;
+
+}
+
+#nextBtn{
+
+margin-bottom:3vh;
+
+padding:16px 36px;
+
+font-size:clamp(28px,4vw,44px);
+
+font-weight:bold;
+
+border:none;
+
+border-radius:22px;
+
+cursor:pointer;
+
+background:linear-gradient(#FFEB3B,#FFC107);
+
+color:#E65100;
+
+box-shadow:0 8px 15px rgba(0,0,0,.25);
+
+transition:.2s;
+
+}
+
+#nextBtn:active{
+
+transform:scale(.95);
+
+}
+
+/* ---------------- Finish ---------------- */
+
+#finishScreen{
+
+display:none;
+
+text-align:center;
+
+}
+
+#finishText{
+
+font-size:clamp(36px,5vw,64px);
+
+font-weight:800;
+
+color:#FF5722;
+
+margin-bottom:4vh;
+
+}
+
+#playAgain{
+
+padding:18px 42px;
+
+font-size:clamp(28px,4vw,42px);
+
+border:none;
+
+border-radius:40px;
+
+background:#66BB6A;
+
+color:white;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+canvas{
+
+position:absolute;
+
+inset:0;
+
+pointer-events:none;
+
+}
+
+/* ---------------- Mobile ---------------- */
+
+@media(max-width:700px){
+
+.rebus{
+
+width:25vw;
+height:25vw;
+
+}
+
+.word{
+
+font-size:8vw;
+
+}
+
+#question{
+
+font-size:5vw;
+
+}
+
+#nextBtn{
+
+padding:15px 28px;
+
+font-size:8vw;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="game">
+
+<!-- Logo Screen -->
+
+<div id="logoScreen">
+
+<img
+id="logo"
+src="assets/innovine-logo.png">
+
+</div>
+
+<!-- Flash Title -->
+
+<div id="titleScreen">
+
+<div id="gameTitle">
+
+Rebus Reading
+
+</div>
+
+</div>
+
+<!-- Start -->
+
+<div id="startScreen">
+
+<div id="startTitle">
+
+Rebus Reading
+
+</div>
+
+<button id="tapBtn">
+
+Tap to Start
+
+</button>
+
+</div>
+
+<!-- Game -->
+
+<div id="playArea">
+
+<div class="title">
+
+Rebus Reading
+
+</div>
+
+<div id="question">
+
+Read each sentence.
+Say the words and the picture together to finish the sentence.
+
+</div>
+
+<button id="speakAgain">
+
+🔊 Hear Again
+
+</button>
+
+<div id="sentence">
+
+</div>
+
+<button id="nextBtn">
+
+Next →
+
+</button>
+
+</div>
+
+<!-- Finish -->
+
+<div id="finishScreen">
+
+<canvas id="confetti"></canvas>
+
+<div id="finishText">
+
+Awesome!
+
+</div>
+
+<button id="playAgain">
+
+Play Again
+
+</button>
+
+</div>
+
+<audio
+id="clap"
+src="assets/clap.mp3">
+</audio>
+
+<script>
+const questionText =
+"Read each sentence. Say the words and the picture together to finish the sentence.";
+
+const rounds=[
+
+{
+
+parts:[
+{text:"The"},
+{img:"boy.png"},
+{text:"has"},
+{text:"a"},
+{img:"ball.png"}
+]
+
+},
+
+{
+
+parts:[
+{text:"The"},
+{img:"dog.png"},
+{text:"is"},
+{text:"in"},
+{text:"the"},
+{img:"van.png"}
+]
+
+},
+
+{
+
+parts:[
+{text:"Ben"},
+{text:"has"},
+{text:"a"},
+{img:"bat.png"}
+]
+
+},
+
+{
+
+parts:[
+{text:"The"},
+{img:"sun.png"},
+{text:"is"},
+{text:"hot"}
+]
+
+},
+
+{
+
+parts:[
+{text:"I"},
+{text:"see"},
+{text:"a"},
+{img:"web.png"}
+]
+
+},
+
+{
+
+parts:[
+{text:"The"},
+{img:"jam.png"},
+{text:"is"},
+{text:"in"},
+{text:"the"},
+{img:"cup.png"}
+]
+
+},
+
+{
+
+parts:[
+{text:"Tim"},
+{text:"has"},
+{text:"a"},
+{img:"jet.png"}
+]
+
+},
+
+{
+
+parts:[
+{text:"The"},
+{img:"fan.png"},
+{text:"is"},
+{text:"on"}
+]
+
+},
+
+{
+
+parts:[
+{text:"The"},
+{img:"lid.png"},
+{text:"is"},
+{text:"on"},
+{text:"the"},
+{img:"pan.png"}
+]
+
+},
+
+{
+
+parts:[
+{text:"The"},
+{img:"cap.png"},
+{text:"is"},
+{text:"in"},
+{text:"the"},
+{img:"box.png"}
+]
+
+},
+
+{
+
+parts:[
+{text:"It"},
+{text:"is"},
+{text:"a"},
+{text:"red"},
+{img:"car.png"}
+]
+
+}
+
+];
+
+const logoScreen=document.getElementById("logoScreen");
+const titleScreen=document.getElementById("titleScreen");
+const startScreen=document.getElementById("startScreen");
+const playArea=document.getElementById("playArea");
+const finishScreen=document.getElementById("finishScreen");
+
+const sentence=document.getElementById("sentence");
+const tapBtn=document.getElementById("tapBtn");
+const nextBtn=document.getElementById("nextBtn");
+const playAgain=document.getElementById("playAgain");
+const speakAgain=document.getElementById("speakAgain");
+const clap=document.getElementById("clap");
+
+let current=0;
+
+setTimeout(()=>{
+
+logoScreen.style.display="none";
+titleScreen.style.display="flex";
+
+setTimeout(()=>{
+
+titleScreen.style.display="none";
+startScreen.style.display="flex";
+
+},5000);
+
+},5000);
+
+tapBtn.onclick=()=>{
+
+startScreen.style.display="none";
+playArea.style.display="flex";
+
+current=0;
+
+loadRound();
+
+};
+
+function speakQuestion(){
+
+speechSynthesis.cancel();
+
+const msg=new SpeechSynthesisUtterance(questionText);
+
+msg.rate=.88;
+msg.pitch=1.05;
+
+speechSynthesis.speak(msg);
+
+}
+
+speakAgain.onclick=speakQuestion;
+
+function loadRound(){
+
+sentence.innerHTML="";
+
+rounds[current].parts.forEach(item=>{
+
+if(item.text){
+
+const span=document.createElement("span");
+
+span.className="word";
+
+span.textContent=item.text;
+
+sentence.appendChild(span);
+
+}
+
+if(item.img){
+
+const img=document.createElement("img");
+
+img.className="rebus";
+
+img.src="assets/"+item.img;
+
+img.draggable=false;
+
+sentence.appendChild(img);
+
+}
+
+});
+
+setTimeout(speakQuestion,400);
+
+}
+
+nextBtn.onclick=()=>{
+
+clap.currentTime=0;
+
+clap.play();
+
+setTimeout(()=>{
+
+current++;
+
+if(current<rounds.length){
+
+loadRound();
+
+}
+
+else{
+
+endGame();
+
+}
+
+},700);
+
+};
+
+function endGame(){
+
+playArea.style.display="none";
+
+finishScreen.style.display="flex";
+
+startConfetti();
+
+}
+
+playAgain.onclick=()=>{
+
+speechSynthesis.cancel();
+
+stopConfetti();
+
+finishScreen.style.display="none";
+
+logoScreen.style.display="flex";
+
+current=0;
+
+setTimeout(()=>{
+
+logoScreen.style.display="none";
+
+titleScreen.style.display="flex";
+
+setTimeout(()=>{
+
+titleScreen.style.display="none";
+
+startScreen.style.display="flex";
+
+},5000);
+
+},5000);
+
+};
+
+/* ---------------- Confetti ---------------- */
+
+const canvas=document.getElementById("confetti");
+
+const ctx=canvas.getContext("2d");
+
+let pieces=[];
+
+let animation;
+
+function resize(){
+
+canvas.width=window.innerWidth;
+
+canvas.height=window.innerHeight;
+
+}
+
+window.addEventListener("resize",resize);
+
+resize();
+
+function startConfetti(){
+
+pieces=[];
+
+for(let i=0;i<180;i++){
+
+pieces.push({
+
+x:Math.random()*canvas.width,
+
+y:Math.random()*canvas.height-canvas.height,
+
+r:4+Math.random()*6,
+
+dx:-2+Math.random()*4,
+
+dy:2+Math.random()*4,
+
+c:`hsl(${Math.random()*360},80%,60%)`
+
+});
+
+}
+
+animate();
+
+}
+
+function animate(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+pieces.forEach(p=>{
+
+ctx.fillStyle=p.c;
+
+ctx.beginPath();
+
+ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+
+ctx.fill();
+
+p.x+=p.dx;
+
+p.y+=p.dy;
+
+if(p.y>canvas.height){
+
+p.y=-10;
+
+}
+
+});
+
+animation=requestAnimationFrame(animate);
+
+}
+
+function stopConfetti(){
+
+cancelAnimationFrame(animation);
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+}
+
+</script>
+
+</body>
+
+</html>
