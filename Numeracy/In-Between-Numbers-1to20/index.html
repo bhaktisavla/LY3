@@ -658,7 +658,111 @@ transform:scale(.96);
 
 }
 
+.confetti{
 
+position:fixed;
+
+top:-10px;
+
+width:10px;
+
+height:16px;
+
+animation:fall 2.8s linear forwards;
+
+}
+
+
+@keyframes fall{
+
+to{
+
+transform:translateY(105vh) rotate(360deg);
+
+}
+
+}
+  
+</style>
+
+ <body>
+
+
+<div class="cloud cloud1"></div>
+<div class="cloud cloud2"></div>
+<div class="cloud cloud3"></div>
+  
+<div id="logoScreen">
+<img src="assets/innovine-logo.png">
+</div>
+
+
+<div id="titleScreen">
+
+<h1 class="titleHeading">
+In-Between Numbers
+</h1>
+
+<button id="startBtn">
+▶ Tap to Start
+</button>
+
+</div>
+
+
+
+<div class="game" id="game">
+
+<h1>
+In-Between Numbers
+</h1>
+
+
+<div class="questionArea">
+
+
+<div class="instruction" id="questionText">
+
+Listen and type the missing number.
+
+</div>
+
+
+<button id="hearBtn" onclick="speakQuestion()">
+🔊
+</button>
+
+
+</div>
+
+
+
+<div class="planeBox" id="planeBox">
+
+
+<img id="planeImg"
+src="assets/aeroplane.png">
+
+
+<div class="numberRow">
+
+<div class="numBox" id="box1"></div>
+
+<div class="numBox" id="box2"></div>
+
+<div class="numBox" id="box3"></div>
+
+</div>
+
+
+</div>
+
+
+<div class="buttons" id="buttons"></div>
+
+
+</div>
+  
 <!-- AUDIO FILES -->
 
 <audio id="rightSound" src="assets/correct.mp3"></audio>
